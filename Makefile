@@ -1,10 +1,10 @@
 #******************************************************************************
-# Makefile<build>                                             'build' project
+# Makefile<make-it-quick>                                Make-It-Quick project
 #******************************************************************************
 #
 #  File Description:
 #
-#    A sample maefile for 'build'
+#    Top-level makefile for 'make-it-quick'
 #
 #
 #
@@ -15,42 +15,30 @@
 #
 #******************************************************************************
 # (C) 2017-2018 Christophe de Dinechin <christophe@dinechin.org>
-#  This software is licensed under the GNU General Public License v3
-#  See file COPYING for details.
+#     This software is licensed under the GNU General Public License v3
+#     See LICENSE file for details.
 #******************************************************************************
 
-# Define the path to 'build' (can be a git submodule in your project)
+# Things to install
+PREFIX_HDR=$(PREFIX)include/make-it-quick/
+HDR_INSTALL=			\
+	config.arm-linux-gnu.mk	\
+	config.auto.mk		\
+	config.cygwin.mk	\
+	config.gnu.mk		\
+	config.linux.mk		\
+	config.macosx-clang.mk	\
+	config.macosx.mk	\
+	config.mingw.mk		\
+	config.mk		\
+	config.msys.mk		\
+	config.unix.mk		\
+	config.vs2013-64.mk	\
+	config.vs2013.mk	\
+	rules.mk
+
+# Include the makefile rules with special BUILD path
 BUILD=./
-
-# Define the source code
-SOURCES=hello.cpp
-
-# Define libraries we use in that project
-LIBRARIES=lib1/lib1.dll lib2/lib2.lib
-
-# Define the product of the build (.exe will be removed for Unix builds)
-PRODUCTS=hello.exe
-
-# Define configuration options
-CONFIG=	<stdio.h>		\
-	<unistd.h>		\
-	<nonexistent.h>		\
-	<sys/time.h>		\
-	<sys/improbable.h> 	\
-	<iostream>		\
-	clearenv		\
-	libm			\
-	liboony			\
-	sbrk
-
-# Define what to test
-TESTS=product count-characters
-
-# Define what to benchmark
-BENCHMARKS=product
-
-# Include the makefile rules
 include $(BUILD)rules.mk
 
-count-characters.test:
-	@echo Output has `$(TEST_ENV) $(OBJPRODUCTS) | wc -c` characters, should be 35
+TESTS=example/

@@ -1,5 +1,5 @@
 #******************************************************************************
-# config.auto.mk                                              Recorder project
+# config.auto.mk                                         Make-It-Quick project
 #******************************************************************************
 #
 #  File Description:
@@ -14,8 +14,8 @@
 #
 #******************************************************************************
 # (C) 1992-2018 Christophe de Dinechin <christophe@dinechin.org>
-#This software is licensed under the GNU General Public License v3
-#See file COPYING for details.
+#     This software is licensed under the GNU General Public License v3
+#     See LICENSE file for details.
 #******************************************************************************
 
 # Identification of the default build environment

@@ -1,10 +1,10 @@
 #******************************************************************************
-# config.mk                                                   'Build' project
+# config.mk                                              Make-It-Quick project
 #******************************************************************************
 #
 #  File Description:
 #
-#    This is the shared makefile configuration file for 'build'
+#    This is the shared makefile configuration file Make-It-Quick
 #    This where the location of specific directories should be specified
 #
 #
@@ -14,8 +14,8 @@
 #
 #******************************************************************************
 # (C) 1992-2018 Christophe de Dinechin <christophe@dinechin.org>
-#This software is licensed under the GNU General Public License v3
-#See file COPYING for details.
+#     This software is licensed under the GNU General Public License v3
+#     See LICENSE file for details.
 #******************************************************************************
 
 # Use /bin/sh as a basic shell, since it is faster than bash

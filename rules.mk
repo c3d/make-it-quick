@@ -1,5 +1,5 @@
 #******************************************************************************
-# rules.mk                                                    Recorder project
+# rules.mk                                               Make-it-Quick project
 #******************************************************************************
 #
 #  File Description:
@@ -14,11 +14,12 @@
 #
 #******************************************************************************
 # (C) 1992-2018 Christophe de Dinechin <christophe@dinechin.org>
-# This software is licensed under the GNU General Public License v3
-# See file COPYING for details.
+#     This software is licensed under the GNU General Public License v3
+#     See LICENSE file for details.
 #******************************************************************************
 
 # Include the Makefile configuration and local variables
+BUILD?=make-it-quick/
 include $(BUILD)config.mk
 
 # Default build settings (definitions in specific config..mkXYZ)
@@ -79,7 +80,7 @@ LINK_WINPUTS=   $(patsubst %,"%", $(shell cygpath -aw $(LINK_INPUTS)))
 endif
 PRINT_DIR=              --no-print-directory
 RECURSE_BUILDENV=$(BUILDENV)
-RECURSE_CMD=    $(MAKE) $(PRINT_DIR) TARGET=$(TARGET) BUILDENV=$(RECURSE_BUILDENV) BUILD="$(abspath $(BUILD))/" TOP="$(abspath $(TOP))/" $(RECURSE) COLOR_FILTER=
+RECURSE_CMD=    $(MAKE) $(PRINT_DIR) TARGET=$(TARGET) BUILDENV=$(RECURSE_BUILDENV) TOP="$(abspath $(TOP))/" $(RECURSE) COLOR_FILTER=
 MAKEFILE_DEPS:= $(MAKEFILE_LIST)
 NOT_PARALLEL?=  .NOTPARALLEL
 BUILD_LOW?=     0
