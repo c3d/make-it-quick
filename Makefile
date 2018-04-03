@@ -35,10 +35,17 @@ HDR_INSTALL=			\
 	config.unix.mk		\
 	config.vs2013-64.mk	\
 	config.vs2013.mk	\
-	rules.mk
+	rules.mk		\
+	config.local-setup..mk
+
+PREFIX_LIB=$(PREFIX)lib/make-it-quick/config/
+LIB_INSTALL=$(wildcard config/check*.c)
 
 # Include the makefile rules with special BUILD path
 BUILD=./
 include $(BUILD)rules.mk
 
 TESTS=example/
+
+config.local-setup.mk:
+	$(PRINT_GENERATE) echo > $@ CONFIG_SOURCES=$(PREFIX_LIB)make-it-quick/

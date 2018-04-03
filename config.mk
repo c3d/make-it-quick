@@ -58,6 +58,10 @@ TO_INSTALL=	$(OUTPUT_EXE:%=%.install_exe)		\
 		$(DLL_INSTALL:%=%.install_dll)		\
 		$(HDR_INSTALL:%=%.install_hdr)
 
+# Local setup - Location of configuration files, etc (tweaked at install time)
+-include $(BUILD)config.local-setup.mk
+CONFIG_SOURCES?=/usr/lib/make-it-quick/
+
 # Sources to reformat
 CLANG_FORMAT_SOURCES=$(SOURCES) $(HDR_INSTALL)
 

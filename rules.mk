@@ -442,11 +442,11 @@ $(OBJDIR)CFG-LIB_HAVE_lib%.c: 					$(PKG_DEPS)
 # Check if a function is present
 $(OBJDIR)CFG_HAVE_%.h: $(OBJDIR)CFG-FN_HAVE_%.c			$(CONFIG_DEPS)
 	$(PRINT_CONFIG)	$(FN_CONFIG)
-$(OBJDIR)CFG-FN_HAVE_%.c: $(BUILD)config/HAVE_%.c 		$(CONFIG_DEPS)
+$(OBJDIR)CFG-FN_HAVE_%.c: $(CONFIG_SOURCES)config/HAVE_%.c	$(CONFIG_DEPS)
 	$(PRINT_COMMAND) cp $< $@
 $(OBJDIR)CFG-FN_HAVE_%.c: config/HAVE_%.c			$(CONFIG_DEPS)
 	$(PRINT_COMMAND) cp $< $@
-$(OBJDIR)CFG-FN_HAVE_%.c: $(BUILD)config/check_%.c 		$(CONFIG_DEPS)
+$(OBJDIR)CFG-FN_HAVE_%.c: $(CONFIG_SOURCES)config/check_%.c	$(CONFIG_DEPS)
 	$(PRINT_COMMAND) cp $< $@
 $(OBJDIR)CFG-FN_HAVE_%.c: config/check_%.c			$(CONFIG_DEPS)
 	$(PRINT_COMMAND) cp $< $@
