@@ -22,21 +22,10 @@
 # Things to install
 PREFIX_HDR=$(PREFIX)include/make-it-quick/
 HDR_INSTALL=			\
-	config.arm-linux-gnu.mk	\
-	config.auto.mk		\
-	config.cygwin.mk	\
-	config.gnu.mk		\
-	config.linux.mk		\
-	config.macosx-clang.mk	\
-	config.macosx.mk	\
-	config.mingw.mk		\
-	config.mk		\
-	config.msys.mk		\
-	config.unix.mk		\
-	config.vs2013-64.mk	\
-	config.vs2013.mk	\
 	rules.mk		\
-	config.local-setup..mk
+	config.mk		\
+	$(wildcard config.*.mk)	\
+	config.local-setup.mk
 
 PREFIX_LIB=$(PREFIX)lib/make-it-quick/config/
 LIB_INSTALL=$(wildcard config/check*.c)
