@@ -14,7 +14,7 @@
 #
 #
 #******************************************************************************
-# (C) 2017 Christophe de Dinechin <christophe@dinechin.org>
+# (C) 2017-2017 Christophe de Dinechin <christophe@dinechin.org>
 #This software is licensed under the GNU General Public License v3
 #See file COPYING for details.
 #******************************************************************************
