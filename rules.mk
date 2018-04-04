@@ -119,7 +119,6 @@ clean: $(SUBDIRS:%=%.clean) $(VARIANTS:%=%.variant-clean)
 distclean nuke: clean
 	-$(PRINT_CLEAN) rm -rf $(OBJPRODUCTS) $(OBJFILES) $(LOGS)
 
-
 help:
 	@$(ECHO) "Available targets:"
 	@$(ECHO) "  make                : Build default target (TARGET=$(TARGET))"
