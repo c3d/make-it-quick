@@ -68,6 +68,8 @@ MIQ_LDFLAGS=	$(LDFLAGS)				\
 		$(LDFLAGS_VARIANT_$(VARIANT))		\
 		$(LDFLAGS_$*)
 
+MIQ_PACKAGE= 	$(PACKAGE_NAME:%=$(MIQ_OBJDIR)%.pc)
+
 MIQ_INSTALL=	$(TO_INSTALL:%=%.install)		\
 		$(MIQ_OUTEXE:%=%.install_exe)		\
 		$(MIQ_OUTLIB:%=%.install_lib)		\
@@ -75,7 +77,9 @@ MIQ_INSTALL=	$(TO_INSTALL:%=%.install)		\
 		$(EXE_INSTALL:%=%.install_exe)		\
 		$(LIB_INSTALL:%=%.install_lib)		\
 		$(DLL_INSTALL:%=%.install_dll)		\
-		$(HDR_INSTALL:%=%.install_hdr)
+		$(HDR_INSTALL:%=%.install_hdr)		\
+		$(SHR_INSTALL:%=%.install_shr)		\
+		$(MIQ_PACKAGE:%=%.install_pc)
 
 MIQ_SOURCES=	$(SOURCES)				\
 		$(SOURCES_BUILDENV_$(BUILDENV))		\
@@ -543,6 +547,35 @@ benchmark:	$(BENCHMARKS:%=%.benchmark)
 	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_DLL)
 %.install_hdr: $(PREFIX_HDR).mkdir-only
 	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_HDR)
+%.install_shr: $(PREFIX_SHR).mkdir-only
+	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_SHR)
+%.install_pc: $(PREFIX_PKGCONFIG).mkdir-only %
+	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_PKGCONFIG)
+
+
+#------------------------------------------------------------------------------
+#  Generation of pkg-config data file
+#------------------------------------------------------------------------------
+
+MIQ_PACKAGELIBS=$(PACKAGE_LIBS:%.lib=$(LINK_LIB_OPT)%)	\
+		$(PACKAGE_DLLS:%.dll=$(LINK_DLL_OPT)%)
+MIQ_GENPC=					  	 \
+	(echo 'prefix=$(PREFIX)'			;\
+	echo 'exec_prefix=$${prefix}'			;\
+	echo 'libdir=$(PREFIX_LIB)'			;\
+	echo 'includedir=$(PREFIX_HDR)'			;\
+	echo 'Name: $(PACKAGE_NAME)'			;\
+	echo 'Description: $(PACKAGE_DESCRIPTION)'	;\
+	echo 'Version: $(PACKAGE_VERSION)'		;\
+	echo 'URL: $(PACKAGE_URL)'			;\
+	echo 'Requires: $(PACKAGE_REQUIRES)'		;\
+	echo 'Conflicts: $(PACKAGE_CONFLICTS)'		;\
+	echo 'Libs: -L$${libdir} $(MIQ_PACKAGELIBS)'	;\
+	echo 'Cflags: -I$${includedir}'			)
+
+$(MIQ_PACKAGE):						$(MIQ_MAKEDEPS)
+	$(PRINT_BUILD)	$(MIQ_GENPC) > $@
+
 
 #------------------------------------------------------------------------------
 #  Clang format

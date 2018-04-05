@@ -64,6 +64,10 @@ NOT_PARALLEL?=  .NOTPARALLEL
 # Git revision for the current code
 GIT_REVISION:=  $(shell git rev-parse --short HEAD 2> /dev/null || echo "unknown")
 
+# Package installation directory
+PACKAGE_DIR=$(PACKAGE_NAME:%=%/)
+PACKAGE_LIBS=$(MIQ_PRODLIB)
+PACKAGE_DLLS=$(MIQ_PRODDLL)
 
 # Local setup - Location of configuration files, etc (tweaked at install time)
 -include $(MIQ)config.local-setup.mk
@@ -80,10 +84,11 @@ CLANG_FORMAT_SOURCES=$(SOURCES) $(HDR_INSTALL)
 SYSCONFIG?=$(DESTDIR)/etc/
 PREFIX?=$(DESTDIR)/usr/local/
 PREFIX_BIN?=$(PREFIX)bin/
-PREFIX_LIB?=$(PREFIX)lib/
+PREFIX_LIB?=$(PREFIX)lib/$(PACKAGE_DIR)
 PREFIX_DLL?=$(PREFIX_LIB)
-PREFIX_HDR?=$(PREFIX)include/
-PREFIX_SHARE?=$(PREFIX)share/
+PREFIX_HDR?=$(PREFIX)include/$(PACKAGE_DIR)
+PREFIX_SHARE?=$(PREFIX)share/$(PACKAGE_DIR)
+PREFIX_PKGCONFIG=$(PREFIX)share/pkgconfig/
 
 
 #------------------------------------------------------------------------------
