@@ -22,5 +22,5 @@
 SOURCES=lib1.c
 PRODUCTS=lib1.dll
 
-BUILD?=make-it-quick/
-include $(BUILD)rules.mk
+MIQ=make-it-quick/
+include $(MIQ)rules.mk

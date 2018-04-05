@@ -22,5 +22,5 @@
 SOURCES=lib2.c
 PRODUCTS=lib2.lib
 
-BUILD?=make-it-quick/
-include $(BUILD)rules.mk
+MIQ=make-it-quick/
+include $(MIQ)rules.mk

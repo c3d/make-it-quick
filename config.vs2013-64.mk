@@ -1,5 +1,5 @@
 #******************************************************************************
-# config.vs2013-64.mk                                    Make-It-Quick project 
+# config.vs2013-64.mk                                    Make-It-Quick project
 #******************************************************************************
 #
 #  File Description:
@@ -19,9 +19,8 @@
 #     See LICENSE file for details.
 #******************************************************************************
 
-DEFINES_vs2013-64=	WIN32
-LDFLAGS_vs2013-64=	shell32.lib Advapi32.lib User32.lib -libpath:$(OBJROOT)
-OS_NAME_vs2013-64=      windows
+DEFINES_BUILDENV_vs2013-64=$(DEFINES_BUILDENV_vs2013)
+LDFLAGS_BUILDENV_vs2013-64=$(LDFLAGS_BUILDENV_vs2013)
+OS_NAME_BUILDENV_vs2013-64=windows
 
-include $(BUILD)config.vs2013.mk
-
+include $(MIQ)config.vs2013.mk

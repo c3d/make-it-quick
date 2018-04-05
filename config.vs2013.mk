@@ -26,11 +26,11 @@
 # -nologo: suppresses display of sign-on banner
 # -TC: C mode
 # -TP: C++ mode
-CC=    cl -nologo -TC
-CXX=   cl -nologo -TP -EHsc
-CPP=   cl -nologo -E
-LD=    link -nologo
-MSLIB= lib -nologo
+CC=	cl -nologo -TC
+CXX=	cl -nologo -TP -EHsc
+CPP=	cl -nologo -E
+LD=	link -nologo
+MSLIB=	lib -nologo
 PYTHON= python
 AR=     no-ar-on-windows
 RANLIB= no-ranlib-on-windows
@@ -59,34 +59,30 @@ CAT=	type
 
 # -TP=C++ mode
 # -EHa=Exception model catching both structured and unstructured exceptions
-CFLAGS_cxx=	 -TP -EHa -EHsc
+CXXFLAGS_BUILDENV_vs2013= -TP -EHa -EHsc
 
 # -Z7=Put debug information in .obj files (don't laugh)
 # -Zi=Set debug information format to Program Database
 # -O2=Optimise for speed (-O1 is for size, -Ob for inline functions, and so on)
-CFLAGS_debug=	    -Zi -DEBUG
-CFLAGS_opt=	    -O2 -Zi -DEBUG
-CFLAGS_release= -O2
+CFLAGS_TARGET_debug=	-Zi -DEBUG
+CFLAGS_TARGET_opt=	-O2 -Zi -DEBUG
+CFLAGS_TARGET_release=	-O2
 
 # Curiously, the C++ compiler takes the same options as the C compiler. Bug?
-CXXFLAGS_debug=      -Zi -EHa -EHsc -DEBUG
-CXXFLAGS_opt=	 -O2 -Zi -EHa -EHsc -DEBUG
-CXXFLAGS_release=-O2     -EHa -EHsc
+CXXFLAGS_TARGET_debug=	-Zi -EHa -EHsc -DEBUG
+CXXFLAGS_opt=		-O2 -Zi -EHa -EHsc -DEBUG
+CXXFLAGS_release=	-O2 -EHa -EHsc
 
-DEFINES_vs2013= WIN32
-OS_NAME_vs2013= windows
-
-# Some default build libraries that are typically used for Python
-LDFLAGS_vs2013=	shell32.lib Advapi32.lib User32.lib -libpath:$(OBJROOT)
+DEFINES_BUILDENV_vs2013= WIN32
+OS_NAME_BUILDENV_vs2013= windows
 
 # Options specific to profiling
 # OBJ_PDB is the .pdb file (profile database) associated to a Windows
 # binary (.exe, .lib), containing profile and debug information
-OBJ_PDB:=       $(OBJROOT)/$(PRODUCTS)
-OBJ_PDB:=       $(subst .exe,.pdb,$(OBJ_PDB))
-CFLAGS_profile=	   -Fd$(OBJ_PDB)	-O2 -Zi            -DEBUG
-CXXFLAGS_profile=  -Fd$(OBJ_PDB)	-O2 -Zi -EHa -EHsc -DEBUG
-LDFLAGS_profile=   -pdb:$(OBJ_PDB) -debug
+MIQ_PDB:=		$(MIQ_OUTEXE:%.exe=%.pdb)
+CFLAGS_TARGET_profile=	-Fd$(MIQ_PDB)	-O2 -Zi            -DEBUG
+CXXFLAGS_TARGET_profile=-Fd$(MIQ_PDB)	-O2 -Zi -EHa -EHsc -DEBUG
+LDFLAGS_TARGET_profile=	-pdb:$(MIQ_PDB) -debug
 
 
 #------------------------------------------------------------------------------
@@ -117,22 +113,23 @@ LINK_DLL_OPT=-l:
 # In order to merge all .pdb information for an executable, we need to pass the -debug
 # option to the linker.
 
-MAKE_CC=	$(CC)  $(CFLAGS)   $(CPPFLAGS_$*) $(CFLAGS_$*)	 -c -Fo$@ $<
-MAKE_CXX=	$(CXX) $(CXXFLAGS) $(CPPFLAGS_$*) $(CXXFLAGS_$*) -c -Fo$@ $<
+MAKE_CC=	$(CC)  $(MIQ_CFLAGS)	-c -Fo$@ $<
+MAKE_CXX=	$(CXX) $(MIQ_CXXFLAGS)	-c -Fo$@ $<
 MAKE_DIR=	mkdir -p $*
 MAKE_OBJDIR=	$(MAKE_DIR) && touch $@
-MAKE_LIB=	$(MSLIB)			$(LINK_INPUTS)	      -out:$@
-MAKE_DLL=	$(LD) $(LDFLAGS) $(LDFLAGS_$*)	$(LINK_CMDLINE)-dll   -out:$@
-MAKE_EXE=	$(LD) $(LDFLAGS) $(LDFLAGS_$*)	$(LINK_CMDLINE)	      -out:$@
+MAKE_LIB=	$(MSLIB) $(MIQ_LINKOPTS)			-out:$@
+MAKE_DLL=	$(LD)	 $(MIQ_LINKOPTS) $(MIQ_LDFLAGS)	   -dll -out:$@
+MAKE_EXE=	$(LD)	 $(MIQ_LINKOPTS) $(MIQ_LDFLAGS)		-out:$@
 
 
 #------------------------------------------------------------------------------
 #  Dependencies
 #------------------------------------------------------------------------------
+#  Can't build the dependencies with the Visual Studio compilers at the moment
 
 GNU_CC=         gcc
 GNU_CXX=        g++
 GNU_AS=         gcc -x assembler-with-cpp
-CC_DEPEND=	$(GNU_CC)  -D_WIN32=1 $(GFLAGS) $(CPPFLAGS) $(CPPFLAGS_$*) -MM -MF $@ -MT $(@:.d=) $<
-CXX_DEPEND=	$(GNU_CXX) -D_WIN32=1 $(GFLAGS) $(CPPFLAGS) $(CPPFLAGS_$*) -MM -MF $@ -MT $(@:.d=) $<
-AS_DEPEND=	$(GNU_AS)  -D_WIN32=1 $(GFLAGS) $(CPPFLAGS) $(CPPFLAGS_$*) -MM -MF $@ -MT $(@:.d=) $<
+CC_DEPEND=	$(GNU_CC)  -D_WIN32=1 $(GFLAGS)   -MM -MF $@ -MT $(@:.d=) $<
+CXX_DEPEND=	$(GNU_CXX) -D_WIN32=1 $(GXXFLAGS) -MM -MF $@ -MT $(@:.d=) $<
+AS_DEPEND=	$(GNU_AS)  -D_WIN32=1 $(GASFLAGS) -MM -MF $@ -MT $(@:.d=) $<

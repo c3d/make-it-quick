@@ -30,7 +30,7 @@ BUILDENV_MSYS=msys
 BUILDENV_HP-UX=hpux
 BUILDENV_SunOS=sun
 
-include $(BUILD)config.$(BUILDENV).mk
+include $(MIQ)config.$(BUILDENV).mk
 
 # Make sure 'all' remains the first target seen
 all: $(TARGET)

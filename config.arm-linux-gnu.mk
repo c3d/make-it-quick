@@ -1,5 +1,5 @@
 #******************************************************************************
-# config.arm-linux-gnu.mk                                        Build project 
+# config.arm-linux-gnu.mk                                        Build project
 #******************************************************************************
 #
 #  File Description:
@@ -20,4 +20,4 @@
 #******************************************************************************
 
 CROSS_COMPILE=arm-linux-gnu
-include $(BUILD)config.gnu.mk
+include $(MIQ)config.gnu.mk

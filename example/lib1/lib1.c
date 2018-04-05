@@ -1,4 +1,4 @@
 int lib1_foo(void)
 {
-    return 0;
+    return 42;
 }

@@ -1,5 +1,5 @@
 #******************************************************************************
-# config.unix.mk                                         Make-It-Quick project 
+# config.unix.mk                                         Make-It-Quick project
 #******************************************************************************
 #
 #  File Description:
@@ -19,7 +19,7 @@
 #     See LICENSE file for details.
 #******************************************************************************
 
-DEFINES_unix=
-OS_NAME_unix=unix
+DEFINES_BUILDENV_unix=
+OS_NAME_BUILDENV_unix=unix
 
-include $(BUILD)config.gnu.mk
+include $(MIQ)config.gnu.mk

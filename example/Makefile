@@ -21,12 +21,13 @@
 
 # Define the source code
 SOURCES=hello.cpp
+SOURCES_world=world.c log-name.c
 
 # Define libraries we use in that project
 LIBRARIES=lib1/lib1.dll lib2/lib2.lib
 
 # Define the product of the build (.exe will be removed for Unix builds)
-PRODUCTS=hello.exe
+PRODUCTS=hello.exe world.exe
 
 # Define configuration options
 CONFIG=	<stdio.h>		\
@@ -53,8 +54,8 @@ TESTS=product count-characters
 BENCHMARKS=product
 
 # Include the makefile rules
-BUILD=../
-include $(BUILD)rules.mk
+MIQ=make-it-quick/
+include $(MIQ)rules.mk
 
 count-characters.test:
 	@echo Output has `$(TEST_ENV) $(OBJPRODUCTS) | wc -c` characters, should be 35

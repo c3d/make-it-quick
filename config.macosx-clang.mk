@@ -21,15 +21,14 @@
 #  Configuration definitions
 #------------------------------------------------------------------------------
 
-DEFINES_macosx-clang=CONFIG_MACOSX
-OS_NAME_macosx-clang=macosx
+DEFINES_BUILDENV_macosx-clang=CONFIG_MACOSX
+OS_NAME_BUILDENV_macosx-clang=macosx
 
-include $(BUILD)config.gnu.mk
+include $(MIQ)config.gnu.mk
 
-CFLAGS_ssev4=	-msse4
 DLL_EXT=	.dylib
-MAKE_DLL=	$(LD) -shared	$(LDFLAGS) $(LDFLAGS_$*)  	$(LINK_INPUTS)	-o $@	-rpath $(PREFIX_LIB)
+MAKE_DLL=	$(LD) -shared $(MIQ_LDFLAGS) $(MIQ_TOLINK) -o $@ -rpath $(PREFIX_DLL)
 
 # On MacOSX, we will use basic frameworks e.g. for string and filesystem functions
-LDFLAGS_macosx-clang=	-framework CoreFoundation 			\
-			-framework CoreServices
+LDFLAGS_BUILDENV_macosx-clang=	-framework CoreFoundation \
+				-framework CoreServices

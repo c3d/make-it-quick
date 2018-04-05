@@ -19,39 +19,91 @@
 #******************************************************************************
 
 # Include the Makefile configuration and local variables
-BUILD?=make-it-quick/
-include $(BUILD)config.mk
+MIQ?=make-it-quick/
+include $(MIQ)config.mk
 
 # Default build settings (definitions in specific config..mkXYZ)
-XINCLUDES=  $(INCLUDES) $(INCLUDES_$(BUILDENV)) $(INCLUDES_$(TARGET))       $(INCLUDES_EXTRA)
-XDEFINES=   $(DEFINES)  $(DEFINES_$(BUILDENV))  $(DEFINES_$(TARGET))        $(DEFINES_EXTRA)
-CPPFLAGS+=              $(CPPFLAGS_$(BUILDENV)) $(CPPFLAGS_$(TARGET))       $(CPPFLAGS_EXTRA)                   $(XDEFINES:%=-D%) $(XINCLUDES:%=-I%)
-CFLAGS+=    $(CPPFLAGS) $(CFLAGS_STD)   $(CFLAGS_PKGCONFIG) $(CFLAGS_$(BUILDENV))   $(CFLAGS_$(TARGET))         $(CFLAGS_EXTRA)
-CXXFLAGS+=  $(CPPFLAGS) $(CXXFLAGS_STD) $(CFLAGS_PKGCONFIG) $(CXXFLAGS_$(BUILDENV)) $(CXXFLAGS_$(TARGET))       $(CFLAGS_EXTRA) $(CXXFLAGS_EXTRA)
-LDFLAGS+=               $(LDFLAGS_PKGCONFIG) $(LDFLAGS_$(BUILDENV))  $(LDFLAGS_$(TARGET))        $(CFLAGS_EXTRA) $(LDFLAGS_EXTRA)
+MIQ_INCLUDES=  	$(INCLUDES)				\
+		$(INCLUDES_BUILDENV_$(BUILDENV))	\
+		$(INCLUDES_TARGET_$(TARGET))		\
+		$(INCLUDES_VARIANT_$(VARIANT))		\
+		$(INCLUDES_$*)
 
-ifndef DIR
-FULLDIR:=       $(abspath .)/
-DIR:=           $(subst $(TOP),,$(FULLDIR))
-PRETTY_DIR:=    $(subst $(TOP),[top],$(FULLDIR)$(VARIANT:%=[%]))
-BUILD_DATE:=    $(shell /bin/date '+%Y%m%d-%H%M%S')
-OBJROOT:=       $(OBJFILES)$(BUILDENV)/$(CROSS_COMPILE:%=%-)$(TARGET)$(BASE_EXTRA_DEPTH)
-BUILD_LOG:=     $(LOGS)build-$(BUILDENV)-$(CROSS_COMPILE:%=%-)$(TARGET)-$(BUILD_DATE).log
+MIQ_DEFINES=	$(DEFINES)				\
+		$(DEFINES_BUILDENV_$(BUILDENV))		\
+		$(DEFINES_TARGET_$(TARGET))		\
+		$(DEFINES_VARIANT_$(VARIANT))		\
+		$(DEFINES_$*)
+
+MIQ_CPPFLAGS=	$(CPPFLAGS)				\
+		$(CPPFLAGS_BUILDENV_$(BUILDENV))	\
+		$(CPPFLAGS_TARGET_$(TARGET))		\
+		$(CPPFLAGS_VARIANT_$(VARIANT))		\
+		$(CPPFLAGS_$*)				\
+		$(MIQ_DEFINES:%=-D%)			\
+		$(MIQ_INCLUDES:%=-I%)
+
+MIQ_CFLAGS=	$(CFLAGS)				\
+		$(MIQ_CPPFLAGS)				\
+		$(CFLAGS_PKGCONFIG)			\
+		$(CFLAGS_STD)				\
+		$(CFLAGS_BUILDENV_$(BUILDENV))		\
+		$(CFLAGS_TARGET_$(TARGET))		\
+		$(CFLAGS_VARIANT_$(VARIANT))		\
+		$(CFLAGS_$*)
+
+MIQ_CXXFLAGS= 	$(CXXFLAGS)				\
+		$(MIQ_CPPFLAGS)				\
+		$(CFLAGS_PKGCONFIG)			\
+		$(CXXFLAGS_STD)				\
+		$(CXXFLAGS_BUILDENV_$(BUILDENV))	\
+		$(CXXFLAGS_TARGET_$(TARGET))		\
+		$(CXXFLAGS_VARIANT_$(VARIANT))		\
+		$(CXXFLAGS_$*)
+
+MIQ_LDFLAGS=	$(LDFLAGS)				\
+		$(LDFLAGS_PKGCONFIG)			\
+		$(LDFLAGS_BUILDENV_$(BUILDENV))		\
+		$(LDFLAGS_TARGET_$(TARGET))		\
+		$(LDFLAGS_VARIANT_$(VARIANT))		\
+		$(LDFLAGS_$*)
+
+MIQ_INSTALL=	$(TO_INSTALL:%=%.install)		\
+		$(MIQ_OUTEXE:%=%.install_exe)		\
+		$(MIQ_OUTLIB:%=%.install_lib)		\
+		$(MIQ_OUTDLL:%=%.install_dll)		\
+		$(EXE_INSTALL:%=%.install_exe)		\
+		$(LIB_INSTALL:%=%.install_lib)		\
+		$(DLL_INSTALL:%=%.install_dll)		\
+		$(HDR_INSTALL:%=%.install_hdr)
+
+MIQ_SOURCES=	$(SOURCES)				\
+		$(SOURCES_BUILDENV_$(BUILDENV))		\
+		$(SOURCES_TARGET_$(TARGET))		\
+		$(SOURCES_VARIANT_$(VARIANT))		\
+		$(MIQ_OUT_SOURCES)
+
+ifndef MIQ_DIR
+MIQ_FULLDIR:=   $(abspath .)/
+MIQ_DIR:=       $(subst $(abspath $(TOP))/,,$(MIQ_FULLDIR))
+MIQ_PRETTYDIR:= $(subst $(abspath $(TOP))/,[top],$(MIQ_FULLDIR)$(VARIANT:%=[%]))
+MIQ_BUILDDATE:= $(shell /bin/date '+%Y%m%d-%H%M%S')
+MIQ_OBJROOT:=	$(OBJFILES)$(BUILDENV)/$(CROSS_COMPILE:%=%-)$(TARGET)
+MIQ_BUILDLOG:=  $(LOGS)build-$(BUILDENV)-$(CROSS_COMPILE:%=%-)$(TARGET)-$(MIQ_BUILDDATE).log
 endif
 
 # Configuration variables
-OBJDIR:=	$(OBJROOT)/$(DIR)
-OBJECTS=	$(SOURCES:%=$(OBJDIR)%$(OBJ_EXT))
-PRODUCTS_EXE=	$(patsubst %.exe,%$(EXE_EXT),$(filter %.exe,$(PRODUCTS)))
-PRODUCTS_LIB=	$(patsubst %.lib,%$(LIB_EXT),$(filter %.lib,$(PRODUCTS)))
-PRODUCTS_DLL=	$(patsubst %.dll,%$(DLL_EXT),$(filter %.dll,$(PRODUCTS)))
-PRODUCTS_OTHER= $(filter-out %.exe %.lib %.dll %$(EXE_EXT) %$(LIB_EXT) %$(DLL_EXT), $(PRODUCTS))
-PRODUCTS_LIBS=	$(filter %.lib %.dll,$(PRODUCTS))
-OUTPUT_EXE=	$(PRODUCTS_EXE:%=$(OUTPUT)$(EXE_PFX)%)
-OUTPUT_LIB=	$(PRODUCTS_LIB:%=$(OUTPUT)$(LIB_PFX)%)
-OUTPUT_DLL=	$(PRODUCTS_DLL:%=$(OUTPUT)$(DLL_PFX)%)
-OUTPUT_OTHER=	$(PRODUCTS_OTHER:%=$(OUTPUT)%)
-OBJPRODUCTS=	$(OUTPUT_EXE) $(OUTPUT_LIB) $(OUTPUT_DLL) $(OUTPUT_OTHER)
+MIQ_OBJDIR:=	$(MIQ_OBJROOT)/$(MIQ_DIR)
+MIQ_OBJECTS=	$(MIQ_SOURCES:%=$(MIQ_OBJDIR)%$(OBJ_EXT))
+MIQ_PRODEXE=	$(filter %.exe,$(PRODUCTS))
+MIQ_PRODLIB=	$(filter %.lib,$(PRODUCTS))
+MIQ_PRODDLL=	$(filter %.dll,$(PRODUCTS))
+MIQ_PRODLIBS=	$(filter %.lib %.dll,$(PRODUCTS))
+MIQ_OUTEXE=	$(MIQ_PRODEXE:%.exe=$(OUTPUT)$(EXE_PFX)%$(EXE_EXT))
+MIQ_OUTLIB=	$(MIQ_PRODLIB:%.lib=$(OUTPUT)$(LIB_PFX)%$(LIB_EXT))
+MIQ_OUTDLL=	$(MIQ_PRODDLL:%.dll=$(OUTPUT)$(DLL_PFX)%$(DLL_EXT))
+MIQ_OUTPRODS=	$(MIQ_OUTEXE) $(MIQ_OUTLIB) $(MIQ_OUTDLL)
+
 
 # Check a common mistake with PRODUCTS= not being set or set without extension
 # Even on Linux / Unix, the PRODUCTS variable must end in .exe for executables,
@@ -60,35 +112,31 @@ OBJPRODUCTS=	$(OUTPUT_EXE) $(OUTPUT_LIB) $(OUTPUT_DLL) $(OUTPUT_OTHER)
 # unknown extensions by mistake. The extension is replaced with the
 # correct platform extension, i.e. .a for static libraries on Linux
 ifneq ($(PRODUCTS),)
-ifeq ($(PRODUCTS_EXE)$(PRODUCTS_LIB)$(PRODUCTS_DLL),)
-$(error Error: Variable PRODUCTS must end in .exe, .lib or .dll)
+ifeq ($(MIQ_PRODEXE)$(MIQ_PRODLIB)$(MIQ_PRODDLL),)
+$(error Error: Variable PRODUCTS must contain .exe, .lib or .dll)
 endif
 endif
 
-ALL_LIBS=	$(LIBRARIES) $(LINK_LIBS)
-LIBNAMES=       $(filter %.lib, $(notdir $(ALL_LIBS)))
-DLLNAMES=       $(filter %.dll, $(notdir $(ALL_LIBS)))
-OBJLIBS= 	$(LIBNAMES:%.lib=$(OUTPUT)$(LIB_PFX)%$(LIB_EXT))
-OBJDLLS=        $(DLLNAMES:%.dll=$(OUTPUT)$(DLL_PFX)%$(DLL_EXT))
-LINK_PATHS:=	$(OUTPUT:%=$(LINK_DIR_OPT)%)
-LINK_XLIBS=	$(LIBNAMES:%.lib=$(LINK_LIB_OPT)%)	\
-		$(DLLNAMES:%.dll=$(LINK_DLL_OPT)%)
-LINK_INPUTS=    $(OBJECTS) $(OBJLIBS) $(OBJDLLS)
-LINK_CMDLINE= 	$(OBJECTS) $(LINK_PATHS) $(LINK_XLIBS)
-ifneq ($(words $(LINK_INPUTS)),0)
-LINK_WINPUTS=   $(patsubst %,"%", $(shell cygpath -aw $(LINK_INPUTS)))
-endif
-PRINT_DIR=              --no-print-directory
-RECURSE_BUILDENV=$(BUILDENV)
-RECURSE_CMD=    $(MAKE) $(PRINT_DIR) TARGET=$(TARGET) BUILDENV=$(RECURSE_BUILDENV) TOP="$(abspath $(TOP))/" $(RECURSE) COLOR_FILTER=
-MAKEFILE_DEPS:= $(MAKEFILE_LIST)
-NOT_PARALLEL?=  .NOTPARALLEL
-BUILD_LOW?=     0
-BUILD_HIGH?=    100
-BUILD_INDEX:=   1
-BUILD_COUNT:=   $(words $(SOURCES))
-GIT_REVISION:=  $(shell git rev-parse --short HEAD 2> /dev/null || echo "unknown")
-PROFILE_OUTPUT:=$(subst $(EXE_EXT),,$(OUTPUT_EXE))_prof_$(GIT_REVISION).vsp
+MIQ_LIBS=	$(LIBRARIES) $(LINK_LIBS)
+MIQ_LIBNAMES=   $(filter %.lib, $(notdir $(MIQ_LIBS)))
+MIQ_DLLNAMES=   $(filter %.dll, $(notdir $(MIQ_LIBS)))
+MIQ_OBJLIBS= 	$(MIQ_LIBNAMES:%.lib=$(OUTPUT)$(LIB_PFX)%$(LIB_EXT))
+MIQ_OBJDLLS=    $(MIQ_DLLNAMES:%.dll=$(OUTPUT)$(DLL_PFX)%$(DLL_EXT))
+MIQ_LINKPATHS:=	$(OUTPUT:%=$(LINK_DIR_OPT)%)
+MIQ_LINKLIBS=	$(MIQ_LIBNAMES:%.lib=$(LINK_LIB_OPT)%)	\
+		$(MIQ_DLLNAMES:%.dll=$(LINK_DLL_OPT)%)
+MIQ_TOLINK=     $(MIQ_OBJECTS) $(MIQ_OBJLIBS) $(MIQ_OBJDLLS)
+MIQ_RECURSE=    $(MAKE) $(PRINT_DIR) 			\
+			TARGET=$(TARGET)		\
+			BUILDENV=$(RECURSE_BUILDENV) 	\
+			TOP="$(abspath $(TOP))/"	\
+			COLOR_FILTER=			\
+			$(RECURSE)
+MIQ_MAKEDEPS:=	$(MAKEFILE_LIST)
+MIQ_INDEX:=     1
+MIQ_COUNT:=     $(words $(MIQ_SOURCES))
+MIQ_PROFOUT:=	$(subst $(EXE_EXT),,$(MIQ_OUTEXE))_prof_$(GIT_REVISION).vsp
+
 
 #------------------------------------------------------------------------------
 #   User targets
@@ -96,28 +144,28 @@ PROFILE_OUTPUT:=$(subst $(EXE_EXT),,$(OUTPUT_EXE))_prof_$(GIT_REVISION).vsp
 
 all: $(TARGET)
 
-debug opt release profile: logs.mkdir
-	$(PRINT_COMMAND) $(TIME) $(MAKE) TARGET=$@ RECURSE=build LOG_COMMANDS= build $(LOG_COMMANDS)
+debug opt release profile: $(LOGS).mkdir $(dir $(LAST_LOG)).mkdir
+	$(PRINT_COMMAND) $(TIME) $(MAKE) TARGET=$@ RECURSE=.build LOG_COMMANDS= .build $(LOG_COMMANDS)
 
 # Testing
 test tests check: $(TARGET)
 	$(PRINT_COMMAND) $(MAKE) RECURSE=test $(TESTS:%=%.test) LOG_COMMANDS= TIME= $(LOG_COMMANDS)
 
 # Clean builds
-startup restart rebuild: clean all
+rebuild: re-$(TARGET)
 
 # Installation
-install: install-all
+install: install-$(TARGET)
 
 clean: $(SUBDIRS:%=%.clean) $(VARIANTS:%=%.variant-clean)
-	-$(PRINT_CLEAN) rm -f $(TO_CLEAN) $(OBJECTS) $(DEPENDENCIES) $(OBJPRODUCTS) $(LINK_INPUTS) config.h
+	-$(PRINT_CLEAN) rm -f $(TO_CLEAN) $(MIQ_OBJECTS) $(DEPENDENCIES) $(MIQ_OUTPRODS) $(MIQ_TOLINK) config.h
 %.clean:
-	$(PRINT_COMMAND) cd $* && $(RECURSE_CMD) clean $(COLORIZE)
+	$(PRINT_COMMAND) cd $* && $(MIQ_RECURSE) clean $(COLORIZE)
 %.variant-clean:
-	$(PRINT_COMMAND) $(RECURSE_CMD) VARIANT=$* VARIANTS= clean $(COLORIZE)
+	$(PRINT_COMMAND) $(MIQ_RECURSE) VARIANT=$* VARIANTS= clean $(COLORIZE)
 
 distclean nuke: clean
-	-$(PRINT_CLEAN) rm -rf $(OBJPRODUCTS) $(OBJFILES) $(LOGS)
+	-$(PRINT_CLEAN) rm -rf $(MIQ_OUTPRODS) $(OBJFILES) $(LOGS)
 
 help:
 	@$(ECHO) "Available targets:"
@@ -144,67 +192,46 @@ help:
 #   Internal targets
 #------------------------------------------------------------------------------
 
-build: hello config libraries prebuild recurse objects product postbuild goodbye
+.build: .hello .config .libraries .prebuild		\
+	.recurse .objects .product			\
+	.postbuild .goodbye
 
-hello:
-	@$(INFO) "[BEGIN]" $(TARGET) $(BUILDENV) in "$(PRETTY_DIR)"
-goodbye:
-	@$(INFO) "[END]" $(TARGET) $(BUILDENV) in "$(PRETTY_DIR)"
+.hello:
+	@$(INFO) "[BEGIN]" $(TARGET) $(BUILDENV) in "$(MIQ_PRETTYDIR)"
+.goodbye:
+	@$(INFO) "[END]" $(TARGET) $(BUILDENV) in "$(MIQ_PRETTYDIR)"
 
 # Sequencing build steps and build step hooks
-config: hello
-config: $(VARIANTS:%=%.variant)
+.config: .hello
+.config: $(VARIANTS:%=%.variant)
 ifeq ($(VARIANTS),)
-config: $(CONFIG:%=config.h)
-config: $(NORM_CONFIG:%=$(OBJDIR)CFG_HAVE_%.mk)
+.config: $(CONFIG:%=config.h)
+.config: $(MIQ_NORMCONFIG:%=$(MIQ_OBJDIR)CFG_HAVE_%.mk)
 endif
-libraries: config
-libraries: $(OBJLIBS) $(OBJDLLS)
-prebuild: config
-objects: prebuild
-objects:$(OBJDIR:%=%.mkdir) $(OBJECTS)
-product:$(OBJPRODUCTS)
-postbuild: product $(DO_INSTALL)
-do_install: $(TO_INSTALL)
-goodbye: postbuild
+.libraries: .config
+.libraries: $(MIQ_OBJLIBS) $(MIQ_OBJDLLS)
+.prebuild: .config
+.objects: .prebuild
+.objects: $(MIQ_OBJDIR:%=%.mkdir)
+.product: $(MIQ_OUTPRODS)
+.postbuild: .product $(DO_INSTALL:%=$(MIQ_INSTALL))
+.goodbye: .postbuild
 
-# Run the test (in the object directory)
-product.test: product .ALWAYS
-	$(PRINT_TEST) $(TEST_ENV) $(OUTPUT_EXE) $(PRODUCTS_OPTS)
 
-# Run a test from a C or C++ file to link against current library
-%.c.test: $(OUTPUT_LIB) .ALWAYS
-	$(PRINT_BUILD) $(MAKE) SOURCES=$*.c LINK_LIBS="$(PRODUCTS_LIBS)" PRODUCTS=$*.exe $(TARGET)
-	$(PRINT_TEST) $(TEST_ENV) $(TEST_CMD_$*) $(OUTPUT)$*$(EXE_EXT) $(TEST_ARGS_$*)
-%.cpp.test: $(OUTPUT_LIB) .ALWAYS
-	$(PRINT_BUILD) $(MAKE) SOURCES=$*.cpp LINK_LIBS="$(PRODUCTS_LIBS)" PRODUCTS=$*.exe $(TARGET)
-	$(PRINT_TEST) $(TEST_ENV) $(TEST_CMD_$*) $(OUTPUT)$*$(EXE_EXT) $(TEST_ARGS_$*)
-
-# Installing the product: always need to build it first
-%.install_exe: $(PREFIX_BIN).mkdir-only product
-	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_BIN)
-%.install_lib: $(PREFIX_LIB).mkdir-only product
-	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_LIB)
-%.install_dll: $(PREFIX_DLL).mkdir-only product
-	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_DLL)
-%.install_hdr: $(PREFIX_HDR).mkdir-only
-	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_HDR)
-
-# Benchmarking (always done with profile target)
-benchmark:	$(BENCHMARK:%=%.benchmark) $(BENCHMARKS:%=%.benchmark)
-product.benchmark: product .ALWAYS
-	$(PRINT_TEST) gprof
-
-.PHONY: hello goodbye
-.PHONY: all debug opt release profile build test install
-.PHONY: config libraries recurse prebuild objects product postbuild
+.PHONY: all debug opt release profile build test install rebuild
+.PHONY: .hello .config .libraries .prebuild		\
+	.recurse .objects .product			\
+	.postbuild .goodbye
 .PHONY: .ALWAYS
 
 
 #------------------------------------------------------------------------------
 #  Build target modifiers
 #------------------------------------------------------------------------------
+#  These are only defined when RECURSE is not set so that we can have
+#  files that contain the patterns, e.g. log-file.c
 
+ifndef RECURSE
 # Make from the top-level directory (useful from child directories)
 top-%:
 	cd $(TOP); $(MAKE) $*
@@ -214,8 +241,12 @@ v-% verbose-%:
 	$(PRINT_COMMAND) $(MAKE) $* V=1
 
 # Timed build (show the time for each step)
-t-% time-%:
-	$(PRINT_COMMAND) time $(MAKE) $*
+time-%:
+	$(PRINT_COMMAND) time $(MAKE) TIME= $*
+
+# Clean build
+re-%: clean
+	$(PRINT_COMMAND) $(MAKE) $*
 
 # Timed build (show the time for each step)
 notime-%:
@@ -223,96 +254,88 @@ notime-%:
 
 # Installation build
 install-%:
-	$(PRINT_COMMAND) $(MAKE) DO_INSTALL=do_install
+	$(PRINT_COMMAND) $(MAKE) $* DO_INSTALL=install
 
 # Deep build (re-check all libraries instead of just resulting .a)
-d-% deep-%:
-	$(PRINT_COMMAND) $(MAKE) $* DEEP_BUILD=deep_build
+deep-%:
+	$(PRINT_COMMAND) $(MAKE) $* DEEP_BUILD=.ALWAYS
 
-# Silent build (logs errors only to build.err)
-s-% silent-%:
-	$(PRINT_COMMAND) $(MAKE) -s --no-print-directory $* 2> build.err
+# Silent build (logs errors only to build log
+silent-%:
+	$(PRINT_COMMAND) $(MAKE) $* -s --no-print-directory 2> $(MIQ_BUILDLOG)
 
 # Logged build (show results and record them in build.log)
-l-% log-%:
+log-%:
 	$(PRINT_COMMAND) $(MAKE) $*
-nolog-% nl-%:
+nolog-%:
 	$(PRINT_COMMAND) $(MAKE) $* LOG_COMMANDS=
 
 # No colorization
-nocolor-% nocol-% bw-%:
+nocolor-%:
 	$(PRINT_COMMAND) $(MAKE) $* COLORIZE=
 
 # For debug-install, run 'make TARGET=debug install'
 debug-% opt-% release-% profile-%:
 	@$(MAKE) TARGET=$(@:-$*=) $*
+endif
 
 
 #------------------------------------------------------------------------------
 #  Subdirectories and requirements
 #------------------------------------------------------------------------------
 
-recurse: $(SUBDIRS:%=%.recurse)
-%.dll.recurse:      | hello prebuild
-	+$(PRINT_COMMAND) $(MAKE) $*.recurse BUILD_DLL=dll
-%.project.recurse:  | hello prebuild
-	+$(PRINT_COMMAND) $(MAKE) PROJECT=$*
-%.recurse:          | hello prebuild
-	+$(PRINT_COMMAND) cd $* && $(RECURSE_CMD)
-
-# If LIBRARIES=foo/bar, go to directory foo/bar, which should build bar.a
-$(OUTPUT)$(LIB_PFX)%$(LIB_EXT): $(DEEP_BUILD)
-	+$(PRINT_COMMAND) cd $(firstword $(dir $(filter %$*, $(LIBRARIES:.lib=) $(SUBDIRS))) .) && $(RECURSE_CMD)
-$(OUTPUT)$(DLL_PFX)%$(DLL_EXT): $(DEEP_BUILD)
-	+$(PRINT_COMMAND) cd $(firstword $(dir $(filter %$*, $(LIBRARIES:.dll=) $(SUBDIRS))) .) && $(RECURSE_CMD)
-%/.test:
-	+$(PRINT_TEST) cd $* && $(MAKE) TARGET=$(TARGET) test
-deep_build:
+.recurse: $(SUBDIRS:%=%.recurse)
+%.recurse:          | .hello .prebuild
+	+$(PRINT_COMMAND) cd $* && $(MIQ_RECURSE)
 
 %.variant:
-	$(PRINT_VARIANT) $(MAKE) VARIANTS= VARIANT=$* RECURSE=build build
+	$(PRINT_VARIANT) $(MAKE) VARIANTS= VARIANT=$* RECURSE=.build .build
 
-
-#------------------------------------------------------------------------------
-#  Progress printout
-#------------------------------------------------------------------------------
-
-INCR_INDEX=	$(eval BUILD_INDEX:=$(shell echo $$(($(BUILD_INDEX)+1))))
-PRINT_COUNT=	$(shell printf "%3d/%d" $(BUILD_INDEX) $(BUILD_COUNT))$(INCR_INDEX)
-PRINT_PCT=	$(shell printf "%3d%%" $$(( ($(BUILD_HIGH) - $(BUILD_LOW)) * $(BUILD_INDEX) / $(BUILD_COUNT) + $(BUILD_LOW))))$(INCR_INDEX)
-
-# Printing out various kinds of statements
-ifndef V
-PRINT_COMMAND= 	@
-PRINT_COMPILE=	$(PRINT_COMMAND) $(INFO) "[COMPILE$(PRINT_COUNT)] " $<;
-PRINT_BUILD= 	$(PRINT_COMMAND) $(INFO) "[BUILD]" $(shell basename $@);
-PRINT_GENERATE= $(PRINT_COMMAND) $(INFO) "[GENERATE]" "$(shell basename "$@")";
-PRINT_VARIANT=  $(PRINT_COMMAND) $(INFO) "[VARIANT]" "$*";
-PRINT_INSTALL=  $(PRINT_COMMAND) $(INFO) "[INSTALL] " $(*F) in $(<D) $(COLORIZE);
-PRINT_CLEAN=    $(PRINT_COMMAND) $(INFO) "[CLEAN] " $@ $(PRETTY_DIR) $(COLORIZE);
-PRINT_COPY=     $(PRINT_COMMAND) $(INFO) "[COPY]" $< '=>' $@ ;
-PRINT_DEPEND= 	$(PRINT_COMMAND) $(INFO) "[DEPEND] " $< ;
-PRINT_TEST= 	$(PRINT_COMMAND) $(INFO) "[TEST]" $(@:.test=) ;
-PRINT_CONFIG= 	$(PRINT_COMMAND) $(INFO) "[CONFIG]" "$(ORIG_TARGET)" ;
-PRINT_PKGCONFIG=$(PRINT_COMMAND) $(INFO) "[PKGCONFIG]" "$*" ;
-PRINT_LIBCONFIG=$(PRINT_COMMAND) $(INFO) "[LIBCONFIG]" "lib$*" ;
-PRINT_REFORMAT= $(PRINT_COMMAND) $(INFO) "[REFORMAT]" "$*" $(COLORIZE);
-endif
-
-logs.mkdir: $(LOGS).mkdir $(dir $(LAST_LOG))/.mkdir
 %/.mkdir-only:
 	$(PRINT_COMMAND) $(MAKE_DIR)
 %/.mkdir:
 	$(PRINT_COMMAND) $(MAKE_OBJDIR)
 .PRECIOUS: %/.mkdir
 
+# If LIBRARIES=foo/bar, go to directory foo/bar, which should build bar.a
+$(OUTPUT)$(LIB_PFX)%$(LIB_EXT): $(DEEP_BUILD)
+	+$(PRINT_COMMAND) cd $(firstword $(dir $(filter %$*, $(LIBRARIES:.lib=) $(SUBDIRS))) .nonexistent) && $(MIQ_RECURSE)
+$(OUTPUT)$(DLL_PFX)%$(DLL_EXT): $(DEEP_BUILD)
+	+$(PRINT_COMMAND) cd $(firstword $(dir $(filter %$*, $(LIBRARIES:.dll=) $(SUBDIRS))) .nonexistent) && $(MIQ_RECURSE)
+
+
+#------------------------------------------------------------------------------
+#  Progress printout
+#------------------------------------------------------------------------------
+
+MIQ_INCRIDX=	$(eval MIQ_INDEX:=$(shell echo $$(($(MIQ_INDEX)+1))))
+MIQ_START=	$(eval MIQ_INDEX:=1) $(eval MIQ_COUNT:=$(words $?))
+MIQ_PRINTCOUNT=	$(shell printf "%3d/%d" $(MIQ_INDEX) $(MIQ_COUNT))$(MIQ_INCRIDX)
+
+# Printing out various kinds of statements
+ifndef V
+PRINT_COMMAND= 	@
+PRINT_COMPILE=	$(PRINT_COMMAND) $(INFO) "[COMPILE$(MIQ_PRINTCOUNT)] " $<;
+PRINT_BUILD= 	$(PRINT_COMMAND) $(INFO) "[BUILD]" $(shell basename $@);
+PRINT_GENERATE= $(PRINT_COMMAND) $(INFO) "[GENERATE]" "$(shell basename "$@")";
+PRINT_VARIANT=  $(PRINT_COMMAND) $(INFO) "[VARIANT]" "$*";
+PRINT_INSTALL=  $(PRINT_COMMAND) $(INFO) "[INSTALL] " $(*F) in $(<D) $(COLORIZE);
+PRINT_CLEAN=    $(PRINT_COMMAND) $(INFO) "[CLEAN] " $@ $(MIQ_PRETTYDIR) $(COLORIZE);
+PRINT_COPY=     $(PRINT_COMMAND) $(INFO) "[COPY]" $< '=>' $@ ;
+PRINT_DEPEND= 	$(PRINT_COMMAND) $(INFO) "[DEPEND] " $< ;
+PRINT_TEST= 	$(PRINT_COMMAND) $(INFO) "[TEST]" $(@:.test=) ;
+PRINT_CONFIG= 	$(PRINT_COMMAND) $(INFO) "[CONFIG]" "$(MIQ_ORIGTARGET)" ;
+PRINT_PKGCONFIG=$(PRINT_COMMAND) $(INFO) "[PKGCONFIG]" "$*" ;
+PRINT_LIBCONFIG=$(PRINT_COMMAND) $(INFO) "[LIBCONFIG]" "lib$*" ;
+PRINT_REFORMAT= $(PRINT_COMMAND) $(INFO) "[REFORMAT]" "$*" $(COLORIZE);
+endif
 
 #------------------------------------------------------------------------------
 #  Special for Fabien: make 'Directory'
 #------------------------------------------------------------------------------
 
 ifneq ($(filter $(MAKECMDGOALS:/=),$(SUBDIRS)),)
-$(MAKECMDGOALS): deep_build
+$(MAKECMDGOALS): .ALWAYS
 	$(PRINT_COMMAND)	cd $@ && make
 endif
 
@@ -322,52 +345,72 @@ ifdef RECURSE
 # Dependencies generation
 #------------------------------------------------------------------------------
 
-
-DEPENDENCIES=$(SOURCES:%=$(OBJDIR)%$(OBJ_EXT).d)
-OBJDIR_DEPS=$(OBJDIR)%.deps/.mkdir
+MIQ_DEPENDENCIES=$(MIQ_SOURCES:%=$(MIQ_OBJDIR)%$(OBJ_EXT).d)
+MIQ_OBJDIR_DEPS=$(MIQ_OBJDIR)%.deps/.mkdir
 
 ifeq (3.80,$(firstword $(sort $(MAKE_VERSION) 3.80)))
-OBJ_DEPS=$(OBJDIR_DEPS) $(MAKEFILE_DEPS) | prebuild
+MIQ_OBJDEPS=$(MIQ_OBJDIR_DEPS) $(MIQ_MAKEDEPS) | .prebuild
 else
-OBJ_DEPS=$(OBJDIR_DEPS) $(MAKEFILE_DEPS)  prebuild
+MIQ_OBJDEPS=$(MIQ_OBJDIR_DEPS) $(MIQ_MAKEDEPS)  .prebuild
 endif
 
+# Check if the compiler supports dependency flags (if not, do it the hard way)
 ifndef DEPFLAGS
-$(OBJDIR)%.c$(OBJ_EXT).d:		%.c			$(OBJ_DEPS)
+$(MIQ_OBJDIR)%.c$(OBJ_EXT).d:		%.c			$(MIQ_OBJDEPS)
 	$(PRINT_DEPEND) ( $(CC_DEPEND)
-$(OBJDIR)%.cpp$(OBJ_EXT).d:		%.cpp			$(OBJ_DEPS)
+$(MIQ_OBJDIR)%.cpp$(OBJ_EXT).d:		%.cpp			$(MIQ_OBJDEPS)
 	$(PRINT_DEPEND) ( $(CXX_DEPEND)
-$(OBJDIR)%.s$(OBJ_EXT).d: 		%.s			$(OBJ_DEPS)
+$(MIQ_OBJDIR)%.ccc$(OBJ_EXT).d:		%.cc			$(MIQ_OBJDEPS)
+	$(PRINT_DEPEND) ( $(CXX_DEPEND)
+$(MIQ_OBJDIR)%.s$(OBJ_EXT).d: 		%.s			$(MIQ_OBJDEPS)
+	$(PRINT_DEPEND) ( $(AS_DEPEND)
+$(MIQ_OBJDIR)%.asm$(OBJ_EXT).d: 	%.asm			$(MIQ_OBJDEPS)
 	$(PRINT_DEPEND) ( $(AS_DEPEND)
 else
-$(OBJDIR)%$(OBJ_EXT).d: $(OBJDIR)%$(OBJ_EXT)
+$(MIQ_OBJDIR)%$(OBJ_EXT).d: $(MIQ_OBJDIR)%$(OBJ_EXT)
 endif
 
 
 #------------------------------------------------------------------------------
-#  Inference rules
+#  Build inference rules
 #------------------------------------------------------------------------------
 
-$(OBJDIR)%.c$(OBJ_EXT): %.c 					$(OBJ_DEPS)
+# Compilation
+$(MIQ_OBJDIR)%.c$(OBJ_EXT): 	%.c				$(MIQ_OBJDEPS)
 	$(PRINT_COMPILE) $(MAKE_CC)
-$(OBJDIR)%.cpp$(OBJ_EXT): %.cpp 				$(OBJ_DEPS)
+$(MIQ_OBJDIR)%.cpp$(OBJ_EXT): 	%.cpp 				$(MIQ_OBJDEPS)
 	$(PRINT_COMPILE) $(MAKE_CXX)
-$(OBJDIR)%.s$(OBJ_EXT): %.s 					$(OBJ_DEPS)
+$(MIQ_OBJDIR)%.cc$(OBJ_EXT): 	%.cc 				$(MIQ_OBJDEPS)
+	$(PRINT_COMPILE) $(MAKE_CXX)
+$(MIQ_OBJDIR)%.s$(OBJ_EXT): 	%.s				$(MIQ_OBJDEPS)
+	$(PRINT_COMPILE) $(MAKE_AS)
+$(MIQ_OBJDIR)%.asm$(OBJ_EXT): 	%.asm				$(MIQ_OBJDEPS)
 	$(PRINT_COMPILE) $(MAKE_AS)
 
-.SECONDEXPANSION:
-$(OUTPUT_LIB): $(LINK_INPUTS) $$(LINK_INPUTS)	 		$(MAKEFILE_DEPS)
-	$(PRINT_BUILD) $(MAKE_LIB)
-$(OUTPUT_DLL): $(LINK_INPUTS) $$(LINK_INPUTS)			$(MAKEFILE_DEPS)
-	$(PRINT_BUILD) $(MAKE_DLL)
-$(OUTPUT_EXE): $(LINK_INPUTS) $$(LINK_INPUTS)			$(MAKEFILE_DEPS)
-	$(PRINT_BUILD) $(MAKE_EXE)
+# Skip headers
+$(MIQ_OBJDIR)%.h$(OBJ_EXT):
+$(MIQ_OBJDIR)%.hpp$(OBJ_EXT):
+$(MIQ_OBJDIR)%.hh$(OBJ_EXT):
 
 # Include dependencies from current directory
 # We only build when the target is set to avoid dependencies on 'clean'
-ifeq ($(MAKECMDGOALS),build)
--include $(DEPENDENCIES)
+ifeq ($(MAKECMDGOALS),.build)
+-include $(MIQ_DEPENDENCIES)
 endif
+
+# Link
+.SECONDEXPANSION:
+MIQ_NOSRC=	$(@:$(OUTPUT)%=%)
+MIQ_NOEXE=	$(MIQ_NOSRC:$(EXE_PFX)%$(EXE_EXT)=%)
+MIQ_NOLIB=	$(MIQ_NOEXE:$(LIB_PFX)%$(LIB_EXT)=%)
+MIQ_NODLL=	$(MIQ_NOLIB:$(DLL_PFX)%$(DLL_EXT)=%)
+MIQ_OUT_SOURCES=$(SOURCES_$(MIQ_NODLL))
+$(MIQ_OUTLIB): $(MIQ_TOLINK) $$(MIQ_TOLINK)	 		$(MIQ_MAKEDEPS)
+	$(PRINT_BUILD) $(MAKE_LIB)
+$(MIQ_OUTDLL): $(MIQ_TOLINK) $$(MIQ_TOLINK)			$(MIQ_MAKEDEPS)
+	$(PRINT_BUILD) $(MAKE_DLL)
+$(MIQ_OUTEXE): $(MIQ_TOLINK) $$(MIQ_TOLINK)			$(MIQ_MAKEDEPS)
+	$(PRINT_BUILD) $(MAKE_EXE)
 
 
 #------------------------------------------------------------------------------
@@ -375,28 +418,31 @@ endif
 #------------------------------------------------------------------------------
 
 # Package configuration file
-PKG_CFLAGS= 	$(PKGCONFIGS:%=$(OBJDIR)%.pkg-config.cflags)
-PKG_LDFLAGS=	$(PKGCONFIGS:%=$(OBJDIR)%.pkg-config.ldflags)
-CONFIG_LIBS=
-PKG_LIBS=	$(patsubst %,$(OBJDIR)%.cfg.ldflags,$(filter lib%,$(CONFIG)))
+MIQ_PKGCFLAGS= 	$(PKGCONFIGS:%=$(MIQ_OBJDIR)%.pkg-config.cflags)
+MIQ_PKGLDFLAGS=	$(PKGCONFIGS:%=$(MIQ_OBJDIR)%.pkg-config.ldflags)
+MIQ_PKGLIBS=	$(PKGCONFIGS:lib%=$(MIQ_OBJDIR)lib%.cfg.ldflags)
+MIQ_PKGDEPS=	$(MIQ_MAKEDEPS) $(MIQ_OBJDIR).mkdir
 
-PKG_DEPS=	$(MAKEFILE_DEPS) $(OBJDIR).mkdir
+# Build the package config from cflags, ldflags and libs config
+$(MIQ_OBJDIR)pkg-config.mk: $(MIQ_PKGCFLAGS) $(MIQ_PKGLDFLAGS) $(MIQ_PKGLIBS)
+	$(PRINT_COMMAND) (echo CFLAGS_PKGCONFIG=`$(CAT) $(MIQ_PKGCFLAGS)`; echo LDFLAGS_PKGCONFIG=`$(CAT) $(MIQ_PKGLDFLAGS) $(MIQ_PKGLIBS)`) > $@
 
-$(OBJDIR)pkg-config.mk: $(PKG_CFLAGS) $(PKG_LDFLAGS) $(PKG_LIBS)
-	$(PRINT_COMMAND) (echo CFLAGS_PKGCONFIG=`$(CAT) $(PKG_CFLAGS)`; echo LDFLAGS_PKGCONFIG=`$(CAT) $(PKG_LDFLAGS) $(PKG_LIBS)`) > $@
--include $(PKGCONFIGS:%=$(OBJDIR)pkg-config.mk)
--include $(PKG_LIBS:%=$(OBJDIR)pkg-config.mk)
+# Include rules for makefiles
+-include $(PKGCONFIGS:%=$(MIQ_OBJDIR)pkg-config.mk)
+-include $(MIQ_PKGLIBS:%=$(MIQ_OBJDIR)pkg-config.mk)
 
-$(OBJDIR)%?.pkg-config.cflags: 					$(PKG_DEPS)
+# Optional packages end with ?, e.g. PKGCONFIG=openssl?
+$(MIQ_OBJDIR)%?.pkg-config.cflags:				$(MIQ_PKGDEPS)
 	$(PRINT_PKGCONFIG)  (pkg-config --cflags $* --silence-errors || true) > $@
-$(OBJDIR)%?.pkg-config.ldflags: 				$(PKG_DEPS)
+$(MIQ_OBJDIR)%?.pkg-config.ldflags: 				$(MIQ_PKGDEPS)
 	$(PRINT_COMMAND)  (pkg-config --libs $* --silence-errors || true) > $@
 
-$(OBJDIR)%.pkg-config.cflags: 					$(PKG_DEPS)
-	$(PRINT_PKGCONFIG)  pkg-config --cflags $* > $@
-$(OBJDIR)%.pkg-config.ldflags: 					$(PKG_DEPS)
-	$(PRINT_COMMAND)  pkg-config --libs $* > $@
-$(OBJDIR)lib%.cfg.ldflags: $(OBJDIR)CFG_HAVE_lib%.h		$(PKG_DEPS)
+# Non-optional packages
+$(MIQ_OBJDIR)%.pkg-config.cflags: 					$(MIQ_PKGDEPS)
+	$(PRINT_PKGCONFIG)  pkg-config --cflags $* > $@ || (echo "Error: Required package $* not found" && false)
+$(MIQ_OBJDIR)%.pkg-config.ldflags: 					$(MIQ_PKGDEPS)
+	$(PRINT_COMMAND)  pkg-config --libs $* > $@ || (echo "Error: Required package $* not found" && false)
+$(MIQ_OBJDIR)lib%.cfg.ldflags: $(MIQ_OBJDIR)CFG_HAVE_lib%.h		$(MIQ_PKGDEPS)
 	$(PRINT_COMMAND)  (grep -q 'define ' $< && echo $(LINK_CFG_OPT)$* || true) > $@
 
 
@@ -404,55 +450,99 @@ $(OBJDIR)lib%.cfg.ldflags: $(OBJDIR)CFG_HAVE_lib%.h		$(PKG_DEPS)
 #   Configuration rules
 #------------------------------------------------------------------------------
 
-NORM_CONFIG=$(subst <,.lt.,$(subst >,.gt.,$(subst /,.sl.,$(CONFIG))))
-ORIG_TARGET=$(subst .lt.,<,$(subst .gt.,>,$(subst .sl.,/,$*)))
-CONFIG_DEPS=	$(PKG_DEPS) 						\
-		$(PKGCONFIGS:%=$(OBJDIR)pkg-config.mk)			\
-		$(PKG_LIBS:%=$(OBJDIR)pkg-config.mk)
+# Normalize header configuration name (turn <foo.h> into .lt.foo.h.gt. and back)
+MIQ_NORMCONFIG=$(subst <,.lt.,$(subst >,.gt.,$(subst /,.sl.,$(CONFIG))))
+MIQ_ORIGTARGET=$(subst .lt.,<,$(subst .gt.,>,$(subst .sl.,/,$*)))
+MIQ_CONFIGDEPS=	$(MIQ_PKGDEPS) 						\
+		$(PKGCONFIGS:%=$(MIQ_OBJDIR)pkg-config.mk)		\
+		$(MIQ_PKGLIBS:%=$(MIQ_OBJDIR)pkg-config.mk)
 
-config.h: $(NORM_CONFIG:%=$(OBJDIR)CFG_HAVE_%.h)
+# Generate the config.h by concatenating all the indiviual config files
+config.h: $(MIQ_NORMCONFIG:%=$(MIQ_OBJDIR)CFG_HAVE_%.h)
 	$(PRINT_GENERATE) cat $^ > $@
 
-$(OBJDIR)CFG_HAVE_%.mk: $(OBJDIR)CFG_HAVE_%.h 			$(MAKEFILE_DEPS)
+# Build makefile configuration files from generated .h files
+$(MIQ_OBJDIR)CFG_HAVE_%.mk: $(MIQ_OBJDIR)CFG_HAVE_%.h 		$(MIQ_MAKEDEPS)
 	$(PRINT_COMMAND) $(MAKE_CONFIG)
--include $(NORM_CONFIG:%=$(OBJDIR)CFG_HAVE_%.mk)
+-include $(MIQ_NORMCONFIG:%=$(MIQ_OBJDIR)CFG_HAVE_%.mk)
 
 # C standard headers, e.g. HAVE_<stdio.h>
-$(OBJDIR)CFG_HAVE_.lt.%.h.gt..h: $(OBJDIR)CFG-CH_HAVE_%.c	$(CONFIG_DEPS)
+$(MIQ_OBJDIR)CFG_HAVE_.lt.%.h.gt..h: $(MIQ_OBJDIR)CFGCH%.c	$(MIQ_CONFIGDEPS)
 	$(PRINT_CONFIG) $(CC_CONFIG)
-$(OBJDIR)CFG-CH_HAVE_%.c: $(OBJDIR).mkdir			$(CONFIG_DEPS)
-	$(PRINT_COMMAND) (echo '#include' "<$(ORIG_TARGET).h>" && echo 'int main() { return 0; }') > "$@"
-.PRECIOUS: $(OBJDIR)CFG-CH_HAVE_%.c
+$(MIQ_OBJDIR)CFGCH%.c: $(MIQ_OBJDIR).mkdir			$(MIQ_CONFIGDEPS)
+	$(PRINT_COMMAND) (echo '#include' "<$(MIQ_ORIGTARGET).h>" && echo 'int main() { return 0; }') > "$@"
+.PRECIOUS: $(MIQ_OBJDIR)CFGCH%.c
 
 # C++ Standard headers, e.g. HAVE_<iostream>
-$(OBJDIR)CFG_HAVE_.lt.%.gt..h: $(OBJDIR)CFG-C++H_HAVE_%.cpp	$(CONFIG_DEPS)
+$(MIQ_OBJDIR)CFG_HAVE_.lt.%.gt..h: $(MIQ_OBJDIR)CFGCPPH%.cpp	$(MIQ_CONFIGDEPS)
 	$(PRINT_CONFIG) $(CXX_CONFIG)
-$(OBJDIR)CFG-C++H_HAVE_%.cpp: $(OBJDIR).mkdir			$(CONFIG_DEPS)
-	$(PRINT_COMMAND) (echo '#include' "<$(ORIG_TARGET)>" && echo 'int main() { return 0; }') > "$@"
-.PRECIOUS: $(OBJDIR)CFG-C++H_HAVE_%.cpp
+$(MIQ_OBJDIR)CFGCPPH%.cpp: $(MIQ_OBJDIR).mkdir			$(MIQ_CONFIGDEPS)
+	$(PRINT_COMMAND) (echo '#include' "<$(MIQ_ORIGTARGET)>" && echo 'int main() { return 0; }') > "$@"
+.PRECIOUS: $(MIQ_OBJDIR)CFGCPPH%.cpp
 
-# Library
-$(OBJDIR)CFG_HAVE_lib%.h: $(OBJDIR)CFG-LIB_HAVE_lib%.c		$(PKG_DEPS)
+# Library, e.g. libm
+$(MIQ_OBJDIR)CFG_HAVE_lib%.h: $(MIQ_OBJDIR)CFGLIB%.c		$(MIQ_PKGDEPS)
 	$(PRINT_LIBCONFIG) $(LIB_CONFIG)
-$(OBJDIR)CFG-LIB_HAVE_lib%.c: 					$(PKG_DEPS)
+$(MIQ_OBJDIR)CFGLIB%.c: 					$(MIQ_PKGDEPS)
 	$(PRINT_COMMAND) echo 'int main() { return 0; }' > "$@"
-.PRECIOUS: $(OBJDIR)CFG-LIB_HAVE_lib%.c
+.PRECIOUS: $(MIQ_OBJDIR)CFGLIB%.c
 
-# Check if a function is present
-$(OBJDIR)CFG_HAVE_%.h: $(OBJDIR)CFG-FN_HAVE_%.c			$(CONFIG_DEPS)
+# Check if a function is present (code to test in config/check_foo.c)
+$(MIQ_OBJDIR)CFG_HAVE_%.h: $(MIQ_OBJDIR)CFGFN%.c		$(MIQ_CONFIGDEPS)
 	$(PRINT_CONFIG)	$(FN_CONFIG)
-$(OBJDIR)CFG-FN_HAVE_%.c: $(CONFIG_SOURCES)config/HAVE_%.c	$(CONFIG_DEPS)
+$(MIQ_OBJDIR)CFGFN%.c: $(CONFIG_SOURCES)check_%.c		$(MIQ_CONFIGDEPS)
 	$(PRINT_COMMAND) cp $< $@
-$(OBJDIR)CFG-FN_HAVE_%.c: config/HAVE_%.c			$(CONFIG_DEPS)
+$(MIQ_OBJDIR)CFGFN%.c: config/check_%.c				$(MIQ_CONFIGDEPS)
 	$(PRINT_COMMAND) cp $< $@
-$(OBJDIR)CFG-FN_HAVE_%.c: $(CONFIG_SOURCES)config/check_%.c	$(CONFIG_DEPS)
-	$(PRINT_COMMAND) cp $< $@
-$(OBJDIR)CFG-FN_HAVE_%.c: config/check_%.c			$(CONFIG_DEPS)
-	$(PRINT_COMMAND) cp $< $@
-.PRECIOUS: $(OBJDIR)CFG-FN_HAVE_%.c
+.PRECIOUS: $(MIQ_OBJDIR)CFGFN%.c
 
 endif
 
+
+#------------------------------------------------------------------------------
+#   Test targets
+#------------------------------------------------------------------------------
+
+# Run the test (in the object directory)
+product.test: .product .ALWAYS
+	$(PRINT_TEST) $(TEST_ENV) $(TEST_CMD) $(MIQ_OUTEXE) $(TEST_ARGS)
+
+# Run a test from a C or C++ file to link against current library
+%.c.test: $(MIQ_OUTLIB) .ALWAYS
+	$(PRINT_BUILD) $(MAKE) SOURCES=$*.c LINK_LIBS="$(MIQ_PRODLIBS)" PRODUCTS=$*.exe $(TARGET)
+	$(PRINT_TEST) $(TEST_ENV) $(TEST_CMD_$*) $(OUTPUT)$(EXE_PFX)$*$(EXE_EXT) $(TEST_ARGS_$*)
+%.cpp.test: $(MIQ_OUTLIB) .ALWAYS
+	$(PRINT_BUILD) $(MAKE) SOURCES=$*.cpp LINK_LIBS="$(MIQ_PRODLIBS)" PRODUCTS=$*.exe $(TARGET)
+	$(PRINT_TEST) $(TEST_ENV) $(TEST_CMD_$*) $(OUTPUT)$(EXE_PFX)$*$(EXE_EXT) $(TEST_ARGS_$*)
+%/.test:
+	+$(PRINT_TEST) cd $* && $(MAKE) test
+
+
+#------------------------------------------------------------------------------
+#  Benchmark targets
+#------------------------------------------------------------------------------
+
+# Benchmarking (always done with profile target)
+benchmark:	$(BENCHMARKS:%=%.benchmark)
+%.benchmark:
+	$(PRINT_COMMAND) $(MAKE) TEST_ENV=$(BENCHMARK_TEST_ENV) $*.test
+
+
+#------------------------------------------------------------------------------
+#  Install targets
+#------------------------------------------------------------------------------
+
+# Installing the product: always need to build it first
+%.install: $(PREFIX).mkdir-only .product
+	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX)
+%.install_exe: $(PREFIX_BIN).mkdir-only .product
+	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_BIN)
+%.install_lib: $(PREFIX_LIB).mkdir-only .product
+	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_LIB)
+%.install_dll: $(PREFIX_DLL).mkdir-only .product
+	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_DLL)
+%.install_hdr: $(PREFIX_HDR).mkdir-only
+	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_HDR)
 
 #------------------------------------------------------------------------------
 #  Clang format

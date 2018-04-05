@@ -28,7 +28,7 @@ SHELL=      /bin/bash
 #------------------------------------------------------------------------------
 
 # Default target
-TARGET?=        opt
+TARGET?=opt
 
 # Default build environment if not set
 BUILDENV?=auto
@@ -37,7 +37,7 @@ BUILDENV?=auto
 TOP?=$(abspath .)/
 
 # Default output for build products
-OUTPUT?= $(TOP)
+OUTPUT?=$(TOP)
 
 # Default location for object files
 OBJFILES?= $(TOP).objects/
@@ -50,16 +50,23 @@ LAST_LOG?=$(LOGS)make.log
 TO_CLEAN=	*~ *.bak
 
 # Stuff to install
-TO_INSTALL=	$(OUTPUT_EXE:%=%.install_exe)		\
-		$(OUTPUT_LIB:%=%.install_lib)		\
-		$(OUTPUT_DLL:%=%.install_dll)		\
-		$(EXE_INSTALL:%=%.install_exe)		\
-		$(LIB_INSTALL:%=%.install_lib)		\
-		$(DLL_INSTALL:%=%.install_dll)		\
-		$(HDR_INSTALL:%=%.install_hdr)
+TO_INSTALL=
+
+# Do not print directory by default (override to print them, e.g. Emacs)
+PRINT_DIR=              --no-print-directory
+
+# Buildenv for recursive builds
+RECURSE_BUILDENV=$(BUILDENV)
+
+# How to avoid parallel builds by default
+NOT_PARALLEL?=  .NOTPARALLEL
+
+# Git revision for the current code
+GIT_REVISION:=  $(shell git rev-parse --short HEAD 2> /dev/null || echo "unknown")
+
 
 # Local setup - Location of configuration files, etc (tweaked at install time)
--include $(BUILD)config.local-setup.mk
+-include $(MIQ)config.local-setup.mk
 CONFIG_SOURCES?=/usr/lib/make-it-quick/
 
 # Sources to reformat
@@ -92,15 +99,14 @@ CC_STD	?=gnu11
 CXX_STD	?=gnu++11
 
 # Compilation flags
-DEFINES_debug=      DEBUG
-DEFINES_opt=        DEBUG OPTIMIZED
-DEFINES_release=    NDEBUG OPTIMIZED RELEASE
+DEFINES_TARGET_debug=	DEBUG
+DEFINES_TARGET_opt=	DEBUG OPTIMIZED
+DEFINES_TARGET_release= NDEBUG OPTIMIZED RELEASE
 
 # Default for C++ flags is to use CFLAGS
-CXXFLAGS_debug=     $(CFLAGS_debug)
-CXXFLAGS_opt=       $(CFLAGS_opt)
-CXXFLAGS_release=   $(CFLAGS_release)
-CXXFLAGS_extra=     $(CFLAGS_extra)
+CXXFLAGS_TARGET_debug=     $(CFLAGS_TARGET_debug)
+CXXFLAGS_TARGET_opt=       $(CFLAGS_TARGET_opt)
+CXXFLAGS_TARGET_release=   $(CFLAGS_TARGET_release)
 
 
 #------------------------------------------------------------------------------
@@ -109,15 +115,13 @@ CXXFLAGS_extra=     $(CFLAGS_extra)
 
 ECHO=           /bin/echo
 TIME=           time
-RECURSE_MAKE=   $(MAKE) --no-print-directory COLOR_FILTER=
-
 
 
 #------------------------------------------------------------------------------
 #   OS name for a given build environment
 #------------------------------------------------------------------------------
 
-OS_NAME=                $(OS_NAME_$(BUILDENV))
+OS_NAME=	$(OS_NAME_BUILDENV_$(BUILDENV))
 
 
 #------------------------------------------------------------------------------
@@ -176,17 +180,17 @@ COLORIZE= | sed $(SEDOPT_$(OS_NAME))                                            
 #------------------------------------------------------------------------------
 
 ifndef V
-LOG_COMMANDS=       PRINT_COMMAND="true && " 2>&1              | \
-                    tee $(BUILD_LOG)                             \
-                    $(COLOR_FILTER) ;                            \
-                    RC=$${PIPESTATUS[0]} $${pipestatus[1]} ;     \
-                    $(ECHO) `grep -v '^true &&' $(BUILD_LOG)   | \
-                             grep -i $(ERROR_MSG) $(BUILD_LOG) | \
-                             wc -l` Errors,                      \
-                            `grep -v '^true &&' $(BUILD_LOG)   | \
-                             grep -i $(WARNING_MSG)            | \
-                             wc -l` Warnings in $(BUILD_LOG);    \
-                    cp $(BUILD_LOG) $(LAST_LOG);                 \
+LOG_COMMANDS=       PRINT_COMMAND="true && " 2>&1                     | \
+                    tee $(MIQ_BUILDLOG)					\
+                    $(COLOR_FILTER) ;                                   \
+                    RC=$${PIPESTATUS[0]} $${pipestatus[1]} ;            \
+                    $(ECHO) `grep -v '^true &&' $(MIQ_BUILDLOG)       | \
+                             grep -i $(ERROR_MSG) $(MIQ_BUILDLOG)     | \
+                             wc -l` Errors,                             \
+                            `grep -v '^true &&' $(MIQ_BUILDLOG)       | \
+                             grep -i $(WARNING_MSG)                   | \
+                             wc -l` Warnings in $(MIQ_BUILDLOG);        \
+                    cp $(MIQ_BUILDLOG) $(LAST_LOG);                     \
                     exit $$RC
 endif
 
@@ -196,4 +200,4 @@ endif
 #------------------------------------------------------------------------------
 
 # Include actual configuration for specific BUILDENV - At end for overrides
-include $(BUILD)config.$(BUILDENV).mk
+include $(MIQ)config.$(BUILDENV).mk

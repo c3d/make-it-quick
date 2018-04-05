@@ -19,14 +19,14 @@
 #     See LICENSE file for details.
 #******************************************************************************
 
-DEFINES_cygwin=CONFIG_CYGWIN UNICODE _WIN32 WIN32
-OS_NAME_cygwin=windows
+DEFINES_BUILDENV_cygwin=CONFIG_CYGWIN UNICODE _WIN32 WIN32
+OS_NAME_BUILDENV_cygwin=windows
 
-include $(BUILD)config.gnu.mk
+include $(MIQ)config.gnu.mk
 
 EXE_EXT=	.exe
 LIB_EXT=	.a
 DLL_EXT=	.dll
 OBJ_EXT=	.obj
 
-MAKE_DLL=	$(LD) -shared	$(LINK_CMDLINE) $(LDFLAGS) $(LDFLAGS_$*) -o $@
+MAKE_DLL=	$(LD) -shared $(MIQ_LDFLAGS) $(MIQ_TOLINK) -o $@

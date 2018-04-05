@@ -31,10 +31,10 @@ PREFIX_LIB=$(PREFIX)lib/make-it-quick/config/
 LIB_INSTALL=$(wildcard config/check*.c)
 
 # Include the makefile rules with special BUILD path
-BUILD=./
-include $(BUILD)rules.mk
+MIQ=./
+include $(MIQ)rules.mk
 
 TESTS=example/
 
 config.local-setup.mk:
-	$(PRINT_GENERATE) echo > $@ CONFIG_SOURCES=$(PREFIX_LIB)make-it-quick/
+	$(PRINT_GENERATE) echo > $@ CONFIG_SOURCES=$(PREFIX_LIB)

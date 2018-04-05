@@ -26,9 +26,9 @@ int main()
 #warning "Building without <iostream> or <stdio.h>. Cross-compiling?"
 #endif // HAVE_IOSTREAM
 
-    if (lib1_foo() != 0)
+    if (lib1_foo() != 42)
       exit(1);
-    if (lib2_bar() != 0)
+    if (lib2_bar() != 42)
       exit(2);
 
     return 0;

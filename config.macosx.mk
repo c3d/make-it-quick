@@ -1,5 +1,5 @@
 #******************************************************************************
-# config.macosx.mk                                       Make-It-Quick project 
+# config.macosx.mk                                       Make-It-Quick project
 #******************************************************************************
 #
 #  File Description:
@@ -19,6 +19,6 @@
 #     See LICENSE file for details.
 #******************************************************************************
 
-OS_NAME_macosx=         macosx
+OS_NAME_BUILDENV_macosx=         macosx
 
-include $(BUILD4)config.macosx.mk-clang
+include $(MIQ)config.macosx.mk-clang

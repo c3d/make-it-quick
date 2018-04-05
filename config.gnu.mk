@@ -42,18 +42,18 @@ CAT=		cat /dev/null
 #  Compilation flags
 #------------------------------------------------------------------------------
 
-CFLAGS_PIC=	-fPIC
-CFLAGS_STD=	$(CC_STD:%=-std=%)	$(CFLAGS_PIC)
-CXXFLAGS_STD=	$(CXX_STD:%=-std=%)	$(CFLAGS_PIC)
+CFLAGS_PIC=		-fPIC
+CFLAGS_STD=		$(CC_STD:%=-std=%)	$(CFLAGS_PIC)
+CXXFLAGS_STD=		$(CXX_STD:%=-std=%)	$(CFLAGS_PIC)
 
-CFLAGS_debug=   -g -Wall -fno-inline
-CFLAGS_opt=     -g -O3 -Wall
-CFLAGS_release= -O3 -Wall
-CFLAGS_profile=	-pg
-CFLAGS_cxx=     -x c++
-LDFLAGS_debug=  -g
-LDFLAGS_profile=-pg
-DEPFLAGS=	-MD -MP -MF $(@).d -MT $@
+CFLAGS_TARGET_debug=	-g -Wall -fno-inline
+CFLAGS_TARGET_opt=	-g -O3 -Wall
+CFLAGS_TARGET_release=	-O3 -Wall
+CFLAGS_TARGET_profile=	-pg
+LDFLAGS_TARGET_debug=	-g
+LDFLAGS_TARGET_profile=	-pg
+DEPFLAGS=		-MD -MP -MF $(@).d -MT $@
+
 
 #------------------------------------------------------------------------------
 #  File extensions
@@ -72,14 +72,14 @@ DLL_PFX=	lib
 #  Build rules
 #------------------------------------------------------------------------------
 
-MAKE_CC=	$(CC)	$(CFLAGS)   $(CPPFLAGS_$*) $(CFLAGS_$*)	  -c $< -o $@ $(DEPFLAGS)
-MAKE_CXX=	$(CXX)	$(CXXFLAGS) $(CPPFLAGS_$*) $(CXXFLAGS_$*) -c $< -o $@ $(DEPFLAGS)
-MAKE_AS=	$(CC)	$(CFLAGS)   $(CPPFLAGS_$*) $(CFLAGS_$*)	  -c $< -o $@ $(DEPFLAGS)
+MAKE_CC=	$(CC)	$(MIQ_CFLAGS)	-c $< -o $@ $(DEPFLAGS)
+MAKE_CXX=	$(CXX)	$(MIQ_CXXFLAGS)	-c $< -o $@ $(DEPFLAGS)
+MAKE_AS=	$(CC)	$(MIQ_CFLAGS)	-c $< -o $@ $(DEPFLAGS)
 MAKE_DIR=	mkdir -p $*
 MAKE_OBJDIR=	$(MAKE_DIR) && touch $@
-MAKE_LIB=	$(AR) $@	$(LINK_INPUTS)	&& $(RANLIB) $@
-MAKE_DLL=	$(LD) -shared	$(LINK_CMDLINE) $(LDFLAGS) $(LDFLAGS_$*) -o $@ -Wl,-rpath $(PREFIX_DLL)
-MAKE_EXE=	$(LD)		$(LINK_CMDLINE) $(LDFLAGS) $(LDFLAGS_$*) -o $@
+MAKE_LIB=	$(AR) $@	$(MIQ_TOLINK)	&& $(RANLIB) $@
+MAKE_DLL=	$(LD) -shared	$(MIQ_LDFLAGS) $(MIQ_TOLINK) -o $@ -Wl,-rpath $(PREFIX_DLL)
+MAKE_EXE=	$(LD)		$(MIQ_LDFLAGS) $(MIQ_TOLINK) -o $@
 
 LINK_DIR_OPT=	-L
 LINK_LIB_OPT=	-l
@@ -91,9 +91,9 @@ LINK_CFG_OPT=	-l
 #   Dependencies
 #------------------------------------------------------------------------------
 
-CC_DEPEND=      $(CC)  $(CPPFLAGS) $(CPPFLAGS_$*) -MM -MP -MF $@ -MT $(@:.d=) $<
-CXX_DEPEND=     $(CXX) $(CPPFLAGS) $(CPPFLAGS_$*) -MM -MP -MF $@ -MT $(@:.d=) $<
-AS_DEPEND=      $(CC)  $(CPPFLAGS) $(CPPFLAGS_$*) -MM -MP -MF $@ -MT $(@:.d=) $<
+CC_DEPEND=      $(CC)  $(MIQ_CPPFLAGS) -MM -MP -MF $@ -MT $(@:.d=) $<
+CXX_DEPEND=     $(CXX) $(MIQ_CPPFLAGS) -MM -MP -MF $@ -MT $(@:.d=) $<
+AS_DEPEND=      $(CC)  $(MIQ_CPPFLAGS) -MM -MP -MF $@ -MT $(@:.d=) $<
 
 
 #------------------------------------------------------------------------------
@@ -107,34 +107,34 @@ TEST_ENV=	LD_LIBRARY_PATH=$(OUTPUT)
 #  Configuration checks
 #------------------------------------------------------------------------------
 
-CFG_UPPER=	$(shell echo -n "$(ORIG_TARGET)" | tr '[:lower:]' '[:upper:]' | tr -c '[:alnum:]' '_')
-CFG_LFLAGS=	$(LDFLAGS)						\
+MIQ_CFGUPPER=	$(shell echo -n "$(MIQ_ORIGTARGET)" | tr '[:lower:]' '[:upper:]' | tr -c '[:alnum:]' '_')
+MIQ_CFGLFLAGS=	$(MIQ_LDFLAGS)						\
 		$(shell grep '// [A-Z]*FLAGS=' "$<" |			\
 			sed -e 's|// [A-Z]*FLAGS=||g')
-CFG_FLAGS=	$(CFG_LFLAGS)						\
-		$(shell $(CAT) $(PKG_CFLAGS) $(PKG_LDFLAGS))
+MIQ_CFGFLAGS=	$(MIQ_CFGLFLAGS)					\
+		$(shell $(CAT) $(MIQ_PKGCFLAGS) $(MIQ_PKGLDFLAGS))
 
-CFG_TEST=	"$<" -o "$<".exe > "$<".err 2>&1 &&			\
+MIQ_CFGTEST=	"$<" -o "$<".exe > "$<".err 2>&1 &&			\
 		[ -x "$<".exe ] &&					\
-		"$<".exe > "$<".out && CFG_RC=1 || CFG_RC=0;
-CFG_UNDEF0=	$$CFG_RC						\
+		"$<".exe > "$<".out && MIQ_CFGRC=1 || MIQ_CFGRC=0;
+MIQ_CFGUNDEF0=	$$MIQ_CFGRC						\
 	| sed -e 's|^\#define \(.*\) 0$$|/* \#undef \1 */|g' > "$@";	\
 	[ -f "$<".out ] && cat >> "$@" "$<".out; true
 
-CFG_DEF=	echo '\#define'
+MIQ_CFGDEF=	echo '\#define'
 
-CFG_CFLAGS=	$(CFLAGS)   $(CFG_FLAGS)
-CFG_CXXFLAGS=	$(CXXFLAGS) $(CFG_FLAGS)
+MIQ_CFGCFLAGS=	$(MIQ_CFLAGS)  $(MIQ_CFGFLAGS) $(CFLAGS_CONFIG_$*)
+MIQ_CFGCXXFLAGS=$(MIQCXXFLAGS) $(MIQ_CFGFLAGS) $(CFLAGS_CONFIG_$*)
 
-CFG_CC_CMD=	$(CC)  $(CFG_CFLAGS)   	$(CFLAGS_CONFIG_$*)        $(CFG_TEST)
-CFG_CXX_CMD=	$(CXX) $(CFG_CXXFLAGS) 	$(CXXFLAGS_CONFIG_$*)      $(CFG_TEST)
-CFG_LIB_CMD=	$(CC)  $(CFG_LFLAGS)	$(CFLAGS_CONFIG_$*)   -l$* $(CFG_TEST)
-CFG_FN_CMD=	$(CC)  $(CFG_CFLAGS)   	$(CFLAGS_CONFIG_$*)        $(CFG_TEST)
+MIQ_CFGCC_CMD=	$(CC)  $(MIQ_CFGCFLAGS)   $(MIQ_CFGTEST)
+MIQ_CFGCXX_CMD=	$(CXX) $(MIQ_CFGCXXFLAGS) $(MIQ_CFGTEST)
+MIQ_CFGLIB_CMD=	$(CC)  $(MIQ_CFGLFLAGS)  -l$* $(MIQ_CFGTEST)
+MIQ_CFGFN_CMD=	$(CC)  $(MIQ_CFGCFLAGS) $(CFLAGS_CONFIG_$*)        $(MIQ_CFGTEST)
 
-CC_CONFIG=	$(CFG_CC_CMD)  $(CFG_DEF) HAVE_$(CFG_UPPER)_H 	$(CFG_UNDEF0)
-CXX_CONFIG=	$(CFG_CXX_CMD) $(CFG_DEF) HAVE_$(CFG_UPPER)   	$(CFG_UNDEF0)
-LIB_CONFIG=	$(CFG_LIB_CMD) $(CFG_DEF) HAVE_LIB$(CFG_UPPER)	$(CFG_UNDEF0)
-FN_CONFIG=	$(CFG_FN_CMD)  $(CFG_DEF) HAVE_$(CFG_UPPER) 	$(CFG_UNDEF0)
+CC_CONFIG=	$(MIQ_CFGCC_CMD)  $(MIQ_CFGDEF) HAVE_$(MIQ_CFGUPPER)_H 	$(MIQ_CFGUNDEF0)
+CXX_CONFIG=	$(MIQ_CFGCXX_CMD) $(MIQ_CFGDEF) HAVE_$(MIQ_CFGUPPER)   	$(MIQ_CFGUNDEF0)
+LIB_CONFIG=	$(MIQ_CFGLIB_CMD) $(MIQ_CFGDEF) HAVE_LIB$(MIQ_CFGUPPER)	$(MIQ_CFGUNDEF0)
+FN_CONFIG=	$(MIQ_CFGFN_CMD)  $(MIQ_CFGDEF) HAVE_$(MIQ_CFGUPPER) 	$(MIQ_CFGUNDEF0)
 
 MAKE_CONFIG=	sed	-e 's|^\#define \([^ ]*\) \(.*\)$$|\1=\2|g' 	\
 			-e 's|.*undef.*||g' < "$<" > "$@"

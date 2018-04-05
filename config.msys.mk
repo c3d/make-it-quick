@@ -19,5 +19,5 @@
 #     See LICENSE file for details.
 #******************************************************************************
 
-include $(BUILD)config.mingw.mk
+include $(MIQ)config.mingw.mk
 LINE_BUFFERED=--line-buffered
