@@ -65,7 +65,7 @@ NOT_PARALLEL?=  .NOTPARALLEL
 GIT_REVISION:=  $(shell git rev-parse --short HEAD 2> /dev/null || echo "unknown")
 
 # Package installation directory
-PACKAGE_DIR=$(PACKAGE_NAME:%=%/)
+PACKAGE_DIR?=$(PACKAGE_NAME:%=%/)
 PACKAGE_LIBS=$(MIQ_PRODLIB)
 PACKAGE_DLLS=$(MIQ_PRODDLL)
 

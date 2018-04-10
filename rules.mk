@@ -436,7 +436,9 @@ $(MIQ_OUTEXE): $(MIQ_TOLINK) $$(MIQ_TOLINK)			$(MIQ_MAKEDEPS)
 # Package configuration file
 MIQ_PKGCFLAGS= 	$(PKGCONFIGS:%=$(MIQ_OBJDIR)%.pkg-config.cflags)
 MIQ_PKGLDFLAGS=	$(PKGCONFIGS:%=$(MIQ_OBJDIR)%.pkg-config.ldflags)
-MIQ_PKGLIBS=	$(patsubst %,$(OBJDIR)%.cfg.ldflags,$(filter lib%,$(CONFIG)))
+MIQ_PKGCONFIGS=	$(PKGCONFIGS:%?=%)
+MIQ_PKGCFG=	$(MIQ_PKGONFIGS:%=$(MIQ_OBJDIR)CFG_HAVE_PACKAGE_%.h)
+MIQ_PKGLIBS=	$(patsubst %,$(MIQ_OBJDIR)%.cfg.ldflags,$(filter lib%,$(CONFIG)))
 MIQ_PKGDEPS=	$(MIQ_MAKEDEPS) $(MIQ_OBJDIR).mkdir
 
 # Build the package config from cflags, ldflags and libs config
@@ -467,7 +469,7 @@ $(MIQ_OBJDIR)lib%.cfg.ldflags: $(MIQ_OBJDIR)CFG_HAVE_lib%.h		$(MIQ_PKGDEPS)
 #------------------------------------------------------------------------------
 
 # Normalize header configuration name (turn <foo.h> into .lt.foo.h.gt. and back)
-MIQ_NORMCONFIG=$(subst <,.lt.,$(subst >,.gt.,$(subst /,.sl.,$(CONFIG))))
+MIQ_NORMCONFIG=$(subst <,.lt.,$(subst >,.gt.,$(subst /,.sl.,$(CONFIG) $(PKGCONFIGS:%=PACKAGE_%))))
 MIQ_ORIGTARGET=$(subst .lt.,<,$(subst .gt.,>,$(subst .sl.,/,$*)))
 MIQ_CONFIGDEPS=	$(MIQ_PKGDEPS) 						\
 		$(PKGCONFIGS:%=$(MIQ_OBJDIR)pkg-config.mk)		\
@@ -479,39 +481,44 @@ config.h: $(MIQ_NORMCONFIG:%=$(MIQ_OBJDIR)CFG_HAVE_%.h)
 
 # Build makefile configuration files from generated .h files
 $(MIQ_OBJDIR)CFG_HAVE_%.mk: $(MIQ_OBJDIR)CFG_HAVE_%.h 		$(MIQ_MAKEDEPS)
-	$(PRINT_COMMAND) $(MAKE_CONFIG)
+	$(PRINT_COMMAND) $(MIQ_MK_CFG)
 -include $(MIQ_NORMCONFIG:%=$(MIQ_OBJDIR)CFG_HAVE_%.mk)
 
 # C standard headers, e.g. HAVE_<stdio.h>
 $(MIQ_OBJDIR)CFG_HAVE_.lt.%.h.gt..h: $(MIQ_OBJDIR)CFGCH%.c	$(MIQ_CONFIGDEPS)
-	$(PRINT_CONFIG) $(CC_CONFIG)
+	$(PRINT_CONFIG) $(MIQ_CC_CFG)
 $(MIQ_OBJDIR)CFGCH%.c: $(MIQ_OBJDIR).mkdir			$(MIQ_CONFIGDEPS)
 	$(PRINT_COMMAND) (echo '#include' "<$(MIQ_ORIGTARGET).h>" && echo 'int main() { return 0; }') > "$@"
 .PRECIOUS: $(MIQ_OBJDIR)CFGCH%.c
 
 # C++ Standard headers, e.g. HAVE_<iostream>
 $(MIQ_OBJDIR)CFG_HAVE_.lt.%.gt..h: $(MIQ_OBJDIR)CFGCPPH%.cpp	$(MIQ_CONFIGDEPS)
-	$(PRINT_CONFIG) $(CXX_CONFIG)
+	$(PRINT_CONFIG) $(MIQ_CXX_CFG)
 $(MIQ_OBJDIR)CFGCPPH%.cpp: $(MIQ_OBJDIR).mkdir			$(MIQ_CONFIGDEPS)
 	$(PRINT_COMMAND) (echo '#include' "<$(MIQ_ORIGTARGET)>" && echo 'int main() { return 0; }') > "$@"
 .PRECIOUS: $(MIQ_OBJDIR)CFGCPPH%.cpp
 
 # Library, e.g. libm
 $(MIQ_OBJDIR)CFG_HAVE_lib%.h: $(MIQ_OBJDIR)CFGLIB%.c		$(MIQ_PKGDEPS)
-	$(PRINT_LIBCONFIG) $(LIB_CONFIG)
+	$(PRINT_CONFIG) $(MIQ_LIB_CFG)
 $(MIQ_OBJDIR)CFGLIB%.c: 					$(MIQ_PKGDEPS)
 	$(PRINT_COMMAND) echo 'int main() { return 0; }' > "$@"
 .PRECIOUS: $(MIQ_OBJDIR)CFGLIB%.c
 
 # Check if a function is present (code to test in config/check_foo.c)
 $(MIQ_OBJDIR)CFG_HAVE_%.h: $(MIQ_OBJDIR)CFGFN%.c		$(MIQ_CONFIGDEPS)
-	$(PRINT_CONFIG)	$(FN_CONFIG)
+	$(PRINT_CONFIG)	$(MIQ_FN_CFG)
 $(MIQ_OBJDIR)CFGFN%.c: $(CONFIG_SOURCES)check_%.c		$(MIQ_CONFIGDEPS)
 	$(PRINT_COMMAND) cp $< $@
 $(MIQ_OBJDIR)CFGFN%.c: config/check_%.c				$(MIQ_CONFIGDEPS)
 	$(PRINT_COMMAND) cp $< $@
 .PRECIOUS: $(MIQ_OBJDIR)CFGFN%.c
 
+# Packages
+$(MIQ_OBJDIR)CFG_HAVE_PACKAGE_%?.h: 				$(MIQ_CONFIGDEPS)
+	$(PRINT_CONFIG) $(MIQ_PK_CFG)
+$(MIQ_OBJDIR)CFG_HAVE_PACKAGE_%.h: 				$(MIQ_CONFIGDEPS)
+	$(PRINT_CONFIG) $(MIQ_PK_CFG)
 endif
 
 
