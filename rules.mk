@@ -44,9 +44,9 @@ MIQ_CPPFLAGS=	$(CPPFLAGS)				\
 		$(MIQ_INCLUDES:%=-I%)
 
 MIQ_CFLAGS=	$(CFLAGS)				\
+		$(CFLAGS_STD)				\
 		$(MIQ_CPPFLAGS)				\
 		$(CFLAGS_PKGCONFIG)			\
-		$(CFLAGS_STD)				\
 		$(CFLAGS_BUILDENV_$(BUILDENV))		\
 		$(CFLAGS_TARGET_$(TARGET))		\
 		$(CFLAGS_VARIANT_$(VARIANT))		\
@@ -102,12 +102,19 @@ MIQ_OBJECTS=	$(MIQ_SOURCES:%=$(MIQ_OBJDIR)%$(OBJ_EXT))
 MIQ_PRODEXE=	$(filter %.exe,$(PRODUCTS))
 MIQ_PRODLIB=	$(filter %.lib,$(PRODUCTS))
 MIQ_PRODDLL=	$(filter %.dll,$(PRODUCTS))
-MIQ_PRODLIBS=	$(filter %.lib %.dll,$(PRODUCTS))
+MIQ_PRODLIBS=	$(OUTPUT:%=$(LINK_DIR_OPT)%) $(filter %.lib %.dll,$(PRODUCTS))
 MIQ_OUTEXE=	$(MIQ_PRODEXE:%.exe=$(OUTPUT)$(EXE_PFX)%$(EXE_EXT))
 MIQ_OUTLIB=	$(MIQ_PRODLIB:%.lib=$(OUTPUT)$(LIB_PFX)%$(LIB_EXT))
 MIQ_OUTDLL=	$(MIQ_PRODDLL:%.dll=$(OUTPUT)$(DLL_PFX)%$(DLL_EXT))
 MIQ_OUTPRODS=	$(MIQ_OUTEXE) $(MIQ_OUTLIB) $(MIQ_OUTDLL)
-
+MIQ_BUILDTEST=	$(MAKE) SOURCES=$(@:%.test=%) 			\
+			PRODUCTS=$*_test.exe 			\
+			RUN_TESTS=				\
+			LINK_LIBS="$(MIQ_PRODLIBS)"
+MIQ_RUNTEST=	$(TEST_ENV)					\
+			$(TEST_CMD_$*)				\
+			$(OUTPUT)$(EXE_PFX)$*_test$(EXE_EXT)	\
+			$(TEST_ARGS_$*)
 
 # Check a common mistake with PRODUCTS= not being set or set without extension
 # Even on Linux / Unix, the PRODUCTS variable must end in .exe for executables,
@@ -126,7 +133,6 @@ MIQ_LIBNAMES=   $(filter %.lib, $(notdir $(MIQ_LIBS)))
 MIQ_DLLNAMES=   $(filter %.dll, $(notdir $(MIQ_LIBS)))
 MIQ_OBJLIBS= 	$(MIQ_LIBNAMES:%.lib=$(OUTPUT)$(LIB_PFX)%$(LIB_EXT))
 MIQ_OBJDLLS=    $(MIQ_DLLNAMES:%.dll=$(OUTPUT)$(DLL_PFX)%$(DLL_EXT))
-MIQ_LINKPATHS:=	$(OUTPUT:%=$(LINK_DIR_OPT)%)
 MIQ_LINKLIBS=	$(MIQ_LIBNAMES:%.lib=$(LINK_LIB_OPT)%)	\
 		$(MIQ_DLLNAMES:%.dll=$(LINK_DLL_OPT)%)
 MIQ_TOLINK=     $(MIQ_OBJECTS) $(MIQ_OBJLIBS) $(MIQ_OBJDLLS)
@@ -152,8 +158,7 @@ debug opt release profile: $(LOGS).mkdir $(dir $(LAST_LOG)).mkdir
 	$(PRINT_COMMAND) $(TIME) $(MAKE) TARGET=$@ RECURSE=.build LOG_COMMANDS= .build $(LOG_COMMANDS)
 
 # Testing
-test tests check: $(TARGET)
-	$(PRINT_COMMAND) $(MAKE) RECURSE=test $(TESTS:%=%.test) LOG_COMMANDS= TIME= $(LOG_COMMANDS)
+test tests check: test-$(TARGET)
 
 # Clean builds
 rebuild: re-$(TARGET)
@@ -198,7 +203,7 @@ help:
 
 .build: .hello .config .libraries .prebuild		\
 	.recurse .objects .product			\
-	.postbuild .goodbye
+	.postbuild .tests .goodbye
 
 .hello:
 	@$(INFO) "[BEGIN]" $(TARGET) $(BUILDENV) in "$(MIQ_PRETTYDIR)"
@@ -219,6 +224,7 @@ endif
 .objects: $(MIQ_OBJDIR:%=%.mkdir)
 .product: $(MIQ_OUTPRODS)
 .postbuild: .product $(DO_INSTALL:%=$(MIQ_INSTALL))
+.tests: $(RUN_TESTS:%=$(TESTS:%=%.test))
 .goodbye: .postbuild
 
 
@@ -239,6 +245,10 @@ ifndef RECURSE
 # Make from the top-level directory (useful from child directories)
 top-%:
 	cd $(TOP); $(MAKE) $*
+
+# Test build
+test-%:
+	$(PRINT_COMMAND) $(MAKE) RUN_TESTS=yes $*
 
 # Verbose build (show all commands as executed)
 v-% verbose-%:
@@ -424,7 +434,7 @@ $(MIQ_OUTEXE): $(MIQ_TOLINK) $$(MIQ_TOLINK)			$(MIQ_MAKEDEPS)
 # Package configuration file
 MIQ_PKGCFLAGS= 	$(PKGCONFIGS:%=$(MIQ_OBJDIR)%.pkg-config.cflags)
 MIQ_PKGLDFLAGS=	$(PKGCONFIGS:%=$(MIQ_OBJDIR)%.pkg-config.ldflags)
-MIQ_PKGLIBS=	$(PKGCONFIGS:lib%=$(MIQ_OBJDIR)lib%.cfg.ldflags)
+MIQ_PKGLIBS=	$(patsubst %,$(OBJDIR)%.cfg.ldflags,$(filter lib%,$(CONFIG)))
 MIQ_PKGDEPS=	$(MIQ_MAKEDEPS) $(MIQ_OBJDIR).mkdir
 
 # Build the package config from cflags, ldflags and libs config
@@ -508,16 +518,12 @@ endif
 #------------------------------------------------------------------------------
 
 # Run the test (in the object directory)
-product.test: .product .ALWAYS
+product.test: .product
 	$(PRINT_TEST) $(TEST_ENV) $(TEST_CMD) $(MIQ_OUTEXE) $(TEST_ARGS)
 
 # Run a test from a C or C++ file to link against current library
-%.c.test: $(MIQ_OUTLIB) .ALWAYS
-	$(PRINT_BUILD) $(MAKE) SOURCES=$*.c LINK_LIBS="$(MIQ_PRODLIBS)" PRODUCTS=$*.exe $(TARGET)
-	$(PRINT_TEST) $(TEST_ENV) $(TEST_CMD_$*) $(OUTPUT)$(EXE_PFX)$*$(EXE_EXT) $(TEST_ARGS_$*)
-%.cpp.test: $(MIQ_OUTLIB) .ALWAYS
-	$(PRINT_BUILD) $(MAKE) SOURCES=$*.cpp LINK_LIBS="$(MIQ_PRODLIBS)" PRODUCTS=$*.exe $(TARGET)
-	$(PRINT_TEST) $(TEST_ENV) $(TEST_CMD_$*) $(OUTPUT)$(EXE_PFX)$*$(EXE_EXT) $(TEST_ARGS_$*)
+%.c.test %.cpp.test: $(MIQ_OUTPRODS)
+	$(PRINT_TEST) $(MIQ_BUILDTEST) && $(MIQ_RUNTEST)
 %/.test:
 	+$(PRINT_TEST) cd $* && $(MAKE) test
 
