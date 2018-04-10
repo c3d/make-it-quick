@@ -43,6 +43,7 @@ CAT=		cat /dev/null
 
 CFLAGS_STD=		$(CC_STD:%=-std=%)	$(CFLAGS_PIC)
 CXXFLAGS_STD=		$(CXX_STD:%=-std=%)	$(CFLAGS_PIC)
+CFLAGS_DEPENDENCIES=	-MD -MP -MF $(@).d -MT $@
 
 CFLAGS_TARGET_debug=	-g -Wall -fno-inline
 CFLAGS_TARGET_opt=	-g -O3 -Wall
@@ -50,7 +51,6 @@ CFLAGS_TARGET_release=	-O3 -Wall
 CFLAGS_TARGET_profile=	-pg
 LDFLAGS_TARGET_debug=	-g
 LDFLAGS_TARGET_profile=	-pg
-DEPFLAGS=		-MD -MP -MF $(@).d -MT $@
 
 
 #------------------------------------------------------------------------------
@@ -82,18 +82,18 @@ MAKE_OBJDIR=	$(MAKE_DIR) && touch $@
 ifdef LIBTOOL
 MIQ_COMPILE=	$(LIBTOOL) --silent --mode=compile
 MIQ_LINK=	$(LIBTOOL) --silent --mode=link
-MAKE_CC=	$(MIQ_COMPILE) $(CC)  $(MIQ_CFLAGS)   -c $< -o $@ $(DEPFLAGS)
-MAKE_CXX=	$(MIQ_COMPILE) $(CXX) $(MIQ_CXXFLAGS) -c $< -o $@ $(DEPFLAGS)
-MAKE_AS=	$(MIQ_COMPILE) $(CC)  $(MIQ_CFLAGS)   -c $< -o $@ $(DEPFLAGS)
+MAKE_CC=	$(MIQ_COMPILE) $(CC)  $(MIQ_CFLAGS)   -c $< -o $@
+MAKE_CXX=	$(MIQ_COMPILE) $(CXX) $(MIQ_CXXFLAGS) -c $< -o $@
+MAKE_AS=	$(MIQ_COMPILE) $(CC)  $(MIQ_CFLAGS)   -c $< -o $@
 MAKE_LIB=	$(MIQ_LINK)    $(LD)  $(MIQ_LDFLAGS) $(MIQ_TOLINK) -rpath $(PREFIX_DLL) -o $@
 MAKE_DLL=	$(MAKE_LIB)
 MAKE_EXE=	$(MIQ_LINK)    $(LD)  $(MIQ_LDFLAGS) $(MIQ_TOLINK) -o $@
 else
 # Non-libtool case: manage manually
 CFLAGS_PIC=	-fPIC
-MAKE_CC=	$(CC)	$(MIQ_CFLAGS)	-c $< -o $@ $(DEPFLAGS)
-MAKE_CXX=	$(CXX)	$(MIQ_CXXFLAGS)	-c $< -o $@ $(DEPFLAGS)
-MAKE_AS=	$(CC)	$(MIQ_CFLAGS)	-c $< -o $@ $(DEPFLAGS)
+MAKE_CC=	$(CC)	$(MIQ_CFLAGS)	-c $< -o $@
+MAKE_CXX=	$(CXX)	$(MIQ_CXXFLAGS)	-c $< -o $@
+MAKE_AS=	$(CC)	$(MIQ_CFLAGS)	-c $< -o $@
 MAKE_LIB=	$(AR) $@	$(MIQ_TOLINK)	&& $(RANLIB) $@
 MAKE_DLL=	$(LD) -shared	$(MIQ_LDFLAGS) $(MIQ_TOLINK) -o $@ -Wl,-rpath $(PREFIX_DLL)
 MAKE_EXE=	$(LD)		$(MIQ_LDFLAGS) $(MIQ_TOLINK) -o $@

@@ -44,6 +44,7 @@ MIQ_CPPFLAGS=	$(CPPFLAGS)				\
 		$(MIQ_INCLUDES:%=-I%)
 
 MIQ_CFLAGS=	$(CFLAGS)				\
+		$(CFLAGS_DEPENDENCIES)			\
 		$(CFLAGS_STD)				\
 		$(MIQ_CPPFLAGS)				\
 		$(CFLAGS_PKGCONFIG)			\
@@ -55,6 +56,7 @@ MIQ_CFLAGS=	$(CFLAGS)				\
 MIQ_CXXFLAGS= 	$(CXXFLAGS)				\
 		$(MIQ_CPPFLAGS)				\
 		$(CFLAGS_PKGCONFIG)			\
+		$(CFLAGS_DEPENDENCIES)			\
 		$(CXXFLAGS_STD)				\
 		$(CXXFLAGS_BUILDENV_$(BUILDENV))	\
 		$(CXXFLAGS_TARGET_$(TARGET))		\
@@ -369,7 +371,7 @@ MIQ_OBJDEPS=$(MIQ_OBJDIR_DEPS) $(MIQ_MAKEDEPS)  .prebuild
 endif
 
 # Check if the compiler supports dependency flags (if not, do it the hard way)
-ifndef DEPFLAGS
+ifndef CFLAGS_DEPENDENCIES
 $(MIQ_OBJDIR)%.c$(OBJ_EXT).d:		%.c			$(MIQ_OBJDEPS)
 	$(PRINT_DEPEND) ( $(CC_DEPEND)
 $(MIQ_OBJDIR)%.cpp$(OBJ_EXT).d:		%.cpp			$(MIQ_OBJDEPS)
