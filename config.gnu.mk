@@ -33,7 +33,6 @@ CPP=            $(CC) -E
 PYTHON=         python
 AR=             $(CROSS_COMPILE:%=%-)ar -rcs
 RANLIB=         $(CROSS_COMPILE:%=%-)ranlib
-LIBTOOL=        libtool -no_warning_for_no_symbols
 INSTALL=	install
 CAT=		cat /dev/null
 
@@ -42,7 +41,6 @@ CAT=		cat /dev/null
 #  Compilation flags
 #------------------------------------------------------------------------------
 
-CFLAGS_PIC=		-fPIC
 CFLAGS_STD=		$(CC_STD:%=-std=%)	$(CFLAGS_PIC)
 CXXFLAGS_STD=		$(CXX_STD:%=-std=%)	$(CFLAGS_PIC)
 
@@ -59,10 +57,16 @@ DEPFLAGS=		-MD -MP -MF $(@).d -MT $@
 #  File extensions
 #------------------------------------------------------------------------------
 
+EXE_EXT=
+ifdef LIBTOOL
+OBJ_EXT=        .lo
+LIB_EXT=	.la
+DLL_EXT=	.la
+else
 OBJ_EXT=        .o
 LIB_EXT=        .a
-EXE_EXT=
 DLL_EXT=        .so
+endif
 
 EXE_PFX=
 LIB_PFX=	lib
@@ -72,14 +76,28 @@ DLL_PFX=	lib
 #  Build rules
 #------------------------------------------------------------------------------
 
+MAKE_DIR=	mkdir -p $*
+MAKE_OBJDIR=	$(MAKE_DIR) && touch $@
+
+ifdef LIBTOOL
+MIQ_COMPILE=	$(LIBTOOL) --silent --mode=compile
+MIQ_LINK=	$(LIBTOOL) --silent --mode=link
+MAKE_CC=	$(MIQ_COMPILE) $(CC)  $(MIQ_CFLAGS)   -c $< -o $@ $(DEPFLAGS)
+MAKE_CXX=	$(MIQ_COMPILE) $(CXX) $(MIQ_CXXFLAGS) -c $< -o $@ $(DEPFLAGS)
+MAKE_AS=	$(MIQ_COMPILE) $(CC)  $(MIQ_CFLAGS)   -c $< -o $@ $(DEPFLAGS)
+MAKE_LIB=	$(MIQ_LINK)    $(LD)  $(MIQ_LDFLAGS) $(MIQ_TOLINK) -rpath $(PREFIX_DLL) -o $@
+MAKE_DLL=	$(MAKE_LIB)
+MAKE_EXE=	$(MIQ_LINK)    $(LD)  $(MIQ_LDFLAGS) $(MIQ_TOLINK) -o $@
+else
+# Non-libtool case: manage manually
+CFLAGS_PIC=	-fPIC
 MAKE_CC=	$(CC)	$(MIQ_CFLAGS)	-c $< -o $@ $(DEPFLAGS)
 MAKE_CXX=	$(CXX)	$(MIQ_CXXFLAGS)	-c $< -o $@ $(DEPFLAGS)
 MAKE_AS=	$(CC)	$(MIQ_CFLAGS)	-c $< -o $@ $(DEPFLAGS)
-MAKE_DIR=	mkdir -p $*
-MAKE_OBJDIR=	$(MAKE_DIR) && touch $@
 MAKE_LIB=	$(AR) $@	$(MIQ_TOLINK)	&& $(RANLIB) $@
 MAKE_DLL=	$(LD) -shared	$(MIQ_LDFLAGS) $(MIQ_TOLINK) -o $@ -Wl,-rpath $(PREFIX_DLL)
 MAKE_EXE=	$(LD)		$(MIQ_LDFLAGS) $(MIQ_TOLINK) -o $@
+endif
 
 LINK_DIR_OPT=	-L
 LINK_LIB_OPT=	-l
