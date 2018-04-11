@@ -575,10 +575,10 @@ benchmark:	$(BENCHMARKS:%=%.benchmark)
 MIQ_PACKAGELIBS=$(PACKAGE_LIBS:%.lib=$(LINK_LIB_OPT)%)	\
 		$(PACKAGE_DLLS:%.dll=$(LINK_DLL_OPT)%)
 MIQ_GENPC=					  	 \
-	(echo 'prefix=$(PREFIX)'			;\
+	(echo 'prefix=$(PREFIX:%/=%)'			;\
 	echo 'exec_prefix=$${prefix}'			;\
-	echo 'libdir=$(PREFIX_LIB)'			;\
-	echo 'includedir=$(PREFIX_HDR)'			;\
+	echo 'libdir=$(PREFIX_LIB:%/=%)'		;\
+	echo 'includedir=$(PREFIX_HDR:%/=%)'		;\
 	echo 'Name: $(PACKAGE_NAME)'			;\
 	echo 'Description: $(PACKAGE_DESCRIPTION)'	;\
 	echo 'Version: $(PACKAGE_VERSION)'		;\
