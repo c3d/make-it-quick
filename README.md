@@ -44,14 +44,29 @@ To use `make-it-quick`, you create a `Makefile`. A minimal makefile only needs
 to specify the name of the `SOURCES`, the name of the build `PRODUCTS`,
 and include the `make-it-quick/rules.mk` file, which contains the makefile rules:
 
+    MIQ=make-it-quick/
     SOURCES=my-super-tool.cpp helper.c
     PRODUCTS=my-super-tool.exe
-    include make-it-quick/rules.mk
+    include $(MIQ)rules.mk
 
 That's all you need to get started. There is a small sample `Makefile`
 in this distribution.
 
 In order to get a summary of the available build targets, use `make help`.
+
+### Using Make-It-Quick as a submodule or integrated in a project
+
+In case you want to add Make-It-Quick to a project without adding
+another dependency, you can add Make-It-Quick as a submodule of your
+project, or copy it directly in your project. In that case, you would
+set the `MIQ` variable to point to a location of the `make-it-quick`
+directory relative to the makefiles, for example:
+
+    TOP=../
+    MIQ=$(TOP)make-it-quick/
+    SOURCES=my-super-tool.cpp helper.c
+    PRODUCTS=my-super-tool.exe
+    include $(MIQ)rules.mk
 
 
 ## Building libraries and shared libraries
