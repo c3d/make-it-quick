@@ -79,6 +79,7 @@ MIQ_INSTALL=	$(TO_INSTALL:%=%.install)		\
 		$(EXE_INSTALL:%=%.install_exe)		\
 		$(LIB_INSTALL:%=%.install_lib)		\
 		$(DLL_INSTALL:%=%.install_dll)		\
+		$(HEADERS:%=%.install_hdr)		\
 		$(HDR_INSTALL:%=%.install_hdr)		\
 		$(SHR_INSTALL:%=%.install_shr)		\
 		$(MIQ_PACKAGE:%=%.install_pc)
