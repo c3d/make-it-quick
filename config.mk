@@ -71,7 +71,7 @@ PACKAGE_DLLS=$(MIQ_PRODDLL)
 
 # Local setup - Location of configuration files, etc (tweaked at install time)
 -include $(MIQ)config.local-setup.mk
-CONFIG_SOURCES?=/usr/lib/make-it-quick/
+CONFIG_SOURCES?=$(MIQ)config/
 
 # Sources to reformat
 CLANG_FORMAT_SOURCES=$(SOURCES) $(HDR_INSTALL)
