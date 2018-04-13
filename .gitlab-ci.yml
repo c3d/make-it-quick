@@ -18,3 +18,7 @@ make_only:
 statistics:
   script:
   - time make opt-test
+
+install:
+  script:
+  - make DESTDIR=./tmp install && ls -lR tmp
