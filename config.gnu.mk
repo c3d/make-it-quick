@@ -95,7 +95,7 @@ MAKE_CC=	$(CC)	$(MIQ_CFLAGS)	-c $< -o $@
 MAKE_CXX=	$(CXX)	$(MIQ_CXXFLAGS)	-c $< -o $@
 MAKE_AS=	$(CC)	$(MIQ_CFLAGS)	-c $< -o $@
 MAKE_LIB=	$(AR) $@	$(MIQ_TOLINK)	&& $(RANLIB) $@
-MAKE_DLL=	$(LD) -shared	$(MIQ_LDFLAGS) $(MIQ_TOLINK) -o $@ -Wl,-rpath $(PREFIX_DLL)
+MAKE_DLL=	$(LD) -shared	$(MIQ_LDFLAGS) $(MIQ_TOLINK) -o $@ -Wl,-rpath -Wl,$(PREFIX_DLL)
 MAKE_EXE=	$(LD)		$(MIQ_LDFLAGS) $(MIQ_TOLINK) -o $@
 endif
 
