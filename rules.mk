@@ -151,6 +151,10 @@ MIQ_INDEX:=     1
 MIQ_COUNT:=     $(words $(MIQ_SOURCES))
 MIQ_PROFOUT:=	$(subst $(EXE_EXT),,$(MIQ_OUTEXE))_prof_$(GIT_REVISION).vsp
 
+ifeq (3.80,$(firstword $(sort $(MAKE_VERSION) 3.80)))
+MIQ_ORDERONLY=|
+endif
+
 
 #------------------------------------------------------------------------------
 #   User targets
@@ -303,7 +307,7 @@ endif
 #------------------------------------------------------------------------------
 
 .recurse: $(SUBDIRS:%=%.recurse)
-%.recurse:          | .hello .prebuild
+%.recurse:          $(MIQ_ORDERONLY:%=% .hello .prebuild)
 	+$(PRINT_COMMAND) cd $* && $(MIQ_RECURSE)
 
 %.variant:
@@ -366,11 +370,7 @@ ifdef RECURSE
 MIQ_DEPENDENCIES=$(MIQ_SOURCES:%=$(MIQ_OBJDIR)%$(OBJ_EXT).d)
 MIQ_OBJDIR_DEPS=$(MIQ_OBJDIR)%.deps/.mkdir
 
-ifeq (3.80,$(firstword $(sort $(MAKE_VERSION) 3.80)))
-MIQ_OBJDEPS=$(MIQ_OBJDIR_DEPS) $(MIQ_MAKEDEPS) | .prebuild
-else
-MIQ_OBJDEPS=$(MIQ_OBJDIR_DEPS) $(MIQ_MAKEDEPS)  .prebuild
-endif
+MIQ_OBJDEPS=$(MIQ_OBJDIR_DEPS) $(MIQ_MAKEDEPS) $(MIQ_ORDERONLY:%=% .prebuild)
 
 # Check if the compiler supports dependency flags (if not, do it the hard way)
 ifndef CFLAGS_DEPENDENCIES
