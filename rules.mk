@@ -475,7 +475,8 @@ MIQ_NORMCONFIG=$(subst <,.lt.,$(subst >,.gt.,$(subst /,.sl.,$(CONFIG) $(PKGCONFI
 MIQ_ORIGTARGET=$(subst .lt.,<,$(subst .gt.,>,$(subst .sl.,/,$*)))
 MIQ_CONFIGDEPS=	$(MIQ_PKGDEPS) 						\
 		$(PKGCONFIGS:%=$(MIQ_OBJDIR)pkg-config.mk)		\
-		$(MIQ_PKGLIBS:%=$(MIQ_OBJDIR)pkg-config.mk)
+		$(MIQ_PKGLIBS:%=$(MIQ_OBJDIR)pkg-config.mk)		\
+		$(MIQ_ORDERONLY:%=% .hello)
 
 # Generate the config.h by concatenating all the indiviual config files
 config.h: $(MIQ_NORMCONFIG:%=$(MIQ_OBJDIR)CFG_HAVE_%.h)
@@ -521,6 +522,7 @@ $(MIQ_OBJDIR)CFG_HAVE_PACKAGE_%?.h: 				$(MIQ_CONFIGDEPS)
 	$(PRINT_CONFIG) $(MIQ_PK_CFG)
 $(MIQ_OBJDIR)CFG_HAVE_PACKAGE_%.h: 				$(MIQ_CONFIGDEPS)
 	$(PRINT_CONFIG) $(MIQ_PK_CFG)
+
 endif
 
 
