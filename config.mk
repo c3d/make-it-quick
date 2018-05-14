@@ -52,9 +52,6 @@ TO_CLEAN=	*~ *.bak
 # Stuff to install
 TO_INSTALL=
 
-# Do not print directory by default (override to print them, e.g. Emacs)
-PRINT_DIR=              --no-print-directory
-
 # Buildenv for recursive builds
 RECURSE_BUILDENV=$(BUILDENV)
 
