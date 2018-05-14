@@ -458,9 +458,9 @@ $(MIQ_OBJDIR)%?.pkg-config.ldflags: 				$(MIQ_PKGDEPS)
 
 # Non-optional packages
 $(MIQ_OBJDIR)%.pkg-config.cflags: 					$(MIQ_PKGDEPS)
-	$(PRINT_PKGCONFIG)  pkg-config --cflags $* > $@ || (echo "Error: Required package $* not found" && false)
+	$(PRINT_PKGCONFIG)  pkg-config --cflags $* > $@ || (echo "Error"": Required package $* not found" && false)
 $(MIQ_OBJDIR)%.pkg-config.ldflags: 					$(MIQ_PKGDEPS)
-	$(PRINT_COMMAND)  pkg-config --libs $* > $@ || (echo "Error: Required package $* not found" && false)
+	$(PRINT_COMMAND)  pkg-config --libs $* > $@ || (echo "Error"": Required package $* not found" && false)
 $(MIQ_OBJDIR)lib%.cfg.ldflags: $(MIQ_OBJDIR)CFG_HAVE_lib%.h		$(MIQ_PKGDEPS)
 	$(PRINT_COMMAND)  (grep -q 'define ' $< && echo $(LINK_CFG_OPT)$* || true) > $@
 
