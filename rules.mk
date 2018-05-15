@@ -143,6 +143,7 @@ MIQ_RECURSE=    $(MAKE) TARGET=$(TARGET)		\
 			BUILDENV=$(RECURSE_BUILDENV) 	\
 			TOP="$(abspath $(TOP))/"	\
 			MIQ="$(abspath $(MIQ))/"	\
+			VARIANT=			\
 			COLOR_FILTER=			\
 			$(RECURSE)
 MIQ_MAKEDEPS:=	$(MAKEFILE_LIST)
