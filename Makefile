@@ -29,12 +29,10 @@ HDR_INSTALL=			\
 
 PREFIX_LIB=$(PREFIX)lib/make-it-quick/config/
 LIB_INSTALL=$(wildcard config/check*.c)
+TESTS=example/
 
-# Include the makefile rules with special BUILD path
 MIQ=./
 include $(MIQ)rules.mk
-
-TESTS=example/
 
 config.local-setup.mk:
 	$(PRINT_GENERATE) echo > $@ CONFIG_SOURCES=$(PREFIX_LIB)

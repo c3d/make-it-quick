@@ -541,7 +541,7 @@ product.test: .product
 %.c.test %.cpp.test: $(MIQ_OUTPRODS)
 	$(PRINT_TEST) $(MIQ_BUILDTEST) && $(MIQ_RUNTEST)
 %/.test:
-	+$(PRINT_TEST) cd $* && $(MAKE) test
+	+$(PRINT_TEST) cd $* && $(MIQ_RECURSE) RUN_TESTS=yes .build
 
 
 #------------------------------------------------------------------------------
