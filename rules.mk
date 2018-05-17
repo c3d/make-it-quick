@@ -416,6 +416,9 @@ ifeq ($(MAKECMDGOALS),.build)
 -include $(MIQ_DEPENDENCIES)
 endif
 
+# Create output directory if necessary
+$(MIQ_OUTPRODS): $(OUTPUT).mkdir-only
+
 # Link
 .SECONDEXPANSION:
 MIQ_NOSRC=	$(@:$(OUTPUT)%=%)
