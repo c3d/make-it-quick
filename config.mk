@@ -61,6 +61,9 @@ NOT_PARALLEL?=  .NOTPARALLEL
 # Git revision for the current code
 GIT_REVISION:=  $(shell git rev-parse --short HEAD 2> /dev/null || echo "unknown")
 
+# Product version defaults to package version
+PRODUCTS_VERSION?=$(PACKAGE_VERSION)
+
 # Package installation directory
 PACKAGE_DIR?=$(PACKAGE_NAME:%=%/)
 PACKAGE_LIBS=$(MIQ_PRODLIB)

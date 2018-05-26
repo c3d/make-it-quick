@@ -119,6 +119,13 @@ MIQ_RUNTEST=	$(TEST_ENV)					\
 			$(OUTPUT)$(EXE_PFX)$*_test$(EXE_EXT)	\
 			$(TEST_ARGS_$*)
 
+# Versioning for DLLs
+MIQ_V_WORDS=	$(subst ., ,$(PRODUCTS_VERSION))
+MIQ_V_MAJOR=	$(word 1,$(MIQ_V_WORDS) 0 0 0)
+MIQ_V_MINOR=	$(word 2,$(MIQ_V_WORDS) 0 0 0)
+MIQ_V_PATCH=	$(word 3,$(MIQ_V_WORDS) 0 0 0)
+MIQ_V_VERSION=	$(MIQ_V_MAJOR).$(MIQ_V_MINOR).$(MIQ_V_PATCH)
+
 # Check a common mistake with PRODUCTS= not being set or set without extension
 # Even on Linux / Unix, the PRODUCTS variable must end in .exe for executables,
 # in .lib for static libraries, and in .dll for dynamic libraries.
@@ -568,7 +575,7 @@ benchmark:	$(BENCHMARKS:%=%.benchmark)
 %.install_lib: $(PREFIX_LIB).mkdir-only .product
 	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_LIB)
 %.install_dll: $(PREFIX_DLL).mkdir-only .product
-	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_DLL)
+	$(PRINT_INSTALL) $(INSTALL_DLL)
 %.install_hdr: $(PREFIX_HDR).mkdir-only
 	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_HDR)
 %.install_shr: $(PREFIX_SHR).mkdir-only

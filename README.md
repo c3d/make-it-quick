@@ -433,6 +433,18 @@ in your makefile as follows:
 A file called `my-great-stuff.pc` will be generated and installed
 along with your product.
 
+# Shared library versioning
+
+Shared libraries can be versioned. Version numbers are typically
+in the form major.minor.patch. The version number for a shared library
+is taken from `PRODUCTS_VERSION`, which defaults to `PACKAGE_VERSION`.
+
+For example, if `foo.dll` has `PRODUCTS_VERSION` is 1.3.2, this is
+interpreted as major version 1, minor version 3 and patchlevel 2.
+Accordingly, the library name is set to `libfoo.so.1.3.2`, the
+soname is set to `libfoo.so.1`, and symbolc links `libfoo.so`
+and `libfoo.so.1` will both point to `libfoo.so.1.3.2`.
+
 ## Other stuff
 
 There a few utility targets, in particular:

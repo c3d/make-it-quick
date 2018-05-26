@@ -72,6 +72,29 @@ EXE_PFX=
 LIB_PFX=	lib
 DLL_PFX=	lib
 
+
+#------------------------------------------------------------------------------
+#  Shared libraries versioning
+#------------------------------------------------------------------------------
+
+MIQ_SOBASE=		$(@F:%.install_dll=%)
+MIQ_SONAME=		$(@F:%.install_dll=%)$(MIQ_V_MAJOR:%=.%)
+MIQ_DLLNAME=		$(@:%.install_dll=%)$(PRODUCTS_VERSION:%=.$(MIQ_V_VERSION))
+
+# Conversion to libttool input
+MIQ_LT_CURRENT=	$(shell echo $$(($(MIQ_V_MAJOR) + $(MIQ_V_MINOR))))
+MIQ_LT_REVISION=$(MIQ_V_PATCH)
+MIQ_LT_AGE=	$(MIQ_V_MINOR)
+MIQ_LT_VERSION=	$(MIQ_LT_CURRENT):$(MIQ_LT_REVISION):$(MIQ_LT_AGE)
+MIQ_LT_VERS_OPT=$(PRODUCTS_VERSION:%=-version-info $(MIQ_LT_VERSION))
+
+# Symbolic links for shared libraries
+MIQ_SONAME_OPT=	$(PRODUCTS_VERSION:%=-Wl,-soname -Wl,$(MIQ_SONAME))
+MIQ_SYMLINKS_SO=ln -sf $(notdir $(MIQ_DLLNAME)) $(MIQ_SOBASE) && 	\
+		ln -sf $(notdir $(MIQ_DLLNAME)) $(MIQ_SONAME)
+MIQ_SYMLINKS=	$(PRODUCTS_VERSION:%=&& $(MIQ_SYMLINKS_SO))
+
+
 #------------------------------------------------------------------------------
 #  Build rules
 #------------------------------------------------------------------------------
@@ -85,8 +108,12 @@ MIQ_LINK=	$(LIBTOOL) --silent --mode=link
 MAKE_CC=	$(MIQ_COMPILE) $(CC)  $(MIQ_CFLAGS)   -c $< -o $@
 MAKE_CXX=	$(MIQ_COMPILE) $(CXX) $(MIQ_CXXFLAGS) -c $< -o $@
 MAKE_AS=	$(MIQ_COMPILE) $(CC)  $(MIQ_CFLAGS)   -c $< -o $@
-MAKE_LIB=	$(MIQ_LINK)    $(LD)  $(MIQ_LDFLAGS) $(MIQ_TOLINK) -rpath $(PREFIX_DLL) -o $@
+MAKE_LIB=	$(MIQ_LINK)    $(LD)  $(MIQ_LDFLAGS) $(MIQ_TOLINK)	\
+			-rpath $(PREFIX_DLL) -o $@			\
+			$(MIQ_LT_VERS_OPT)
 MAKE_DLL=	$(MAKE_LIB)
+INSTALL_DLL=	$(LIBTOOL) --silent --mode=install			\
+			$(INSTALL) $(MIQ_DLLNAME) $(PREFIX_DLL)
 MAKE_EXE=	$(MIQ_LINK)    $(LD)  $(MIQ_LDFLAGS) $(MIQ_TOLINK) -o $@
 else
 # Non-libtool case: manage manually
@@ -95,7 +122,13 @@ MAKE_CC=	$(CC)	$(MIQ_CFLAGS)	-c $< -o $@
 MAKE_CXX=	$(CXX)	$(MIQ_CXXFLAGS)	-c $< -o $@
 MAKE_AS=	$(CC)	$(MIQ_CFLAGS)	-c $< -o $@
 MAKE_LIB=	$(AR) $@	$(MIQ_TOLINK)	&& $(RANLIB) $@
-MAKE_DLL=	$(LD) -shared	$(MIQ_LDFLAGS) $(MIQ_TOLINK) -o $@ -Wl,-rpath -Wl,$(PREFIX_DLL)
+MAKE_DLL=	$(LD) -shared	$(MIQ_LDFLAGS) $(MIQ_TOLINK)	\
+				-o $(MIQ_DLLNAME)		\
+				-Wl,-rpath -Wl,$(PREFIX_DLL)	\
+				$(MIQ_SONAME_OPT)		\
+		&& (cd $(OUTPUT) $(MIQ_SYMLINKS))
+INSTALL_DLL= 	$(INSTALL) $(MIQ_DLLNAME) $(PREFIX_DLL)		\
+		&& (cd $(PREFIX_DLL) $(MIQ_SYMLINKS))
 MAKE_EXE=	$(LD)		$(MIQ_LDFLAGS) $(MIQ_TOLINK) -o $@
 endif
 
