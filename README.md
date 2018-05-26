@@ -418,6 +418,21 @@ is optional.
                     gstreamer-1.0
 
 
+# Package configuration (for `pkg-config`)
+
+To generate a `.pc` file suitable for `pkg-config`, set variables
+in your makefile as follows:
+
+    PACKAGE_NAME=my-great-stuff
+    PACKAGE_VERSION=0.0.1
+    PACKAGE_DESCRIPTION=This is insanely great stuff
+    PACKAGE_URL=http://www.my-great-stuff.org
+    PACKAGE_REQUIRES=some-library >= 0.3
+    PACKAGE_BUGS=bugreports@my-great-stuff.org
+
+A file called `my-great-stuff.pc` will be generated and installed
+along with your product.
+
 ## Other stuff
 
 There a few utility targets, in particular:
