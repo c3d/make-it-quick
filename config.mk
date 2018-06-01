@@ -154,6 +154,7 @@ INFO_POS_COL=   \\033[32m
 INFO_RST_COL=   \\033[39;49;27m
 INFO_CLR_EOL=   \\033[K
 INFO=           printf "%-20s %s %s %s %s %s %s %s\n"
+INFO_NONL=      printf "%-20s %-30s %s %s %s %s %s %s"
 
 # Color for build steps
 STEP_COLOR:=    $(shell printf "$(INFO_STEP_COL)")

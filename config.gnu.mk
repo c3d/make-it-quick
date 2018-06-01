@@ -170,9 +170,16 @@ MIQ_CFGTEST=	"$<" -o "$<".exe > "$<".err 2>&1 &&			\
 		[ -x "$<".exe ] &&					\
 		"$<".exe > "$<".out					\
 		$(MIQ_CFGSET)
+MIQ_CFG_PRINT=	if [ $$MIQ_CFGRC == 1 ]; then				\
+		    echo "$(POS_COLOR)OK$(DEF_COLOR)";			\
+		else							\
+		    echo "$(ERR_COLOR)NO$(DEF_COLOR)";			\
+		fi;
 MIQ_CFGUNDEF0=	$$MIQ_CFGRC						\
 	| sed -e 's|^\#define \(.*\) 0$$|/* \#undef \1 */|g' > "$@";	\
-	[ -f "$<".out ] && cat >> "$@" "$<".out; true
+	[ -f "$<".out ] && cat >> "$@" "$<".out; 			\
+	$(MIQ_CFG_PRINT)						\
+	true
 
 MIQ_CFGDEF=	echo '\#define'
 
@@ -193,3 +200,31 @@ MIQ_PK_CFG=	$(MIQ_CFGPK_CMD)  $(MIQ_CFGDEF) HAVE_$(MIQ_CFGUPPER)    $(MIQ_CFGUND
 
 MIQ_MK_CFG=	sed	-e 's|^\#define \([^ ]*\) \(.*\)$$|\1=\2|g' 	\
 			-e 's|.*undef.*||g' < "$<" > "$@"
+
+
+#------------------------------------------------------------------------------
+#  pkg-config checks
+#------------------------------------------------------------------------------
+
+MIQ_PKGCONFIG_CFLAGS_CHECK=						\
+	pkg-config --cflags $* > $@	$(MIQ_PKGCONFIG_ERROR_CHECK)
+
+MIQ_PKGCONFIG_LIBS_CHECK=						\
+	pkg-config --libs $* > $@	$(MIQ_PKGCONFIG_ERROR_CHECK)
+
+MIQ_PKGCONFIG_ERROR_CHECK=						\
+	|| (echo "Error"": Required package $* not found" && false)
+
+MIQ_PKGCONFIG_BUILDMK=							\
+	(echo CFLAGS_PKGCONFIG=`$(CAT) $(MIQ_PKGCFLAGS)`;		\
+	 echo LDFLAGS_PKGCONFIG=`$(CAT) $(MIQ_PKGLDFLAGS) $(MIQ_PKGLIBS)` ) > $@
+
+MIQ_PKGCONFIG_CFLAGS_OPTIONAL=						\
+	(pkg-config --cflags $* --silence-errors > $@			\
+	&& MIQ_CFGRC=1 || MIQ_CFGRC=0;					\
+	true)
+
+MIQ_PKGCONFIG_LIBS_OPTIONAL=						\
+	(pkg-config --libs $* --silence-errors > $@			\
+	&& MIQ_CFGRC=1 || MIQ_CFGRC=0;					\
+	true)

@@ -353,7 +353,7 @@ PRINT_CLEAN=    $(PRINT_COMMAND) $(INFO) "[CLEAN] " $@ $(MIQ_PRETTYDIR) $(COLORI
 PRINT_COPY=     $(PRINT_COMMAND) $(INFO) "[COPY]" $< '=>' $@ ;
 PRINT_DEPEND= 	$(PRINT_COMMAND) $(INFO) "[DEPEND] " $< ;
 PRINT_TEST= 	$(PRINT_COMMAND) $(INFO) "[TEST]" $(@:.test=) ;
-PRINT_CONFIG= 	$(PRINT_COMMAND) $(INFO) "[CONFIG]" "$(MIQ_ORIGTARGET)" ;
+PRINT_CONFIG= 	$(PRINT_COMMAND) $(INFO_NONL) "[CONFIG]" "$(MIQ_ORIGTARGET)" ;
 PRINT_PKGCONFIG=$(PRINT_COMMAND) $(INFO) "[PKGCONFIG]" "$*" ;
 PRINT_LIBCONFIG=$(PRINT_COMMAND) $(INFO) "[LIBCONFIG]" "lib$*" ;
 PRINT_REFORMAT= $(PRINT_COMMAND) $(INFO) "[REFORMAT]" "$*" $(COLORIZE);
@@ -455,7 +455,7 @@ MIQ_PKGDEPS=	$(MIQ_MAKEDEPS) $(MIQ_OBJDIR).mkdir
 
 # Build the package config from cflags, ldflags and libs config
 $(MIQ_OBJDIR)pkg-config.mk: $(MIQ_PKGCFLAGS) $(MIQ_PKGLDFLAGS) $(MIQ_PKGLIBS)
-	$(PRINT_COMMAND) (echo CFLAGS_PKGCONFIG=`$(CAT) $(MIQ_PKGCFLAGS)`; echo LDFLAGS_PKGCONFIG=`$(CAT) $(MIQ_PKGLDFLAGS) $(MIQ_PKGLIBS)`) > $@
+	$(PRINT_COMMAND) $(MIQ_PKGCONFIG_BUILDMK)
 
 # Include rules for makefiles
 -include $(PKGCONFIGS:%=$(MIQ_OBJDIR)pkg-config.mk)
@@ -463,15 +463,17 @@ $(MIQ_OBJDIR)pkg-config.mk: $(MIQ_PKGCFLAGS) $(MIQ_PKGLDFLAGS) $(MIQ_PKGLIBS)
 
 # Optional packages end with ?, e.g. PKGCONFIG=openssl?
 $(MIQ_OBJDIR)%?.pkg-config.cflags:				$(MIQ_PKGDEPS)
-	$(PRINT_PKGCONFIG)  (pkg-config --cflags $* --silence-errors || true) > $@
+	$(PRINT_PKGCONFIG) $(MIQ_PKGCONFIG_CFLAGS_OPTIONAL)
 $(MIQ_OBJDIR)%?.pkg-config.ldflags: 				$(MIQ_PKGDEPS)
-	$(PRINT_COMMAND)  (pkg-config --libs $* --silence-errors || true) > $@
+	$(PRINT_COMMAND)  $(MIQ_PKGCONFIG_LIBS_OPTIONAL)
+
+
 
 # Non-optional packages
 $(MIQ_OBJDIR)%.pkg-config.cflags: 					$(MIQ_PKGDEPS)
-	$(PRINT_PKGCONFIG)  pkg-config --cflags $* > $@ || (echo "Error"": Required package $* not found" && false)
+	$(PRINT_PKGCONFIG)	$(MIQ_PKGCONFIG_CFLAGS_CHECK)
 $(MIQ_OBJDIR)%.pkg-config.ldflags: 					$(MIQ_PKGDEPS)
-	$(PRINT_COMMAND)  pkg-config --libs $* > $@ || (echo "Error"": Required package $* not found" && false)
+	$(PRINT_COMMAND)	$(MIQ_PKGCONFIG_LIBS_CHECK)
 $(MIQ_OBJDIR)lib%.cfg.ldflags: $(MIQ_OBJDIR)CFG_HAVE_lib%.h		$(MIQ_PKGDEPS)
 	$(PRINT_COMMAND)  (grep -q 'define ' $< && echo $(LINK_CFG_OPT)$* || true) > $@
 
