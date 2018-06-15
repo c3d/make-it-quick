@@ -108,28 +108,28 @@ MIQ_LINK=	$(LIBTOOL) --silent --mode=link
 MAKE_CC=	$(MIQ_COMPILE) $(CC)  $(MIQ_CFLAGS)   -c $< -o $@
 MAKE_CXX=	$(MIQ_COMPILE) $(CXX) $(MIQ_CXXFLAGS) -c $< -o $@
 MAKE_AS=	$(MIQ_COMPILE) $(CC)  $(MIQ_CFLAGS)   -c $< -o $@
-MAKE_LIB=	$(MIQ_LINK)    $(LD)  $(MIQ_LDFLAGS) $(MIQ_TOLINK)	\
+MAKE_LIB=	$(MIQ_LINK)    $(LD)  $(MIQ_LDFLAGS) $(MIQ_LINKARGS)	\
 			-rpath $(PREFIX_DLL) -o $@			\
 			$(MIQ_LT_VERS_OPT)
 MAKE_DLL=	$(MAKE_LIB)
 INSTALL_DLL=	$(LIBTOOL) --silent --mode=install			\
 			$(INSTALL) $(MIQ_DLLNAME) $(PREFIX_DLL)
-MAKE_EXE=	$(MIQ_LINK)    $(LD)  $(MIQ_LDFLAGS) $(MIQ_TOLINK) -o $@
+MAKE_EXE=	$(MIQ_LINK)    $(LD)  $(MIQ_LDFLAGS) $(MIQ_LINKARGS) -o $@
 else
 # Non-libtool case: manage manually
 CFLAGS_PIC=	-fPIC
 MAKE_CC=	$(CC)	$(MIQ_CFLAGS)	-c $< -o $@
 MAKE_CXX=	$(CXX)	$(MIQ_CXXFLAGS)	-c $< -o $@
 MAKE_AS=	$(CC)	$(MIQ_CFLAGS)	-c $< -o $@
-MAKE_LIB=	$(AR) $@	$(MIQ_TOLINK)	&& $(RANLIB) $@
-MAKE_DLL=	$(LD) -shared	$(MIQ_LDFLAGS) $(MIQ_TOLINK)	\
+MAKE_LIB=	$(AR) $@	$(MIQ_LINKARGS)	&& $(RANLIB) $@
+MAKE_DLL=	$(LD) -shared	$(MIQ_LDFLAGS) $(MIQ_LINKARGS)	\
 				-o $(MIQ_DLLNAME)		\
 				-Wl,-rpath -Wl,$(PREFIX_DLL)	\
 				$(MIQ_SONAME_OPT)		\
 		&& (cd $(OUTPUT) $(MIQ_SYMLINKS))
 INSTALL_DLL= 	$(INSTALL) $(MIQ_DLLNAME) $(PREFIX_DLL)		\
 		&& (cd $(PREFIX_DLL) $(MIQ_SYMLINKS))
-MAKE_EXE=	$(LD)		$(MIQ_LDFLAGS) $(MIQ_TOLINK) -o $@
+MAKE_EXE=	$(LD)		$(MIQ_LDFLAGS) $(MIQ_LINKARGS) -o $@
 endif
 
 LINK_DIR_OPT=	-L
