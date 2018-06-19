@@ -69,6 +69,11 @@ PACKAGE_DIR?=$(PACKAGE_NAME:%=%/)
 PACKAGE_LIBS=$(MIQ_PRODLIB)
 PACKAGE_DLLS=$(MIQ_PRODDLL)
 
+# Package configuration directories by default
+PACKAGE_PREFIX?=$(PREFIX)
+PACKAGE_PREFIX_LIB?=$(PREFIX_LIB)
+PACKAGE_PREFIX_HDR?=$(PREFIX_HDR)
+
 # Local setup - Location of configuration files, etc (tweaked at install time)
 -include $(MIQ)config.local-setup.mk
 CONFIG_SOURCES?=$(MIQ)config/
