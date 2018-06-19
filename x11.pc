@@ -1,0 +1,5 @@
+Name: x11
+Description: Hacked x11 .pc file for make-it-quick on macOS
+Libs: -L/usr/X11/lib
+Cflags: -I/usr/X11/include
+Version: 0.1

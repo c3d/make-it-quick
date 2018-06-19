@@ -37,3 +37,6 @@ MIQ_SONAME_OPT=	$(PRODUCTS_VERSION:%=-Wl,-install_name -Wl,$(MIQ_SONAME))
 # On MacOSX, we will use basic frameworks e.g. for string and filesystem functions
 LDFLAGS_BUILDENV_macosx-clang=	-framework CoreFoundation \
 				-framework CoreServices
+
+# Special case x11 package, missing on macOS, and unusual location - A bit yucky
+export PKG_CONFIG_PATH:=$(PKG_CONFIG_PATH):$(MIQ)
