@@ -593,8 +593,13 @@ benchmark:	$(BENCHMARKS:%=%.benchmark)
 #  Generation of pkg-config data file
 #------------------------------------------------------------------------------
 
-MIQ_PACKAGELIBS=$(PACKAGE_LIBS:%.lib=$(LINK_LIB_OPT)%)	\
+MIQ_PACKAGELIBS=$(MIQ_PACKAGELDPATH)			\
+		$(PACKAGE_LIBS:%.lib=$(LINK_LIB_OPT)%)	\
 		$(PACKAGE_DLLS:%.dll=$(LINK_DLL_OPT)%)
+MIQ_PACKAGELDPATH=$(firstword 				\
+		$(PACKAGE_LIBS:%=-L$${libdir})		\
+		$(PACKAGE_DLLS:%=-L$${libdir}))
+
 MIQ_GENPC=					  	 \
 	(echo 'prefix=$(PACKAGE_PREFIX:%/=%)'		;\
 	echo 'exec_prefix=$${prefix}'			;\
@@ -606,7 +611,7 @@ MIQ_GENPC=					  	 \
 	echo 'URL: $(PACKAGE_URL)'			;\
 	echo 'Requires: $(PACKAGE_REQUIRES)'		;\
 	echo 'Conflicts: $(PACKAGE_CONFLICTS)'		;\
-	echo 'Libs: -L$${libdir} $(MIQ_PACKAGELIBS)'	;\
+	echo 'Libs: $(MIQ_PACKAGELIBS)'  		;\
 	echo 'Cflags: -I$${includedir}'			)
 
 $(MIQ_PACKAGE):						$(MIQ_MAKEDEPS)
