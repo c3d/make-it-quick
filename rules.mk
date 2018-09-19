@@ -176,7 +176,7 @@ debug opt release profile: $(LOGS).mkdir $(dir $(LAST_LOG)).mkdir
 	$(PRINT_COMMAND) $(TIME) $(MAKE) TARGET=$@ RECURSE=.build LOG_COMMANDS= .build $(LOG_COMMANDS)
 
 # Testing
-test tests check: test-$(TARGET)
+test tests check installcheck: test-$(TARGET)
 
 # Clean builds
 rebuild: re-$(TARGET)
