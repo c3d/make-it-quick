@@ -29,6 +29,8 @@ HDR_INSTALL=			\
 
 PREFIX_LIB=$(PREFIX)lib/make-it-quick/config/
 LIB_INSTALL=$(wildcard config/check*.c)
+PREFIX_SHR=$(PREFIX)lib/make-it-quick/
+SHR_INSTALL=README.md
 TESTS=example/
 
 MIQ=./

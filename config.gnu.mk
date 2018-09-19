@@ -34,6 +34,9 @@ PYTHON=         python
 AR=             $(CROSS_COMPILE:%=%-)ar -rcs
 RANLIB=         $(CROSS_COMPILE:%=%-)ranlib
 INSTALL=	install
+UNINSTALL=	/bin/rm -f
+UNINSTALL_DIR=	/bin/rmdir > /dev/null 2>&1
+UNINSTALL_OK=	|| true
 CAT=		cat /dev/null
 
 

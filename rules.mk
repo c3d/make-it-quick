@@ -72,17 +72,17 @@ MIQ_LDFLAGS=	$(LDFLAGS)				\
 
 MIQ_PACKAGE= 	$(PACKAGE_NAME:%=$(MIQ_OBJDIR)%.pc)
 
-MIQ_INSTALL=	$(TO_INSTALL:%=%.install)		\
-		$(MIQ_OUTEXE:%=%.install_exe)		\
-		$(MIQ_OUTLIB:%=%.install_lib)		\
-		$(MIQ_OUTDLL:%=%.install_dll)		\
-		$(EXE_INSTALL:%=%.install_exe)		\
-		$(LIB_INSTALL:%=%.install_lib)		\
-		$(DLL_INSTALL:%=%.install_dll)		\
-		$(HEADERS:%=%.install_hdr)		\
-		$(HDR_INSTALL:%=%.install_hdr)		\
-		$(SHR_INSTALL:%=%.install_shr)		\
-		$(MIQ_PACKAGE:%=%.install_pc)
+MIQ_INSTALL=	$(TO_INSTALL:%=%.$(DO_INSTALL))		\
+		$(MIQ_OUTEXE:%=%.$(DO_INSTALL)_exe)	\
+		$(MIQ_OUTLIB:%=%.$(DO_INSTALL)_lib)	\
+		$(MIQ_OUTDLL:%=%.$(DO_INSTALL)_dll)	\
+		$(EXE_INSTALL:%=%.$(DO_INSTALL)_exe)	\
+		$(LIB_INSTALL:%=%.$(DO_INSTALL)_lib)	\
+		$(DLL_INSTALL:%=%.$(DO_INSTALL)_dll)	\
+		$(HEADERS:%=%.$(DO_INSTALL)_hdr)	\
+		$(HDR_INSTALL:%=%.$(DO_INSTALL)_hdr)	\
+		$(SHR_INSTALL:%=%.$(DO_INSTALL)_shr)	\
+		$(MIQ_PACKAGE:%=%.$(DO_INSTALL)_pc)
 
 MIQ_SOURCES=	$(SOURCES)				\
 		$(SOURCES_BUILDENV_$(BUILDENV))		\
@@ -183,6 +183,7 @@ rebuild: re-$(TARGET)
 
 # Installation
 install: install-$(TARGET)
+uninstall: uninstall-$(TARGET)
 
 clean: $(SUBDIRS:%=%.clean) $(VARIANTS:%=%.variant-clean)
 	-$(PRINT_CLEAN) rm -f $(TO_CLEAN) $(MIQ_OBJECTS) $(DEPENDENCIES) $(MIQ_OUTPRODS) $(MIQ_TOLINK) config.h
@@ -205,10 +206,11 @@ help:
 	@$(ECHO) "  make clean          : Clean build results (only BUILDENV=$(BUILDENV))"
 	@$(ECHO) "  make rebuild        : Clean before building"
 	@$(ECHO) "  make nuke           : Clean build directory"
-	@$(ECHO) "  make test           : Run sanity tests (run only tests)"
-	@$(ECHO) "  make check          : Build product, then run tests"
+	@$(ECHO) "  make check / test   : Build product and run sanity checks"
 	@$(ECHO) "  make benchmark      : Build product, then run benchmarks"
 	@$(ECHO) "  make install        : Build and install result"
+	@$(ECHO) "  make uninstall      : Remove the installed results"
+	@$(ECHO) "  make dist           : Create a tarball for packaging"
 	@$(ECHO) "  make clang-format   : Reformat sources using clang-format"
 	@$(ECHO) "  make v-[target]     : Build target in 'verbose' mode"
 	@$(ECHO) "  make d-[target]     : Deep-checking of library dependencies"
@@ -241,7 +243,8 @@ endif
 .objects: .prebuild
 .objects: $(MIQ_OBJDIR:%=%.mkdir)
 .product: $(MIQ_OUTPRODS)
-.postbuild: .product $(DO_INSTALL:%=$(MIQ_INSTALL))
+.postbuild: .product .install
+.install: $(DO_INSTALL:%=$(MIQ_INSTALL))
 .tests: $(RUN_TESTS:%=$(TESTS:%=%.test))
 .goodbye: .postbuild
 
@@ -287,6 +290,8 @@ notime-%:
 # Installation build
 install-%:
 	$(PRINT_COMMAND) $(MAKE) $* DO_INSTALL=install
+uninstall-%:
+	$(PRINT_COMMAND) $(MAKE) TARGET=$* DO_INSTALL=uninstall .install
 
 # Deep build (re-check all libraries instead of just resulting .a)
 deep-%:
@@ -352,6 +357,7 @@ PRINT_BUILD= 	$(PRINT_COMMAND) $(INFO) "[BUILD]" $(shell basename $@);
 PRINT_GENERATE= $(PRINT_COMMAND) $(INFO) "[GENERATE]" "$(shell basename "$@")";
 PRINT_VARIANT=  $(PRINT_COMMAND) $(INFO) "[VARIANT]" "$*";
 PRINT_INSTALL=  $(PRINT_COMMAND) $(INFO) "[INSTALL] " $(*F) in $(<D) $(COLORIZE);
+PRINT_UNINSTALL=$(PRINT_COMMAND) $(INFO) "[UNINSTALL] " $(*F) $(COLORIZE);
 PRINT_CLEAN=    $(PRINT_COMMAND) $(INFO) "[CLEAN] " $@ $(MIQ_PRETTYDIR) $(COLORIZE);
 PRINT_COPY=     $(PRINT_COMMAND) $(INFO) "[COPY]" $< '=>' $@ ;
 PRINT_DEPEND= 	$(PRINT_COMMAND) $(INFO) "[DEPEND] " $< ;
@@ -587,6 +593,22 @@ benchmark:	$(BENCHMARKS:%=%.benchmark)
 	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_SHR)
 %.install_pc: $(PREFIX_PKGCONFIG).mkdir-only %
 	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_PKGCONFIG)
+
+# Uninstalling the product
+%.uninstall:
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PREFIX)%) ; $(UNINSTALL_DIR) $(PREFIX) $(UNINSTALL_OK)
+%.uninstall_exe:
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PREFIX_BIN)%) ; $(UNINSTALL_DIR) $(PREFIX_BIN) $(UNINSTALL_OK)
+%.uninstall_lib:
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PREFIX_LIB)%) ; $(UNINSTALL_DIR) $(PREFIX_LIB) $(UNINSTALL_OK)
+%.uninstall_dll:
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PREFIX_DLL)%) ; $(UNINSTALL_DIR) $(PREFIX_DLL) $(UNINSTALL_OK)
+%.uninstall_hdr:
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PREFIX_HDR)%) ; $(UNINSTALL_DIR) $(PREFIX_HDR) $(UNINSTALL_OK)
+%.uninstall_shr:
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PREFIX_SHR)%) ; $(UNINSTALL_DIR) $(PREFIX_SHR) $(UNINSTALL_OK)
+%.uninstall_pc:
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PREFIX_PKGCONFIG)%) ; $(UNINSTALL_DIR) $(PREFIX_PKGCONFIG) $(UNINSTALL_OK)
 
 
 #------------------------------------------------------------------------------
