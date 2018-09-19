@@ -161,6 +161,9 @@ MIQ_INDEX:=     1
 MIQ_COUNT:=     $(words $(MIQ_SOURCES))
 MIQ_PROFOUT:=	$(subst $(EXE_EXT),,$(MIQ_OUTEXE))_prof_$(GIT_REVISION).vsp
 
+MIQ_TARNAME=	$(PACKAGE_NAME)-$(PACKAGE_VERSION)
+MIQ_TARBALL=	$(MIQ_TARNAME).tar.bz2
+
 ifeq (3.80,$(firstword $(sort $(MAKE_VERSION) 3.80)))
 MIQ_ORDERONLY=|
 endif
@@ -192,8 +195,16 @@ clean: $(SUBDIRS:%=%.clean) $(VARIANTS:%=%.variant-clean)
 %.variant-clean:
 	$(PRINT_COMMAND) $(MIQ_RECURSE) VARIANT=$* VARIANTS= clean $(COLORIZE)
 
+dist:	$(MIQ_TARBALL)
+$(MIQ_TARBALL): AUTHORS NEWS
+	$(PRINT_GENERATE) $(GEN_TARBALL)
+AUTHORS: .ALWAYS
+	$(PRINT_GENERATE) $(GEN_AUTHORS) > $@
+NEWS: .ALWAYS
+	$(PRINT_GENERATE) $(GEN_NEWS)
+
 distclean nuke: clean
-	-$(PRINT_CLEAN) rm -rf $(MIQ_OUTPRODS) $(OBJFILES) $(LOGS)
+	-$(PRINT_CLEAN) rm -rf $(MIQ_OUTPRODS) $(OBJFILES) $(LOGS) $(MIQ_TARBALL)
 
 help:
 	@$(ECHO) "Available targets:"

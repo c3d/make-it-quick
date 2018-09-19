@@ -39,6 +39,26 @@ UNINSTALL_DIR=	/bin/rmdir > /dev/null 2>&1
 UNINSTALL_OK=	|| true
 CAT=		cat /dev/null
 
+# Tarball generation
+GEN_TARBALL=	mkdir $(MIQ_TARNAME) &&				\
+		tar cf - AUTHORS NEWS $(shell git ls-files)  |	\
+		(cd $(MIQ_TARNAME); tar xf - ) &&		\
+		tar cfj $@ $(MIQ_TARNAME) &&			\
+		rm -rf $(MIQ_TARNAME)
+
+GEN_AUTHORS=	(echo "This software was brought to you by:";	\
+	         echo "" ;					\
+		 git log --format='%aN <%aE>' | sort -u |	\
+		 sed -e 's/^/- /g';				\
+		 echo ""; 					\
+		 echo "Thank you!")
+GEN_NEWS=	grep '^$(shell git tag -l)' $@ || 		\
+		(touch $@;					\
+		  (git tag -l $(shell git describe) -n999 ;	\
+		  echo "";					\
+		  cat $@)					\
+		  > $@.latest && mv $@.latest $@)
+
 
 #------------------------------------------------------------------------------
 #  Compilation flags

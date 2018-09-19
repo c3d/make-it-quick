@@ -61,8 +61,9 @@ NOT_PARALLEL?=  .NOTPARALLEL
 # Git revision for the current code
 GIT_REVISION:=  $(shell git rev-parse --short HEAD 2> /dev/null || echo "unknown")
 
-# Product version defaults to package version
-PRODUCTS_VERSION?=$(PACKAGE_VERSION)
+# Extract defaults for package name and version if not set
+PACKAGE_NAME?=$(firstword $(PRODUCTS) $(notdir $(shell pwd)))
+PACKAGE_VERSION?=$(shell (git describe --always --match 'v[0-9].*' | sed -e 's/^v//') || echo unknown)
 
 # Package installation directory
 PACKAGE_DIR?=$(PACKAGE_NAME:%=%/)
