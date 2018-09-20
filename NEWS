@@ -1,7 +1,5 @@
-v0.1            This is the first official release of make-it-quick.
+v0.1            First official release of make-it-quick.
 
-    This alpha-quality version provides most of the basic functions I
-    think are useful to develop C / C++ software on Linux and macOS. This
-    was not extensively tested on any other platform at this point,
-    although some effort was made to ensure it would not be gratuitously
-    broken.
+    This version provides the basic functions required to build C / C++
+    programs. It has been tested on Linux and macOS and to a lesser
+    extent on various Windows environemnts.
