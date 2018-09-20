@@ -61,9 +61,12 @@ NOT_PARALLEL?=  .NOTPARALLEL
 # Git revision for the current code
 GIT_REVISION:=  $(shell git rev-parse --short HEAD 2> /dev/null || echo "unknown")
 
+# Local configuration if any
+-include $(MIQ)config.local-setup.mk
+
 # Extract defaults for package name and version if not set
 PACKAGE_NAME?=$(firstword $(PRODUCTS) $(notdir $(shell pwd)))
-PACKAGE_VERSION?=$(shell (git describe --always --match 'v[0-9].*' | sed -e 's/^v//') || echo unknown)
+PACKAGE_VERSION?=$(shell (git describe --always --match 'v[0-9].*' 2> /dev/null | sed -e 's/^v//') || echo unknown)
 
 # Package installation directory
 PACKAGE_DIR?=$(PACKAGE_NAME:%=%/)
@@ -75,8 +78,7 @@ PACKAGE_PREFIX?=$(PREFIX)
 PACKAGE_PREFIX_LIB?=$(PREFIX_LIB)
 PACKAGE_PREFIX_HDR?=$(PREFIX_HDR)
 
-# Local setup - Location of configuration files, etc (tweaked at install time)
--include $(MIQ)config.local-setup.mk
+# Location of configuration files, etc (tweaked at install time)
 CONFIG_SOURCES?=$(MIQ)config/
 
 # Sources to reformat
