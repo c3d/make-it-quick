@@ -113,7 +113,9 @@ MIQ_OUTPRODS=	$(MIQ_OUTEXE) $(MIQ_OUTLIB) $(MIQ_OUTDLL)
 MIQ_BUILDTEST=	$(MAKE) SOURCES=$(@:%.test=%) 			\
 			PRODUCTS=$*_test.exe 			\
 			RUN_TESTS=				\
-			LINK_LIBS="$(MIQ_PRODLIBS)"
+			LINK_LIBS="$(MIQ_PRODLIBS)"		\
+			.build
+
 MIQ_RUNTEST=	$(TEST_ENV)					\
 			$(TEST_CMD_$*)				\
 			$(OUTPUT)$(EXE_PFX)$*_test$(EXE_EXT)	\
