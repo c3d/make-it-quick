@@ -52,11 +52,11 @@ GEN_AUTHORS=	(echo "This software was brought to you by:";	\
 		 sed -e 's/^/- /g';				\
 		 echo ""; 					\
 		 echo "Thank you!")
-GEN_NEWS=	grep '^$(shell git tag -l)' $@ || 		\
-		(touch $@;					\
-		  (git tag -l $(shell git describe) -n999 ;	\
-		  echo "";					\
-		  cat $@)					\
+GEN_NEWS=	grep '^$(shell git tag -n1 `git describe`)' $@ || 	\
+		(touch $@;						\
+		  (git tag -l $(shell git describe) -n999 ;		\
+		  echo "";						\
+		  cat $@)						\
 		  > $@.latest && mv $@.latest $@)
 
 
