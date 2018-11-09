@@ -47,12 +47,6 @@ TESTS=product count-characters
 # Define what to benchmark
 BENCHMARKS=product
 
-# Define what to test
-TESTS=product count-characters
-
-# Define what to benchmark
-BENCHMARKS=product
-
 # Include the makefile rules
 MIQ=make-it-quick/
 include $(MIQ)rules.mk
