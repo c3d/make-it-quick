@@ -32,5 +32,6 @@ OBJ_EXT=	.obj
 
 # Because of the above, we need to put the number before the extesion
 # e.g. where Linux would have libfoo.so.1.3.2, cygwin has libfoo.1.3.2.dll
-MIQ_NOINSTALL=	$(@:%.install_dll=%)
-MIQ_DLLNAME=	$(MIQ_NOINSTALL:%$(DLL_EXT)=%$(PRODUCTS_VERSION:%=.$(MIQ_V_VERSION))$(DLL_EXT))
+MIQ_DLLNAME=	$(MIQ_SOBASE:%$(DLL_EXT)=%$(PRODUCTS_VERSION:%=.$(MIQ_V_VERSION))$(DLL_EXT))
+MIQ_SONAME=	$(MIQ_SOBASE:%$(DLL_EXT)=%)$(MIQ_V_MAJOR:%=.%)$(DLL_EXT)
+MIQ_SONAME_OPT=	$(PRODUCTS_VERSION:%=-Wl,-soname -Wl,$(MIQ_SONAME))

@@ -101,7 +101,7 @@ DLL_PFX=	lib
 #------------------------------------------------------------------------------
 
 MIQ_SOBASE=		$(@F:%.install_dll=%)
-MIQ_SONAME=		$(@F:%.install_dll=%)$(MIQ_V_MAJOR:%=.%)
+MIQ_SONAME=		$(MIQ_SOBASE)$(MIQ_V_MAJOR:%=.%)
 MIQ_DLLNAME=		$(@:%.install_dll=%)$(PRODUCTS_VERSION:%=.$(MIQ_V_VERSION))
 
 # Conversion to libttool input

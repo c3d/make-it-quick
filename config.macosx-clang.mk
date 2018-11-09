@@ -30,8 +30,8 @@ DLL_EXT=	.dylib
 
 # For macOS, the convention is to put the version number before extension,
 # e.g. where Linux would have libfoo.so.1.3.2, macOS has libfoo.1.3.2.dylib
-MIQ_NOINSTALL=	$(@:%.install_dll=%)
-MIQ_DLLNAME=	$(MIQ_NOINSTALL:%$(DLL_EXT)=%$(PRODUCTS_VERSION:%=.$(MIQ_V_VERSION))$(DLL_EXT))
+MIQ_DLLNAME=	$(MIQ_SOBASE:%$(DLL_EXT)=%$(PRODUCTS_VERSION:%=.$(MIQ_V_VERSION))$(DLL_EXT))
+MIQ_SONAME=	$(MIQ_SOBASE:%$(DLL_EXT)=%)$(MIQ_V_MAJOR:%=.%)$(DLL_EXT)
 MIQ_SONAME_OPT=	$(PRODUCTS_VERSION:%=-Wl,-install_name -Wl,$(MIQ_SONAME))
 
 # On MacOSX, we will use basic frameworks e.g. for string and filesystem functions
