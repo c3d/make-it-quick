@@ -19,5 +19,8 @@
 #     See LICENSE file for details.
 #******************************************************************************
 
+DEFINES_BUILDENV_msys=CONFIG_MSYS UNICODE _WIN32 WIN32
+OS_NAME_BUILDENV_msys=windows
+
 include $(MIQ)config.mingw.mk
 LINE_BUFFERED=--line-buffered
