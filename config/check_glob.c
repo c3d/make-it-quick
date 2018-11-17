@@ -11,4 +11,5 @@ int main()
     const char *pattern = "*";
     glob(pattern, GLOB_MARK, glob_error, &files);
     globfree(&files);
+    return 0;
 }
