@@ -236,7 +236,7 @@ help:
 
 .build: .hello .config .libraries .prebuild		\
 	.recurse .objects .product			\
-	.postbuild .tests .goodbye
+	.postbuild $(RUN_TESTS:%=.tests) .goodbye
 
 .hello:
 	@$(INFO) "[BEGIN]" $(TARGET) $(BUILDENV) in "$(MIQ_PRETTYDIR)"
@@ -258,7 +258,7 @@ endif
 .product: $(MIQ_OUTPRODS)
 .postbuild: .product .install
 .install: $(DO_INSTALL:%=$(MIQ_INSTALL))
-.tests: $(RUN_TESTS:%=$(TESTS:%=%.test))
+.tests: $(TESTS:%=%.test)
 .goodbye: .postbuild
 
 
