@@ -403,18 +403,32 @@ MIQ_OBJDEPS=$(MIQ_OBJDIR_DEPS) $(MIQ_MAKEDEPS) $(MIQ_ORDERONLY:%=% .prebuild)
 
 # Check if the compiler supports dependency flags (if not, do it the hard way)
 ifndef CFLAGS_DEPENDENCIES
+
+# The following is a trick to avoid errors if a header file appears in a
+# generated dependency but no longer in the source code.
+# The trick is quite ugly, but fortunately documented here:
+# http://scottmcpeak.com/autodepend/autodepend.html
+POSTPROCESS_DEPENDENCY?=                            \
+    ( sed -e 's/.*://' -e 's/\\$$//' < $@ |         \
+      fmt -1 |                                      \
+      sed -e 's/^ *//' -e 's/$$/:/' >> $@ )
+
 $(MIQ_OBJDIR)%.c$(OBJ_EXT).d:		%.c			$(MIQ_OBJDEPS)
-	$(PRINT_DEPEND) ( $(CC_DEPEND)
+	$(PRINT_DEPEND) ( $(CC_DEPEND) && $(POSTPROCESS_DEPENDENCY) )
 $(MIQ_OBJDIR)%.cpp$(OBJ_EXT).d:		%.cpp			$(MIQ_OBJDEPS)
-	$(PRINT_DEPEND) ( $(CXX_DEPEND)
+	$(PRINT_DEPEND) ( $(CXX_DEPEND) && $(POSTPROCESS_DEPENDENCY) )
 $(MIQ_OBJDIR)%.ccc$(OBJ_EXT).d:		%.cc			$(MIQ_OBJDEPS)
-	$(PRINT_DEPEND) ( $(CXX_DEPEND)
+	$(PRINT_DEPEND) ( $(CXX_DEPEND) && $(POSTPROCESS_DEPENDENCY) )
 $(MIQ_OBJDIR)%.s$(OBJ_EXT).d: 		%.s			$(MIQ_OBJDEPS)
-	$(PRINT_DEPEND) ( $(AS_DEPEND)
+	$(PRINT_DEPEND) ( $(AS_DEPEND) && $(POSTPROCESS_DEPENDENCY) )
 $(MIQ_OBJDIR)%.asm$(OBJ_EXT).d: 	%.asm			$(MIQ_OBJDEPS)
-	$(PRINT_DEPEND) ( $(AS_DEPEND)
+	$(PRINT_DEPEND) ( $(AS_DEPEND) && $(POSTPROCESS_DEPENDENCY) )
+
 else
+
+# Compiler has decent support for dependency generation
 $(MIQ_OBJDIR)%$(OBJ_EXT).d: $(MIQ_OBJDIR)%$(OBJ_EXT)
+
 endif
 
 
