@@ -26,6 +26,7 @@ BUILDENV_Cygwin=cygwin
 BUILDENV_MinGW=mingw
 BUILDENV_MSYS=msys
 BUILDENV_Haiku=haiku
+BUILDENV_FreeBSD=bsd
 
 # Just in case (leftovers from a former life ;-)
 BUILDENV_HP-UX=hpux
