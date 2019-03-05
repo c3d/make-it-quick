@@ -13,7 +13,7 @@ while [ $# -ne 0 ]; do
     --build=*)                          output IGNORED_BUILD=${1/--build=/}/;;
     --host=*)                           output IGNORED_HOST=${1/--host=/}/;;
     --program-prefix=*)                 output IGNORED_PROGRAM_PREFIX=${1/--program-prefix=/}/;;
-    --disable-dependency-tracking)      output IGNORED_DEPENDENCY_TRACKING=1/;;
+    --disable-dependency-tracking)      output IGNORED_DEPENDENCY_TRACKING=0;;
     --prefix=*)                         output PREFIX=${1/--prefix=/}/;;
     --exec-prefix=*)                    output PREFIX_EXEC=${1/--exec-prefix=/}/;;
     --bindir=*)                         output PREFIX_BIN=${1/--bindir=/}/;;
