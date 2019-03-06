@@ -19,6 +19,11 @@
 #     See LICENSE file for details.
 #******************************************************************************
 
+# Package description
+PACKAGE_NAME=make-it-quick
+PACKAGE_DESCRIPTION=A simple auto-configuring build system for C and C++ programs
+PACKAGE_URL=http://github.com/c3d/make-it-quick
+
 # Things to install
 HDR_INSTALL=			\
 	rules.mk		\
