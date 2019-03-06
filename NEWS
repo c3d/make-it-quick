@@ -1,3 +1,8 @@
+v0.2            Improved packaging support, Haiku and FreeBSD platforms
+    - Installable package for Fedora and OpenSUSE
+    - Add preliminary support for Haiku and FreeBSD
+    - Several bug fixes
+
 v0.1            First official release of make-it-quick.
 
     This version provides the basic functions required to build C / C++
