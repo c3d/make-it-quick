@@ -6,27 +6,28 @@ output() {
     echo $1 >> config.local-setup.mk
 }
 
-rm config.local-setup.mk
+rm -f config.local-setup.mk
 
+# DD='$(DESTDIR)'
 while [ $# -ne 0 ]; do
     case "$1" in
     --build=*)                          output IGNORED_BUILD=${1/--build=/}/;;
     --host=*)                           output IGNORED_HOST=${1/--host=/}/;;
     --program-prefix=*)                 output IGNORED_PROGRAM_PREFIX=${1/--program-prefix=/}/;;
     --disable-dependency-tracking)      output IGNORED_DEPENDENCY_TRACKING=0;;
-    --prefix=*)                         output PREFIX=${1/--prefix=/}/;;
-    --exec-prefix=*)                    output PREFIX_EXEC=${1/--exec-prefix=/}/;;
-    --bindir=*)                         output PREFIX_BIN=${1/--bindir=/}/;;
-    --sbindir=*)                        output PREFIX_SBIN=${1/--sbindir=/}/;;
-    --sysconfigdir=*)                   output SYSCONFIG=${1/--sysconfigdir=/}/;;
-    --datadir=*)                        output PREFIX_SHR=${1/--datadir=/}/;;
-    --includedir=*)                     output PREFIX_HDR=${1/--includedir=/}/;;
-    --libdir=*)                         output PREFIX_LIB=${1/--libdir=/}/;;
-    --libexecdir=*)                     output PREFIX_LIBEXEC=${1/--libexecdir=/}/;;
-    --localstatedir=*)                  output PREFIX_VAR=${1/--localstatedir=/}/;;
-    --sharedstatedir==*)                output PREFIX_STR=${1/--sharedstatedir=/}/;;
-    --mandir==*)                        output PREFIX_MAN=${1/--mandir=/}/;;
-    --infodir==*)                       output PREFIX_INFO=${1/--infodir=/}/;;
+    --prefix=*)                         output PREFIX=$DD${1/--prefix=/}/;;
+    --exec-prefix=*)                    output PREFIX_EXEC=$DD${1/--exec-prefix=/}/;;
+    --bindir=*)                         output PREFIX_BIN=$DD${1/--bindir=/}/;;
+    --sbindir=*)                        output PREFIX_SBIN=$DD${1/--sbindir=/}/;;
+    --sysconfigdir=*)                   output SYSCONFIG=$DD${1/--sysconfigdir=/}/;;
+    --datadir=*)                        output PREFIX_SHR=$DD${1/--datadir=/}/;;
+    --includedir=*)                     output PREFIX_HDR=$DD${1/--includedir=/}/;;
+    --libdir=*)                         output PREFIX_LIB=$DD${1/--libdir=/}/;;
+    --libexecdir=*)                     output PREFIX_LIBEXEC=$DD${1/--libexecdir=/}/;;
+    --localstatedir=*)                  output PREFIX_VAR=$DD${1/--localstatedir=/}/;;
+    --sharedstatedir==*)                output PREFIX_STR=$DD${1/--sharedstatedir=/}/;;
+    --mandir==*)                        output PREFIX_MAN=$DD${1/--mandir=/}/;;
+    --infodir==*)                       output PREFIX_INFO=$DD${1/--infodir=/}/;;
     esac
     shift
 done
