@@ -34,6 +34,11 @@ PYTHON=         python
 AR=             $(CROSS_COMPILE:%=%-)ar -rcs
 RANLIB=         $(CROSS_COMPILE:%=%-)ranlib
 INSTALL=	install
+INSTALL_DATA=   $(INSTALL) -m 644
+INSTALL_BIN=	$(INSTALL)
+INSTALL_HDR=	$(INSTALL_DATA)
+INSTALL_SHR=	$(INSTALL_DATA)
+INSTALL_LIB=	$(INSTALL)
 UNINSTALL=	/bin/rm -f
 UNINSTALL_DIR=	/bin/rmdir > /dev/null 2>&1
 UNINSTALL_OK=	|| true

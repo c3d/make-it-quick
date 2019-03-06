@@ -39,5 +39,8 @@ TESTS=example/
 MIQ=./
 include $(MIQ)rules.mk
 
+# Install the check*.c files as data
+INSTALL_LIB=$(INSTALL_DATA)
+
 config.local-setup.mk:
 	$(PRINT_GENERATE) echo > $@ CONFIG_SOURCES=$(PREFIX_LIB)make-it-quick/config/
