@@ -606,36 +606,36 @@ benchmark:	$(BENCHMARKS:%=%.benchmark)
 #------------------------------------------------------------------------------
 
 # Installing the product: always need to build it first
-%.install: $(PREFIX).mkdir-only .product
-	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX)
-%.install_exe: $(PREFIX_BIN).mkdir-only .product
-	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_BIN)
-%.install_lib: $(PREFIX_LIB).mkdir-only .product
-	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_LIB)
-%.install_dll: $(PREFIX_DLL).mkdir-only .product
+%.install: $(PACKAGE_INSTALL).mkdir-only .product
+	$(PRINT_INSTALL) $(INSTALL) $* $(PACKAGE_INSTALL)
+%.install_exe: $(PACKAGE_INSTALL_BIN).mkdir-only .product
+	$(PRINT_INSTALL) $(INSTALL) $* $(PACKAGE_INSTALL_BIN)
+%.install_lib: $(PACKAGE_INSTALL_LIB).mkdir-only .product
+	$(PRINT_INSTALL) $(INSTALL) $* $(PACKAGE_INSTALL_LIB)
+%.install_dll: $(PACKAGE_INSTALL_DLL).mkdir-only .product
 	$(PRINT_INSTALL) $(INSTALL_DLL)
-%.install_hdr: $(PREFIX_HDR).mkdir-only
-	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_HDR)
-%.install_shr: $(PREFIX_SHR).mkdir-only
-	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_SHR)
-%.install_pc: $(PREFIX_PKGCONFIG).mkdir-only %
-	$(PRINT_INSTALL) $(INSTALL) $* $(PREFIX_PKGCONFIG)
+%.install_hdr: $(PACKAGE_INSTALL_HDR).mkdir-only
+	$(PRINT_INSTALL) $(INSTALL) $* $(PACKAGE_INSTALL_HDR)
+%.install_shr: $(PACKAGE_INSTALL_SHR).mkdir-only
+	$(PRINT_INSTALL) $(INSTALL) $* $(PACKAGE_INSTALL_SHR)
+%.install_pc: $(PACKAGE_INSTALL_PKGCONFIG).mkdir-only %
+	$(PRINT_INSTALL) $(INSTALL) $* $(PACKAGE_INSTALL_PKGCONFIG)
 
 # Uninstalling the product
 %.uninstall:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PREFIX)%) ; $(UNINSTALL_DIR) $(PREFIX) $(UNINSTALL_OK)
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL)%) ; $(UNINSTALL_DIR) $(PACKAGE_INSTALL) $(UNINSTALL_OK)
 %.uninstall_exe:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PREFIX_BIN)%) ; $(UNINSTALL_DIR) $(PREFIX_BIN) $(UNINSTALL_OK)
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_BIN)%) ; $(UNINSTALL_DIR) $(PACKAGE_INSTALL_BIN) $(UNINSTALL_OK)
 %.uninstall_lib:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PREFIX_LIB)%) ; $(UNINSTALL_DIR) $(PREFIX_LIB) $(UNINSTALL_OK)
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_LIB)%) ; $(UNINSTALL_DIR) $(PACKAGE_INSTALL_LIB) $(UNINSTALL_OK)
 %.uninstall_dll:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PREFIX_DLL)%) ; $(UNINSTALL_DIR) $(PREFIX_DLL) $(UNINSTALL_OK)
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_DLL)%) ; $(UNINSTALL_DIR) $(PACKAGE_INSTALL_DLL) $(UNINSTALL_OK)
 %.uninstall_hdr:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PREFIX_HDR)%) ; $(UNINSTALL_DIR) $(PREFIX_HDR) $(UNINSTALL_OK)
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_HDR)%) ; $(UNINSTALL_DIR) $(PACKAGE_INSTALL_HDR) $(UNINSTALL_OK)
 %.uninstall_shr:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PREFIX_SHR)%) ; $(UNINSTALL_DIR) $(PREFIX_SHR) $(UNINSTALL_OK)
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_SHR)%) ; $(UNINSTALL_DIR) $(PACKAGE_INSTALL_SHR) $(UNINSTALL_OK)
 %.uninstall_pc:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PREFIX_PKGCONFIG)%) ; $(UNINSTALL_DIR) $(PREFIX_PKGCONFIG) $(UNINSTALL_OK)
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_PKGCONFIG)%) ; $(UNINSTALL_DIR) $(PACKAGE_INSTALL_PKGCONFIG) $(UNINSTALL_OK)
 
 
 #------------------------------------------------------------------------------
@@ -650,10 +650,10 @@ MIQ_PACKAGELDPATH=$(firstword 				\
 		$(PACKAGE_DLLS:%=-L$${libdir}))
 
 MIQ_GENPC=					  	 \
-	(echo 'prefix=$(PACKAGE_PREFIX:%/=%)'		;\
+	(echo 'prefix=$(PREFIX_BIN)'			;\
 	echo 'exec_prefix=$${prefix}'			;\
-	echo 'libdir=$(PACKAGE_PREFIX_LIB:%/=%)'	;\
-	echo 'includedir=$(PACKAGE_PREFIX_HDR:%/=%)'	;\
+	echo 'libdir=$(PREFIX_LIB)'			;\
+	echo 'includedir=$(PREFIX__HDR)'		;\
 	echo 'Name: $(PACKAGE_NAME)'			;\
 	echo 'Description: $(PACKAGE_DESCRIPTION)'	;\
 	echo 'Version: $(PACKAGE_VERSION)'		;\

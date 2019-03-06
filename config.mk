@@ -68,15 +68,10 @@ GIT_REVISION:=  $(shell git rev-parse --short HEAD 2> /dev/null || echo "unknown
 PACKAGE_NAME?=$(firstword $(PRODUCTS) $(notdir $(shell pwd)))
 PACKAGE_VERSION?=$(shell (git describe --always --match 'v[0-9].*' 2> /dev/null | sed -e 's/^v//') || echo unknown)
 
-# Package installation directory
+# Package installation directory intermediate variables
 PACKAGE_DIR?=$(PACKAGE_NAME:%=%/)
 PACKAGE_LIBS=$(MIQ_PRODLIB)
 PACKAGE_DLLS=$(MIQ_PRODDLL)
-
-# Package configuration directories by default
-PACKAGE_PREFIX?=$(PREFIX)
-PACKAGE_PREFIX_LIB?=$(PREFIX_LIB)
-PACKAGE_PREFIX_HDR?=$(PREFIX_HDR)
 
 # Location of configuration files, etc (tweaked at install time)
 CONFIG_SOURCES?=$(MIQ)config/
@@ -89,15 +84,26 @@ CLANG_FORMAT_SOURCES=$(SOURCES) $(HDR_INSTALL)
 #   Installation paths
 #------------------------------------------------------------------------------
 
-SYSCONFIG?=$(DESTDIR)/etc/
-PREFIX?=$(DESTDIR)/usr/local/
+# Variables typically provided by configure scripts
+SYSCONFIG?=/etc/
+PREFIX?=/usr/local/
 PREFIX_BIN?=$(PREFIX)bin/
-PREFIX_LIB?=$(PREFIX)lib/$(PACKAGE_DIR)
+PREFIX_LIB?=$(PREFIX)lib/
 PREFIX_DLL?=$(PREFIX_LIB)
-PREFIX_HDR?=$(PREFIX)include/$(PACKAGE_DIR)
-PREFIX_SHARE?=$(PREFIX)share/$(PACKAGE_DIR)
-PREFIX_PKGCONFIG=$(PREFIX)share/pkgconfig/
+PREFIX_HDR?=$(PREFIX)include/
+PREFIX_SHR?=$(PREFIX)share/
 
+# Package configuration directories by default
+# The defaut is to install binaries and shared libraries in the prefix
+# but to install headers and data items under a directory named after project
+PACKAGE_INSTALL?=$(DESTDIR)$(PREFIX)
+PACKAGE_INSTALL_BIN?=$(DESTDIR)$(PREFIX_BIN)
+PACKAGE_INSTALL_LIB?=$(DESTDIR)$(PREFIX_LIB)
+PACKAGE_INSTALL_DLL?=$(DESTDIR)$(PREFIX_DLL)
+PACKAGE_INSTALL_HDR?=$(DESTDIR)$(PREFIX_HDR)$(PACKAGE_DIR)
+PACKAGE_INSTALL_SHR?=$(DESTDIR)$(PREFIX_SHR)$(PACKAGE_DIR)
+PACKAGE_INSTALL_PKGCONFIG?=$(DESTDIR)$(PREFIX_SHR)pkgconfig/
+PACKAGE_INSTALL_SYSCONFIG?=$(DESTDIR)$(SYSCONFIG)
 
 #------------------------------------------------------------------------------
 #   Compilation flags

@@ -136,7 +136,7 @@ MAKE_LIB=	$(MIQ_LINK)    $(LD)  $(MIQ_LDFLAGS) $(MIQ_LINKARGS)	\
 			$(MIQ_LT_VERS_OPT)
 MAKE_DLL=	$(MAKE_LIB)
 INSTALL_DLL=	$(LIBTOOL) --silent --mode=install			\
-			$(INSTALL) $(MIQ_DLLNAME) $(PREFIX_DLL)
+			$(INSTALL) $(MIQ_DLLNAME) $(PACKAGE_INSTALL_DLL)
 MAKE_EXE=	$(MIQ_LINK)    $(LD)  $(MIQ_LINKARGS) $(MIQ_LDFLAGS) -o $@
 else
 # Non-libtool case: manage manually
@@ -150,8 +150,8 @@ MAKE_DLL=	$(LD) -shared	$(MIQ_LINKARGS)	$(MIQ_LDFLAGS)  \
 				-Wl,-rpath -Wl,$(PREFIX_DLL)	\
 				$(MIQ_SONAME_OPT)		\
 		&& (cd $(OUTPUT) $(MIQ_SYMLINKS))
-INSTALL_DLL= 	$(INSTALL) $(MIQ_DLLNAME) $(PREFIX_DLL)		\
-		&& (cd $(PREFIX_DLL) $(MIQ_SYMLINKS))
+INSTALL_DLL= 	$(INSTALL) $(MIQ_DLLNAME) $(PACKAGE_INSTALL_DLL) \
+		&& (cd $(PACKAGE_INSTALL_DLL) $(MIQ_SYMLINKS))
 MAKE_EXE=	$(LD)		 $(MIQ_LINKARGS) $(MIQ_LDFLAGS) -o $@
 endif
 

@@ -20,16 +20,14 @@
 #******************************************************************************
 
 # Things to install
-PREFIX_HDR=$(PREFIX)include/make-it-quick/
 HDR_INSTALL=			\
 	rules.mk		\
 	config.mk		\
 	$(wildcard config.*.mk)	\
 	config.local-setup.mk
 
-PREFIX_LIB=$(PREFIX)lib/make-it-quick/config/
+PACKAGE_INSTALL_LIB=$(DESTDIR)$(PREFIX_LIB)$(PACKAGE_DIR)config/
 LIB_INSTALL=$(wildcard config/check*.c)
-PREFIX_SHR=$(PREFIX)lib/make-it-quick/
 SHR_INSTALL=README.md
 TESTS=example/
 
@@ -37,4 +35,4 @@ MIQ=./
 include $(MIQ)rules.mk
 
 config.local-setup.mk:
-	$(PRINT_GENERATE) echo > $@ CONFIG_SOURCES=$(PREFIX_LIB)
+	$(PRINT_GENERATE) echo > $@ CONFIG_SOURCES=$(PREFIX_LIB)make-it-quick/config/
