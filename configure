@@ -32,5 +32,5 @@ while [ $# -ne 0 ]; do
     shift
 done
 
-echo "Summary of configuration:"
+echo "# Summary of configuration:"
 cat config.local-setup.mk
