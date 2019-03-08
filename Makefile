@@ -29,7 +29,7 @@ HDR_INSTALL=			\
 	rules.mk		\
 	config.mk		\
 	$(wildcard config.*.mk)	\
-	config.local-setup.mk
+	config.system-setup.mk
 
 PACKAGE_INSTALL_LIB=$(DESTDIR)$(PREFIX_LIB)$(PACKAGE_DIR)config/
 LIB_INSTALL=$(wildcard config/check*.c)
@@ -42,5 +42,5 @@ include $(MIQ)rules.mk
 # Install the check*.c files as data
 INSTALL_LIB=$(INSTALL_DATA)
 
-config.local-setup.mk:
+config.system-setup.mk:
 	$(PRINT_GENERATE) echo > $@ CONFIG_SOURCES=$(PREFIX_LIB)make-it-quick/config/

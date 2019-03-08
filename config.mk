@@ -61,6 +61,9 @@ NOT_PARALLEL?=  .NOTPARALLEL
 # Git revision for the current code
 GIT_REVISION:=  $(shell git rev-parse --short HEAD 2> /dev/null || echo "unknown")
 
+# System configuration if installed
+-include $(MIQ)config.system-setup.mk
+
 # Local configuration if any
 -include $(MIQ)config.local-setup.mk
 
