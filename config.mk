@@ -71,6 +71,9 @@ GIT_REVISION:=  $(shell git rev-parse --short HEAD 2> /dev/null || echo "unknown
 PACKAGE_NAME?=$(firstword $(PRODUCTS) $(notdir $(shell pwd)))
 PACKAGE_VERSION?=$(shell (git describe --always --match 'v[0-9].*' 2> /dev/null | sed -e 's/^v//') || echo unknown)
 
+# Use package version for products version if not set
+PRODUCTS_VERSION?=$(PACKAGE_VERSION)
+
 # Package installation directory intermediate variables
 PACKAGE_DIR?=$(PACKAGE_NAME:%=%/)
 PACKAGE_LIBS=$(MIQ_PRODLIB)
