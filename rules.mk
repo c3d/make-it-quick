@@ -81,7 +81,9 @@ MIQ_INSTALL=	$(TO_INSTALL:%=%.$(DO_INSTALL))		\
 		$(DLL_INSTALL:%=%.$(DO_INSTALL)_dll)	\
 		$(HEADERS:%=%.$(DO_INSTALL)_hdr)	\
 		$(HDR_INSTALL:%=%.$(DO_INSTALL)_hdr)	\
-		$(SHR_INSTALL:%=%.$(DO_INSTALL)_shr)	\
+		$(MANPAGES:%=%.gz.$(DO_INSTALL)_man)	\
+		$(MAN_INSTALL:%=%.gz.$(DO_INSTALL)_man)	\
+		$(ETC_INSTALL:%=%.$(DO_INSTALL)_etc)	\
 		$(MIQ_PACKAGE:%=%.$(DO_INSTALL)_pc)
 
 MIQ_SOURCES=	$(SOURCES)				\
@@ -89,6 +91,10 @@ MIQ_SOURCES=	$(SOURCES)				\
 		$(SOURCES_TARGET_$(TARGET))		\
 		$(SOURCES_VARIANT_$(VARIANT))		\
 		$(MIQ_OUT_SOURCES)
+
+# Automatically put the man pages in the correct section
+MIQ_MANDIR=	$(PACKAGE_INSTALL_MAN)man$(MIQ_MANSECT)/
+MIQ_MANSECT=	$(subst .,,$(suffix $(*:.gz=)))
 
 ifndef MIQ_DIR
 MIQ_FULLDIR:=   $(abspath .)/
@@ -476,7 +482,6 @@ $(MIQ_OUTDLL): $(MIQ_TOLINK) $$(MIQ_TOLINK)			$(MIQ_MAKEDEPS)
 $(MIQ_OUTEXE): $(MIQ_TOLINK) $$(MIQ_TOLINK)			$(MIQ_MAKEDEPS)
 	$(PRINT_BUILD) $(MAKE_EXE)
 
-
 #------------------------------------------------------------------------------
 #   Package configuration
 #------------------------------------------------------------------------------
@@ -577,6 +582,17 @@ endif
 
 
 #------------------------------------------------------------------------------
+#  Documentation generation
+#------------------------------------------------------------------------------
+
+# Man pages
+man/%.gz:	man/%
+	$(PRINT_GENERATE)	gzip -9 < $< > $@
+man/%.[1-9]: man/%.pod
+	$(PRINT_GENERATE)	pod2man $< $@
+
+
+#------------------------------------------------------------------------------
 #   Test targets
 #------------------------------------------------------------------------------
 
@@ -618,6 +634,11 @@ benchmark:	$(BENCHMARKS:%=%.benchmark)
 	$(PRINT_INSTALL) $(INSTALL_HDR) $* $(PACKAGE_INSTALL_HDR)
 %.install_shr: $(PACKAGE_INSTALL_SHR).mkdir-only
 	$(PRINT_INSTALL) $(INSTALL_SHR) $* $(PACKAGE_INSTALL_SHR)
+%.install_man: $(PACKAGE_INSTALL_MAN).mkdir-only %
+	$(PRINT_COMMAND) $(MKDIR) -p $(MIQ_MANDIR)
+	$(PRINT_INSTALL) $(INSTALL_MAN) $* $(MIQ_MANDIR)
+%.install_etc: $(PACKAGE_INSTALL_SYSCONFIG).mkdir-only %
+	$(PRINT_INSTALL) $(INSTALL_ETC) $* $(PACKAGE_INSTALL_SYSCONFIG)
 %.install_pc: $(PACKAGE_INSTALL_PKGCONFIG).mkdir-only %
 	$(PRINT_INSTALL) $(INSTALL_DATA) $* $(PACKAGE_INSTALL_PKGCONFIG)
 
@@ -634,6 +655,10 @@ benchmark:	$(BENCHMARKS:%=%.benchmark)
 	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_HDR)%) ; $(UNINSTALL_DIR) $(PACKAGE_INSTALL_HDR) $(UNINSTALL_OK)
 %.uninstall_shr:
 	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_SHR)%) ; $(UNINSTALL_DIR) $(PACKAGE_INSTALL_SHR) $(UNINSTALL_OK)
+%.uninstall_man:
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_MAN)%)
+%.uninstall_etc:
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_SYSCONFIG)%)
 %.uninstall_pc:
 	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_PKGCONFIG)%) ; $(UNINSTALL_DIR) $(PACKAGE_INSTALL_PKGCONFIG) $(UNINSTALL_OK)
 

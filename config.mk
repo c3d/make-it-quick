@@ -98,6 +98,7 @@ PREFIX_LIB?=$(PREFIX)lib/
 PREFIX_DLL?=$(PREFIX_LIB)
 PREFIX_HDR?=$(PREFIX)include/
 PREFIX_SHR?=$(PREFIX)share/
+PREFIX_MAN?=$(PREFIX_SHR)man/
 
 # Package configuration directories by default
 # The defaut is to install binaries and shared libraries in the prefix
@@ -108,8 +109,10 @@ PACKAGE_INSTALL_LIB?=$(DESTDIR)$(PREFIX_LIB)
 PACKAGE_INSTALL_DLL?=$(DESTDIR)$(PREFIX_DLL)
 PACKAGE_INSTALL_HDR?=$(DESTDIR)$(PREFIX_HDR)$(PACKAGE_DIR)
 PACKAGE_INSTALL_SHR?=$(DESTDIR)$(PREFIX_SHR)$(PACKAGE_DIR)
+PACKAGE_INSTALL_MAN?=$(DESTDIR)$(PREFIX_MAN)
 PACKAGE_INSTALL_PKGCONFIG?=$(DESTDIR)$(PREFIX_SHR)pkgconfig/
-PACKAGE_INSTALL_SYSCONFIG?=$(DESTDIR)$(SYSCONFIG)
+PACKAGE_INSTALL_SYSCONFIG?=$(DESTDIR)$(SYSCONFIG)$(PACKAGE_DIR)
+
 
 #------------------------------------------------------------------------------
 #   Compilation flags
@@ -140,7 +143,7 @@ CXXFLAGS_TARGET_release=   $(CFLAGS_TARGET_release)
 
 ECHO=           /bin/echo
 TIME=           time
-
+MKDIR=		mkdir
 
 #------------------------------------------------------------------------------
 #   OS name for a given build environment
