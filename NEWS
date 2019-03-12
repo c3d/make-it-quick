@@ -1,3 +1,8 @@
+v0.2.1          Add support for man pages installation
+    
+    - Add support for installation of man pages in either nroff or pod format
+    - Fix handling of subdirectories in examples
+
 v0.2            Improved packaging support, Haiku and FreeBSD platforms
     - Installable package for Fedora and OpenSUSE
     - Add preliminary support for Haiku and FreeBSD

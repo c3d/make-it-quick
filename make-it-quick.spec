@@ -1,5 +1,5 @@
 Name:           make-it-quick
-Version:        0.2
+Version:        0.2.1
 Release:        1%{?dist}
 Summary:        A make-only build system for C/C++ programs
 License:        GPLv3+
@@ -39,6 +39,8 @@ can be used to rapidly build C and C++ programs.
 %doc NEWS
 
 %changelog
+* Thu Mar 12 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2.1
+- Add support for man pages and improve handling of subdirectories
 * Thu Mar  7 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2
 - Finish packaging work
 * Thu Sep 20 2018 Christophe de Dinechin <dinechin@redhat.com> - 0.1
