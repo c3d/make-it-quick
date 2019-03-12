@@ -22,5 +22,5 @@
 SOURCES=lib1.c
 PRODUCTS=lib1.dll
 
-MIQ=make-it-quick/
+MIQ=../../
 include $(MIQ)rules.mk

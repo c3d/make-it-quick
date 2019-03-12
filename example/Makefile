@@ -48,7 +48,7 @@ TESTS=product count-characters
 BENCHMARKS=product
 
 # Include the makefile rules
-MIQ=make-it-quick/
+MIQ=../
 include $(MIQ)rules.mk
 
 count-characters.test:

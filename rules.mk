@@ -160,7 +160,6 @@ MIQ_LINKARGS=   $(MIQ_OBJECTS)				\
 MIQ_RECURSE=    $(MAKE) TARGET=$(TARGET)		\
 			BUILDENV=$(RECURSE_BUILDENV) 	\
 			TOP="$(abspath $(TOP))/"	\
-			MIQ="$(abspath $(MIQ))/"	\
 			VARIANT=			\
 			COLOR_FILTER=			\
 			$(RECURSE)
