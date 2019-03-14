@@ -39,7 +39,7 @@ can be used to rapidly build C and C++ programs.
 %doc NEWS
 
 %changelog
-* Thu Mar 12 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2.1
+* Thu Mar 12 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2.1-1
 - Add support for man pages and improve handling of subdirectories
 * Thu Mar  7 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2
 - Finish packaging work
