@@ -621,17 +621,17 @@ benchmark:	$(BENCHMARKS:%=%.benchmark)
 #------------------------------------------------------------------------------
 
 # Installing the product: always need to build it first
-%.install: $(PACKAGE_INSTALL).mkdir-only .product
+%.install: $(PACKAGE_INSTALL).mkdir-only %
 	$(PRINT_INSTALL) $(INSTALL_DATA) $* $(PACKAGE_INSTALL)
-%.install_exe: $(PACKAGE_INSTALL_BIN).mkdir-only .product
+%.install_exe: $(PACKAGE_INSTALL_BIN).mkdir-only %
 	$(PRINT_INSTALL) $(INSTALL_BIN) $* $(PACKAGE_INSTALL_BIN)
-%.install_lib: $(PACKAGE_INSTALL_LIB).mkdir-only .product
+%.install_lib: $(PACKAGE_INSTALL_LIB).mkdir-only %
 	$(PRINT_INSTALL) $(INSTALL_LIB) $* $(PACKAGE_INSTALL_LIB)
-%.install_dll: $(PACKAGE_INSTALL_DLL).mkdir-only .product
+%.install_dll: $(PACKAGE_INSTALL_DLL).mkdir-only %
 	$(PRINT_INSTALL) $(INSTALL_DLL)
-%.install_hdr: $(PACKAGE_INSTALL_HDR).mkdir-only
+%.install_hdr: $(PACKAGE_INSTALL_HDR).mkdir-only %
 	$(PRINT_INSTALL) $(INSTALL_HDR) $* $(PACKAGE_INSTALL_HDR)
-%.install_shr: $(PACKAGE_INSTALL_SHR).mkdir-only
+%.install_shr: $(PACKAGE_INSTALL_SHR).mkdir-only %
 	$(PRINT_INSTALL) $(INSTALL_SHR) $* $(PACKAGE_INSTALL_SHR)
 %.install_man: $(PACKAGE_INSTALL_MAN).mkdir-only %
 	$(PRINT_COMMAND) $(MKDIR) -p $(MIQ_MANDIR)
