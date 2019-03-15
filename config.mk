@@ -94,11 +94,14 @@ CLANG_FORMAT_SOURCES=$(SOURCES) $(HDR_INSTALL)
 SYSCONFIG?=/etc/
 PREFIX?=/usr/local/
 PREFIX_BIN?=$(PREFIX)bin/
+PREFIX_SBIN?=$(PREFIX)sbin/
 PREFIX_LIB?=$(PREFIX)lib/
+PREFIX_LIBEXEC?=$(PREFIX)libexec/
 PREFIX_DLL?=$(PREFIX_LIB)
 PREFIX_HDR?=$(PREFIX)include/
 PREFIX_SHR?=$(PREFIX)share/
 PREFIX_MAN?=$(PREFIX_SHR)man/
+PREFIX_VAR?=$(PREFIX)var/
 
 # Package configuration directories by default
 # The defaut is to install binaries and shared libraries in the prefix
