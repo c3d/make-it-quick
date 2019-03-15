@@ -1,14 +1,15 @@
 Name:           make-it-quick
-Version:        0.2.2
+Version:        0.2.3
 Release:        1%{?dist}
 Summary:        A make-only build system for C/C++ programs
 License:        GPLv3+
-URL:            https://gitlab.com/c3d/%{name}
+URL:            https://github.com/c3d/%{name}
 Source:         https://github.com/c3d/%{name}/archive/v%{version}/%{name}-%{version}.tar.gz
 BuildRequires:  make >= 3.82
 BuildRequires:  gcc >= 4.8
 BuildRequires:  gcc-c++ >= 4.8
 Requires:       sed
+Requires:       make >= 3.82
 BuildArch:      noarch
 
 %description
@@ -34,11 +35,24 @@ can be used to rapidly build C and C++ programs.
 %doc NEWS
 %license LICENSE
 
+%dir %{_includedir}/%{name}
 %{_includedir}/%{name}/*.mk
-%{_datarootdir}/%{name}/config/*.c
-%{_datarootdir}/pkgconfig/%{name}.pc
+
+%dir %{_datadir}/%{name}
+%dir %{_datadir}/%{name}/config
+%{_datadir}/%{name}/config/*.c
+
+%package devel
+Summary:        Development files for make-it-quick
+%description devel
+Development files for make-it-quick
+
+%files devel
+%{_datadir}/pkgconfig/%{name}.pc
 
 %changelog
+* Fri Mar 15 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2.3-1
+- Address review comments (see comment #7 of BZ#1689277)
 * Thu Mar 14 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2.2-1
 - Change the way the config.system-setup.mk file is generated
 - Address issues reported by rpmlint
