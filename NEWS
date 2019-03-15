@@ -1,3 +1,10 @@
+v0.2.2          Release 0.2.2: Address packaging issues reported by rpmlint
+    
+    - Presence of .c files in a non-devel package
+    - Non-binary in /usr/lib, moved config files to /usr/share
+    - Incoherent version number in change log
+    - Handling of documentation (added support to make-it-quick)
+
 v0.2.1          Add support for man pages installation
     
     - Add support for installation of man pages in either nroff or pod format
