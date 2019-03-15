@@ -81,6 +81,7 @@ MIQ_INSTALL=	$(TO_INSTALL:%=%.$(DO_INSTALL))		\
 		$(DLL_INSTALL:%=%.$(DO_INSTALL)_dll)	\
 		$(HEADERS:%=%.$(DO_INSTALL)_hdr)	\
 		$(HDR_INSTALL:%=%.$(DO_INSTALL)_hdr)	\
+		$(SHR_INSTALL:%=%.$(DO_INSTALL)_shr)	\
 		$(MANPAGES:%=%.gz.$(DO_INSTALL)_man)	\
 		$(MAN_INSTALL:%=%.gz.$(DO_INSTALL)_man)	\
 		$(ETC_INSTALL:%=%.$(DO_INSTALL)_etc)	\
