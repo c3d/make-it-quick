@@ -1,5 +1,5 @@
 Name:           make-it-quick
-Version:        0.2.1
+Version:        0.2.2
 Release:        1%{?dist}
 Summary:        A make-only build system for C/C++ programs
 License:        GPLv3+
@@ -30,16 +30,20 @@ can be used to rapidly build C and C++ programs.
 %make_install COLORIZE= TARGET=release
 
 %files
-%{_libdir}/%{name}/config/*.c
-%{_includedir}/%{name}/*.mk
-%{_datarootdir}/pkgconfig/%{name}.pc
-%license LICENSE
 %doc README.md
 %doc AUTHORS
 %doc NEWS
+%license LICENSE
+
+%{_includedir}/%{name}/*.mk
+%{_datarootdir}/%{name}/config/*.c
+%{_datarootdir}/pkgconfig/%{name}.pc
 
 %changelog
-* Thu Mar 12 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2.1-1
+* Thu Mar 14 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2.2-1
+- Change the way the config.system-setup.mk file is generated
+- Address issues reported by rpmlint
+* Tue Mar 12 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2.1-1
 - Add support for man pages and improve handling of subdirectories
 * Thu Mar  7 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2
 - Finish packaging work
