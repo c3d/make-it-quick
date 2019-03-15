@@ -33,7 +33,7 @@ can be used to rapidly build C and C++ programs.
 %doc README.md
 %doc AUTHORS
 %doc NEWS
-%license LICENSE
+%license COPYING
 
 %dir %{_includedir}/%{name}
 %{_includedir}/%{name}/*.mk
