@@ -21,13 +21,12 @@ can be used to rapidly build C and C++ programs.
 %build
 %configure
 %make_build COLORIZE= TARGET=release
-%make_build COLORIZE= AUTHORS NEWS
 
 %check
 %make_build COLORIZE= TARGET=release check
 
 %install
-%make_install COLORIZE= TARGET=release
+%make_install COLORIZE= TARGET=release DOC_INSTALL=
 
 %files
 %doc README.md

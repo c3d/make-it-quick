@@ -82,6 +82,7 @@ MIQ_INSTALL=	$(TO_INSTALL:%=%.$(DO_INSTALL))		\
 		$(HEADERS:%=%.$(DO_INSTALL)_hdr)	\
 		$(HDR_INSTALL:%=%.$(DO_INSTALL)_hdr)	\
 		$(SHR_INSTALL:%=%.$(DO_INSTALL)_shr)	\
+		$(DOC_INSTALL:%=%.$(DO_INSTALL)_doc)	\
 		$(MANPAGES:%=%.gz.$(DO_INSTALL)_man)	\
 		$(MAN_INSTALL:%=%.gz.$(DO_INSTALL)_man)	\
 		$(ETC_INSTALL:%=%.$(DO_INSTALL)_etc)	\
@@ -637,6 +638,8 @@ benchmark:	$(BENCHMARKS:%=%.benchmark)
 %.install_man: $(PACKAGE_INSTALL_MAN).mkdir-only %
 	$(PRINT_COMMAND) $(MKDIR) -p $(MIQ_MANDIR)
 	$(PRINT_INSTALL) $(INSTALL_MAN) $* $(MIQ_MANDIR)
+%.install_doc: $(PACKAGE_INSTALL_DOC).mkdir-only %
+	$(PRINT_INSTALL) $(INSTALL_DOC) $* $(PACKAGE_INSTALL_DOC)
 %.install_etc: $(PACKAGE_INSTALL_SYSCONFIG).mkdir-only %
 	$(PRINT_INSTALL) $(INSTALL_ETC) $* $(PACKAGE_INSTALL_SYSCONFIG)
 %.install_pc: $(PACKAGE_INSTALL_PKGCONFIG).mkdir-only %
@@ -655,6 +658,8 @@ benchmark:	$(BENCHMARKS:%=%.benchmark)
 	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_HDR)%) ; $(UNINSTALL_DIR) $(PACKAGE_INSTALL_HDR) $(UNINSTALL_OK)
 %.uninstall_shr:
 	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_SHR)%) ; $(UNINSTALL_DIR) $(PACKAGE_INSTALL_SHR) $(UNINSTALL_OK)
+%.uninstall_doc:
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_DOC)%) ; $(UNINSTALL_DIR) $(PACKAGE_INSTALL_DOC) $(UNINSTALL_OK)
 %.uninstall_man:
 	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_MAN)%)
 %.uninstall_etc:
