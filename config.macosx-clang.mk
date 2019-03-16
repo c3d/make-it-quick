@@ -27,6 +27,8 @@ OS_NAME_BUILDENV_macosx-clang=macosx
 include $(MIQ)config.gnu.mk
 
 DLL_EXT=	.dylib
+TEST_ENV=	DYLD_LIBRARY_PATH=$(OUTPUT)
+
 
 # For macOS, the convention is to put the version number before extension,
 # e.g. where Linux would have libfoo.so.1.3.2, macOS has libfoo.1.3.2.dylib
