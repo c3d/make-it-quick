@@ -38,6 +38,7 @@ DLL_EXT=        .dll
 
 # MinGW has no 'install' program
 INSTALL=	cp
+INSTALL_DATA=	$(INSTALL)
 
 # All code is PIC in MinGW, so avoid a warning
 CFLAGS_PIC=
