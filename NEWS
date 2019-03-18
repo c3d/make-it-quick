@@ -1,3 +1,7 @@
+v0.2.3          Address packaging review comments
+    
+    See https://bugzilla.redhat.com/show_bug.cgi?id=1689277#c7
+
 v0.2.2          Release 0.2.2: Address packaging issues reported by rpmlint
     
     - Presence of .c files in a non-devel package
