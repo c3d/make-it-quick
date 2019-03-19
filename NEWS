@@ -1,3 +1,8 @@
+v0.2.4          Integration of Fedora packaging
+    
+    - Put %package first (style, comment #11 of BZ#1689277)
+    - Integrate fixes for minor issues found building SPICE
+
 v0.2.3          Address packaging review comments
     
     See https://bugzilla.redhat.com/show_bug.cgi?id=1689277#c7

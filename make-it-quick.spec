@@ -1,5 +1,5 @@
 Name:           make-it-quick
-Version:        0.2.3
+Version:        0.2.4
 Release:        1%{?dist}
 Summary:        A make-only build system for C/C++ programs
 License:        GPLv3+
@@ -15,6 +15,11 @@ BuildArch:      noarch
 %description
 A simple make-only build system with basic auto-configuration that
 can be used to rapidly build C and C++ programs.
+
+%package devel
+Summary:        Development files for make-it-quick
+%description devel
+Development files for make-it-quick
 
 %prep
 %autosetup
@@ -42,15 +47,13 @@ can be used to rapidly build C and C++ programs.
 %dir %{_datadir}/%{name}/config
 %{_datadir}/%{name}/config/*.c
 
-%package devel
-Summary:        Development files for make-it-quick
-%description devel
-Development files for make-it-quick
-
 %files devel
 %{_datadir}/pkgconfig/%{name}.pc
 
 %changelog
+* Tue Mar 19 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2.4-1
+- Address review comments (see comment #11 of BZ#1689277)
+- Integrate fixes found while building SPICE
 * Fri Mar 15 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2.3-1
 - Address review comments (see comment #7 of BZ#1689277)
 * Thu Mar 14 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2.2-1
