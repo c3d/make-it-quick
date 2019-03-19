@@ -56,4 +56,4 @@ LDFLAGS_BUILDENV_macosx-clang=	-framework CoreFoundation \
 				-framework CoreServices
 
 # Special case x11 package, missing on macOS, and unusual location - A bit yucky
-export PKG_CONFIG_PATH:=$(PKG_CONFIG_PATH):$(MIQ)
+export PKG_CONFIG_PATH:=$(PKG_CONFIG_PATH):$(abspath $(MIQ))
