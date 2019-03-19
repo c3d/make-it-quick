@@ -523,8 +523,6 @@ $(MIQ_OBJDIR)%?.pkg-config.cflags:				$(MIQ_PKGDEPS)
 $(MIQ_OBJDIR)%?.pkg-config.ldflags: 				$(MIQ_PKGDEPS)
 	$(PRINT_COMMAND)  $(MIQ_PKGCONFIG_LIBS_OPTIONAL)
 
-
-
 # Non-optional packages
 $(MIQ_OBJDIR)%.pkg-config.cflags: 					$(MIQ_PKGDEPS)
 	$(PRINT_PKGCONFIG)	$(MIQ_PKGCONFIG_CFLAGS_CHECK)
