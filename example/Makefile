@@ -51,6 +51,7 @@ CONFIG=	<stdio.h>		\
 	<sys/improbable.h> 	\
 	<iostream>		\
 	clearenv		\
+	setlinebuf		\
 	libm			\
 	liboony			\
 	sbrk
