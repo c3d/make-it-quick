@@ -358,7 +358,7 @@ endif
 
 .recurse: $(SUBDIRS:%=%.recurse)
 %.recurse:          $(MIQ_ORDERONLY:%=% .hello .prebuild)
-	+$(PRINT_COMMAND) cd $* && $(MIQ_RECURSE)
+	+$(PRINT_COMMAND) cd $* && $(MIQ_RECURSE) $(RECURSE_FLAGS_$*)
 
 %.variant:
 	$(PRINT_VARIANT) $(MAKE) VARIANTS= VARIANT=$* RECURSE=.build .build
