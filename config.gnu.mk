@@ -145,6 +145,7 @@ MIQ_SYMLINKS=	$(PRODUCTS_VERSION:%=&& $(MIQ_SYMLINKS_SO))
 
 MAKE_DIR=	mkdir -p $*
 MAKE_OBJDIR=	$(MAKE_DIR) && touch $@
+LDFLAGS_RPATH=	-Wl,-rpath,$(PREFIX_DLL)
 
 ifdef LIBTOOL
 MIQ_COMPILE=	$(LIBTOOL) --silent --mode=compile
@@ -153,7 +154,7 @@ MAKE_CC=	$(MIQ_COMPILE) $(CC)  $(MIQ_CFLAGS)   -c $< -o $@
 MAKE_CXX=	$(MIQ_COMPILE) $(CXX) $(MIQ_CXXFLAGS) -c $< -o $@
 MAKE_AS=	$(MIQ_COMPILE) $(CC)  $(MIQ_CFLAGS)   -c $< -o $@
 MAKE_LIB=	$(MIQ_LINK)    $(LD)  $(MIQ_LDFLAGS) $(MIQ_LINKARGS)	\
-			-rpath $(PREFIX_DLL) -o $@			\
+			-o $@						\
 			$(MIQ_LT_VERS_OPT)
 MAKE_DLL=	$(MAKE_LIB)
 INSTALL_DLL=	$(LIBTOOL) --silent --mode=install			\
@@ -168,7 +169,6 @@ MAKE_AS=	$(CC)	$(MIQ_CFLAGS)	-c $< -o $@
 MAKE_LIB=	$(AR) $@	$(MIQ_TOLINK)	&& $(RANLIB) $@
 MAKE_DLL=	$(LD) -shared	$(MIQ_LINKARGS)	$(MIQ_LDFLAGS)  \
 				-o $(MIQ_DLLNAME)		\
-				-Wl,-rpath -Wl,$(PREFIX_DLL)	\
 				$(MIQ_SONAME_OPT)		\
 		&& (cd $(OUTPUT) $(MIQ_SYMLINKS))
 INSTALL_DLL= 	$(INSTALL) $(MIQ_DLLNAME) $(PACKAGE_INSTALL_DLL) \
