@@ -1,5 +1,5 @@
 Name:           make-it-quick
-Version:        0.2.4
+Version:        0.2.5
 Release:        1%{?dist}
 Summary:        A make-only build system for C/C++ programs
 License:        GPLv3+
@@ -51,6 +51,13 @@ Development files for make-it-quick
 %{_datadir}/pkgconfig/%{name}.pc
 
 %changelog
+* Tue Apr 23 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2.5-1
+- Copyright header adjustments
+- Improve determination of linker when some C++ files are generated
+- Add configuration check for setlinebuf
+- Avoid rebuilding target product everytime
+- Add feature to disable testing in specific subdirectories
+- Fix rpath option to address macOS / Linux usage difference
 * Tue Mar 19 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2.4-1
 - Address review comments (see comment #11 of BZ#1689277)
 - Integrate fixes found while building SPICE
