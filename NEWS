@@ -1,3 +1,12 @@
+v0.2.5          Release v0.2.5
+    
+    - Copyright header adjustments
+    - Improve determination of linker when some C++ files are generated
+    - Add configuration check for setlinebuf
+    - Avoid rebuilding target product everytime
+    - Add feature to disable testing in specific subdirectories
+    - Fix rpath option to address macOS / Linux usage difference
+
 v0.2.4          Integration of Fedora packaging
     
     - Put %package first (style, comment #11 of BZ#1689277)
