@@ -53,17 +53,23 @@ Development files for make-it-quick
 %changelog
 * Tue Apr 23 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2.5-1
 - New upstream release
+
 * Tue Mar 19 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2.4-1
 - Address review comments (see comment #11 of BZ#1689277)
 - Integrate fixes found while building SPICE
+
 * Fri Mar 15 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2.3-1
 - Address review comments (see comment #7 of BZ#1689277)
+
 * Thu Mar 14 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2.2-1
 - Change the way the config.system-setup.mk file is generated
 - Address issues reported by rpmlint
+
 * Tue Mar 12 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2.1-1
 - Add support for man pages and improve handling of subdirectories
+
 * Thu Mar  7 2019 Christophe de Dinechin <dinechin@redhat.com> - 0.2
 - Finish packaging work
+
 * Thu Sep 20 2018 Christophe de Dinechin <dinechin@redhat.com> - 0.1
 - Initial version of the package
