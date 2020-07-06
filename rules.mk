@@ -697,7 +697,7 @@ MIQ_GENPC=					  	 \
 	(echo 'prefix=$(PREFIX_BIN)'			;\
 	echo 'exec_prefix=$${prefix}'			;\
 	echo 'libdir=$(PREFIX_LIB)'			;\
-	echo 'includedir=$(PREFIX__HDR)'		;\
+	echo 'includedir=$(PREFIX_HDR)'			;\
 	echo 'Name: $(PACKAGE_NAME)'			;\
 	echo 'Description: $(PACKAGE_DESCRIPTION)'	;\
 	echo 'Version: $(PACKAGE_VERSION)'		;\
