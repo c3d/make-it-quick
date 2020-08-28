@@ -67,4 +67,4 @@ MIQ=../
 include $(MIQ)rules.mk
 
 count-characters.test:
-	echo Output has `$(TEST_ENV) $(MIQ_OUTEXE) | wc -c` characters, should be 35
+	$(PRINT_TEST) echo Output has `$(TEST_ENV) $(MIQ_OUTEXE) | wc -c` characters, should be 35
