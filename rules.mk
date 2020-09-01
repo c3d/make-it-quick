@@ -461,15 +461,15 @@ endif
 
 # Compilation
 $(MIQ_OBJDIR)%.c$(EXT.obj): 	%.c				$(MIQ_OBJDEPS)
-	$(PRINT_COMPILE) $(MAKE_CC)
+	$(PRINT_COMPILE) $(COMPILE.c)
 $(MIQ_OBJDIR)%.cpp$(EXT.obj): 	%.cpp 				$(MIQ_OBJDEPS)
-	$(PRINT_COMPILE) $(MAKE_CXX)
+	$(PRINT_COMPILE) $(COMPILE.cpp)
 $(MIQ_OBJDIR)%.cc$(EXT.obj): 	%.cc 				$(MIQ_OBJDEPS)
-	$(PRINT_COMPILE) $(MAKE_CXX)
+	$(PRINT_COMPILE) $(COMPILE.cc)
 $(MIQ_OBJDIR)%.s$(EXT.obj): 	%.s				$(MIQ_OBJDEPS)
-	$(PRINT_COMPILE) $(MAKE_AS)
+	$(PRINT_COMPILE) $(COMPILE.s)
 $(MIQ_OBJDIR)%.asm$(EXT.obj): 	%.asm				$(MIQ_OBJDEPS)
-	$(PRINT_COMPILE) $(MAKE_AS)
+	$(PRINT_COMPILE) $(COMPILE.asm)
 
 # Skip headers
 $(MIQ_OBJDIR)%.h$(EXT.obj):
@@ -493,11 +493,11 @@ MIQ_NOLIB=	$(MIQ_NOEXE:$(PFX.lib)%$(EXT.lib)=%)
 MIQ_NODLL=	$(MIQ_NOLIB:$(PFX.dll)%$(EXT.dll)=%)
 MIQ_OUT_SOURCES=$(SOURCES_$(MIQ_NODLL))
 $(MIQ_OUTLIB): $(MIQ_TOLINK) $$(MIQ_TOLINK)	 		$(MIQ_MAKEDEPS)
-	$(PRINT_BUILD) $(MAKE_LIB)
+	$(PRINT_BUILD) $(LINK.lib)
 $(MIQ_OUTDLL): $(MIQ_TOLINK) $$(MIQ_TOLINK)			$(MIQ_MAKEDEPS)
-	$(PRINT_BUILD) $(MAKE_DLL)
+	$(PRINT_BUILD) $(LINK.dll)
 $(MIQ_OUTEXE): $(MIQ_TOLINK) $$(MIQ_TOLINK)			$(MIQ_MAKEDEPS)
-	$(PRINT_BUILD) $(MAKE_EXE)
+	$(PRINT_BUILD) $(LINK.exe)
 
 #------------------------------------------------------------------------------
 #   Package configuration

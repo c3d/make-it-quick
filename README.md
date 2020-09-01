@@ -79,8 +79,8 @@ The kind of output your makefile produces depends on the extension in
 * `.dll` for a dynamic library
 
 The build commands for each case are defined in build environment
-configurations, e.g. `config.gnu.mk`, by variables called `MAKE_EXE`,
-`MAKE_LIB` and `MAKE_DLL`. The actual extension being used are also
+configurations, e.g. `config.gnu.mk`, by variables called `LINK.exe`,
+`LINK.lib` and `LINK.dll`. The actual extension being used are also
 defined in the same file, as `EXT.exe`, `EXT.lib` and `EXT.dll`. For
 example, on Linux, `EXT.lib` is set to `.a`.
 

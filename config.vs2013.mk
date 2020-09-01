@@ -128,13 +128,14 @@ LINK_DLL_OPT=-l:
 # In order to merge all .pdb information for an executable, we need to pass the -debug
 # option to the linker.
 
-MAKE_CC=	$(CC)  $(MIQ_CFLAGS)	-c -Fo$@ $<
-MAKE_CXX=	$(CXX) $(MIQ_CXXFLAGS)	-c -Fo$@ $<
+COMPILE.c=	$(CC)  $(MIQ_CFLAGS)	-c -Fo$@ $<
+COMPILE.cpp=	$(CXX) $(MIQ_CXXFLAGS)	-c -Fo$@ $<
+COMPILE.cc=	$(COMPILE.cpp)
 MAKE_DIR=	mkdir -p $*
 MAKE_OBJDIR=	$(MAKE_DIR) && touch $@
-MAKE_LIB=	$(MSLIB) $(MIQ_LINKOPTS)			-out:$@
-MAKE_DLL=	$(LD)	 $(MIQ_LINKOPTS) $(MIQ_LDFLAGS)	   -dll -out:$@
-MAKE_EXE=	$(LD)	 $(MIQ_LINKOPTS) $(MIQ_LDFLAGS)		-out:$@
+LINK.lib=	$(MSLIB) $(MIQ_LINKOPTS)			-out:$@
+LINK.dll=	$(LD)	 $(MIQ_LINKOPTS) $(MIQ_LDFLAGS)	   -dll -out:$@
+LINK.exe=	$(LD)	 $(MIQ_LINKOPTS) $(MIQ_LDFLAGS)		-out:$@
 
 
 #------------------------------------------------------------------------------
