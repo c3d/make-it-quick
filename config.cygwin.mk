@@ -40,14 +40,14 @@ OS_NAME_BUILDENV_cygwin=windows
 include $(MIQ)config.gnu.mk
 
 # Cygwin uses Windows extensions, e.g. ld looks for .dll files
-EXE_EXT=	.exe
-LIB_EXT=	.a
-DLL_EXT=	.dll
-OBJ_EXT=	.obj
+EXT.exe=	.exe
+EXT.lib=	.a
+EXT.dll=	.dll
+EXT.obj=	.obj
 
 # Because of the above, we need to put the number before the extesion
 # e.g. where Linux would have libfoo.so.1.3.2, cygwin has libfoo.1.3.2.dll
 MIQ_DLLBASE=    $(@:%.install_dll=%)
-MIQ_DLLNAME=	$(MIQ_DLLBASE:%$(DLL_EXT)=%$(PRODUCTS_VERSION:%=.$(MIQ_V_VERSION))$(DLL_EXT))
-MIQ_SONAME=	$(MIQ_SOBASE:%$(DLL_EXT)=%)$(MIQ_V_MAJOR:%=.%)$(DLL_EXT)
+MIQ_DLLNAME=	$(MIQ_DLLBASE:%$(EXT.dll)=%$(PRODUCTS_VERSION:%=.$(MIQ_V_VERSION))$(EXT.dll))
+MIQ_SONAME=	$(MIQ_SOBASE:%$(EXT.dll)=%)$(MIQ_V_MAJOR:%=.%)$(EXT.dll)
 MIQ_SONAME_OPT=	$(PRODUCTS_VERSION:%=-Wl,-soname -Wl,$(MIQ_SONAME))

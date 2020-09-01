@@ -125,14 +125,14 @@ endif
 
 # Configuration variables
 MIQ_OBJDIR:=	$(MIQ_OBJROOT)/$(MIQ_DIR)
-MIQ_OBJECTS=	$(MIQ_SOURCES:%=$(MIQ_OBJDIR)%$(OBJ_EXT))
+MIQ_OBJECTS=	$(MIQ_SOURCES:%=$(MIQ_OBJDIR)%$(EXT.obj))
 MIQ_PRODEXE=	$(filter %.exe,$(PRODUCTS))
 MIQ_PRODLIB=	$(filter %.lib,$(PRODUCTS))
 MIQ_PRODDLL=	$(filter %.dll,$(PRODUCTS))
 MIQ_PRODLIBS=	$(OUTPUT:%=$(LINK_DIR_OPT)%) $(filter %.lib %.dll,$(PRODUCTS))
-MIQ_OUTEXE=	$(MIQ_PRODEXE:%.exe=$(OUTPUT)$(EXE_PFX)%$(EXE_EXT))
-MIQ_OUTLIB=	$(MIQ_PRODLIB:%.lib=$(OUTPUT)$(LIB_PFX)%$(LIB_EXT))
-MIQ_OUTDLL=	$(MIQ_PRODDLL:%.dll=$(OUTPUT)$(DLL_PFX)%$(DLL_EXT))
+MIQ_OUTEXE=	$(MIQ_PRODEXE:%.exe=$(OUTPUT)$(PFX.exe)%$(EXT.exe))
+MIQ_OUTLIB=	$(MIQ_PRODLIB:%.lib=$(OUTPUT)$(PFX.lib)%$(EXT.lib))
+MIQ_OUTDLL=	$(MIQ_PRODDLL:%.dll=$(OUTPUT)$(PFX.dll)%$(EXT.dll))
 MIQ_OUTPRODS=	$(MIQ_OUTEXE) $(MIQ_OUTLIB) $(MIQ_OUTDLL)
 MIQ_BUILDTEST=	$(MAKE) SOURCES=$(@:%.test=%) 			\
 			PRODUCTS=$*_test.exe 			\
@@ -142,7 +142,7 @@ MIQ_BUILDTEST=	$(MAKE) SOURCES=$(@:%.test=%) 			\
 
 MIQ_RUNTEST=	$(TEST_ENV)					\
 			$(TEST_CMD_$*)				\
-			$(OUTPUT)$(EXE_PFX)$*_test$(EXE_EXT)	\
+			$(OUTPUT)$(PFX.exe)$*_test$(EXT.exe)	\
 			$(TEST_ARGS_$*)
 
 # Versioning for DLLs
@@ -167,8 +167,8 @@ endif
 MIQ_LIBS=	$(LIBRARIES) $(LINK_LIBS)
 MIQ_LIBNAMES=   $(filter %.lib, $(notdir $(MIQ_LIBS)))
 MIQ_DLLNAMES=   $(filter %.dll, $(notdir $(MIQ_LIBS)))
-MIQ_OBJLIBS= 	$(MIQ_LIBNAMES:%.lib=$(OUTPUT)$(LIB_PFX)%$(LIB_EXT))
-MIQ_OBJDLLS=    $(MIQ_DLLNAMES:%.dll=$(OUTPUT)$(DLL_PFX)%$(DLL_EXT))
+MIQ_OBJLIBS= 	$(MIQ_LIBNAMES:%.lib=$(OUTPUT)$(PFX.lib)%$(EXT.lib))
+MIQ_OBJDLLS=    $(MIQ_DLLNAMES:%.dll=$(OUTPUT)$(PFX.dll)%$(EXT.dll))
 MIQ_LINKLIBS=	$(MIQ_LIBNAMES:%.lib=$(LINK_LIB_OPT)%)	\
 		$(MIQ_DLLNAMES:%.dll=$(LINK_DLL_OPT)%)
 MIQ_TOLINK=     $(MIQ_OBJECTS) $(MIQ_OBJLIBS) $(MIQ_OBJDLLS)
@@ -184,7 +184,7 @@ MIQ_RECURSE=    $(MAKE) TARGET=$(TARGET)		\
 MIQ_MAKEDEPS:=	$(MAKEFILE_LIST)
 MIQ_INDEX:=     1
 MIQ_COUNT:=     $(words $(MIQ_SOURCES))
-MIQ_PROFOUT:=	$(subst $(EXE_EXT),,$(MIQ_OUTEXE))_prof_$(GIT_REVISION).vsp
+MIQ_PROFOUT:=	$(subst $(EXT.exe),,$(MIQ_OUTEXE))_prof_$(GIT_REVISION).vsp
 
 MIQ_TARNAME=	$(PACKAGE_NAME)-$(PACKAGE_VERSION)
 MIQ_TARBALL=	$(MIQ_TARNAME).tar.bz2
@@ -371,9 +371,9 @@ endif
 .PRECIOUS: %/.mkdir
 
 # If LIBRARIES=foo/bar, go to directory foo/bar, which should build bar.a
-$(OUTPUT)$(LIB_PFX)%$(LIB_EXT): $(DEEP_BUILD)
+$(OUTPUT)$(PFX.lib)%$(EXT.lib): $(DEEP_BUILD)
 	+$(PRINT_COMMAND) cd $(firstword $(dir $(filter %$*, $(LIBRARIES:.lib=) $(SUBDIRS))) .nonexistent) && $(MIQ_RECURSE)
-$(OUTPUT)$(DLL_PFX)%$(DLL_EXT): $(DEEP_BUILD)
+$(OUTPUT)$(PFX.dll)%$(EXT.dll): $(DEEP_BUILD)
 	+$(PRINT_COMMAND) cd $(firstword $(dir $(filter %$*, $(LIBRARIES:.dll=) $(SUBDIRS))) .nonexistent) && $(MIQ_RECURSE)
 
 
@@ -419,7 +419,7 @@ ifdef RECURSE
 # Dependencies generation
 #------------------------------------------------------------------------------
 
-MIQ_DEPENDENCIES=$(MIQ_SOURCES:%=$(MIQ_OBJDIR)%$(OBJ_EXT).d)
+MIQ_DEPENDENCIES=$(MIQ_SOURCES:%=$(MIQ_OBJDIR)%$(EXT.obj).d)
 MIQ_OBJDIR_DEPS=$(MIQ_OBJDIR)%.deps/.mkdir
 
 MIQ_OBJDEPS=$(MIQ_OBJDIR_DEPS) $(MIQ_MAKEDEPS) $(MIQ_ORDERONLY:%=% .prebuild)
@@ -436,21 +436,21 @@ POSTPROCESS_DEPENDENCY?=                            \
       fmt -1 |                                      \
       sed -e 's/^ *//' -e 's/$$/:/' >> $@ )
 
-$(MIQ_OBJDIR)%.c$(OBJ_EXT).d:		%.c			$(MIQ_OBJDEPS)
+$(MIQ_OBJDIR)%.c$(EXT.obj).d:		%.c			$(MIQ_OBJDEPS)
 	$(PRINT_DEPEND) ( $(CC_DEPEND) && $(POSTPROCESS_DEPENDENCY) )
-$(MIQ_OBJDIR)%.cpp$(OBJ_EXT).d:		%.cpp			$(MIQ_OBJDEPS)
+$(MIQ_OBJDIR)%.cpp$(EXT.obj).d:		%.cpp			$(MIQ_OBJDEPS)
 	$(PRINT_DEPEND) ( $(CXX_DEPEND) && $(POSTPROCESS_DEPENDENCY) )
-$(MIQ_OBJDIR)%.cc$(OBJ_EXT).d:		%.cc			$(MIQ_OBJDEPS)
+$(MIQ_OBJDIR)%.cc$(EXT.obj).d:		%.cc			$(MIQ_OBJDEPS)
 	$(PRINT_DEPEND) ( $(CXX_DEPEND) && $(POSTPROCESS_DEPENDENCY) )
-$(MIQ_OBJDIR)%.s$(OBJ_EXT).d: 		%.s			$(MIQ_OBJDEPS)
+$(MIQ_OBJDIR)%.s$(EXT.obj).d: 		%.s			$(MIQ_OBJDEPS)
 	$(PRINT_DEPEND) ( $(AS_DEPEND) && $(POSTPROCESS_DEPENDENCY) )
-$(MIQ_OBJDIR)%.asm$(OBJ_EXT).d: 	%.asm			$(MIQ_OBJDEPS)
+$(MIQ_OBJDIR)%.asm$(EXT.obj).d: 	%.asm			$(MIQ_OBJDEPS)
 	$(PRINT_DEPEND) ( $(AS_DEPEND) && $(POSTPROCESS_DEPENDENCY) )
 
 else
 
 # Compiler has decent support for dependency generation
-$(MIQ_OBJDIR)%$(OBJ_EXT).d: $(MIQ_OBJDIR)%$(OBJ_EXT)
+$(MIQ_OBJDIR)%$(EXT.obj).d: $(MIQ_OBJDIR)%$(EXT.obj)
 
 endif
 
@@ -460,21 +460,21 @@ endif
 #------------------------------------------------------------------------------
 
 # Compilation
-$(MIQ_OBJDIR)%.c$(OBJ_EXT): 	%.c				$(MIQ_OBJDEPS)
+$(MIQ_OBJDIR)%.c$(EXT.obj): 	%.c				$(MIQ_OBJDEPS)
 	$(PRINT_COMPILE) $(MAKE_CC)
-$(MIQ_OBJDIR)%.cpp$(OBJ_EXT): 	%.cpp 				$(MIQ_OBJDEPS)
+$(MIQ_OBJDIR)%.cpp$(EXT.obj): 	%.cpp 				$(MIQ_OBJDEPS)
 	$(PRINT_COMPILE) $(MAKE_CXX)
-$(MIQ_OBJDIR)%.cc$(OBJ_EXT): 	%.cc 				$(MIQ_OBJDEPS)
+$(MIQ_OBJDIR)%.cc$(EXT.obj): 	%.cc 				$(MIQ_OBJDEPS)
 	$(PRINT_COMPILE) $(MAKE_CXX)
-$(MIQ_OBJDIR)%.s$(OBJ_EXT): 	%.s				$(MIQ_OBJDEPS)
+$(MIQ_OBJDIR)%.s$(EXT.obj): 	%.s				$(MIQ_OBJDEPS)
 	$(PRINT_COMPILE) $(MAKE_AS)
-$(MIQ_OBJDIR)%.asm$(OBJ_EXT): 	%.asm				$(MIQ_OBJDEPS)
+$(MIQ_OBJDIR)%.asm$(EXT.obj): 	%.asm				$(MIQ_OBJDEPS)
 	$(PRINT_COMPILE) $(MAKE_AS)
 
 # Skip headers
-$(MIQ_OBJDIR)%.h$(OBJ_EXT):
-$(MIQ_OBJDIR)%.hpp$(OBJ_EXT):
-$(MIQ_OBJDIR)%.hh$(OBJ_EXT):
+$(MIQ_OBJDIR)%.h$(EXT.obj):
+$(MIQ_OBJDIR)%.hpp$(EXT.obj):
+$(MIQ_OBJDIR)%.hh$(EXT.obj):
 
 # Include dependencies from current directory
 # We only build when the target is set to avoid dependencies on 'clean'
@@ -488,9 +488,9 @@ $(MIQ_OUTPRODS):			| $(OUTPUT).mkdir-only
 # Link
 .SECONDEXPANSION:
 MIQ_NOSRC=	$(@:$(OUTPUT)%=%)
-MIQ_NOEXE=	$(MIQ_NOSRC:$(EXE_PFX)%$(EXE_EXT)=%)
-MIQ_NOLIB=	$(MIQ_NOEXE:$(LIB_PFX)%$(LIB_EXT)=%)
-MIQ_NODLL=	$(MIQ_NOLIB:$(DLL_PFX)%$(DLL_EXT)=%)
+MIQ_NOEXE=	$(MIQ_NOSRC:$(PFX.exe)%$(EXT.exe)=%)
+MIQ_NOLIB=	$(MIQ_NOEXE:$(PFX.lib)%$(EXT.lib)=%)
+MIQ_NODLL=	$(MIQ_NOLIB:$(PFX.dll)%$(EXT.dll)=%)
 MIQ_OUT_SOURCES=$(SOURCES_$(MIQ_NODLL))
 $(MIQ_OUTLIB): $(MIQ_TOLINK) $$(MIQ_TOLINK)	 		$(MIQ_MAKEDEPS)
 	$(PRINT_BUILD) $(MAKE_LIB)

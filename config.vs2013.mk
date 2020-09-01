@@ -104,14 +104,14 @@ LDFLAGS_TARGET_profile=	-pdb:$(MIQ_PDB) -debug
 #  File extensions
 #------------------------------------------------------------------------------
 
-OBJ_EXT=.obj
-LIB_EXT=.lib
-EXE_EXT=.exe
-DLL_EXT=.dll
+EXT.obj=.obj
+EXT.lib=.lib
+EXT.exe=.exe
+EXT.dll=.dll
 
-EXE_PFX=
-LIB_PFX=lib
-DLL_PFX=lib
+PFX.exe=
+PFX.lib=
+PFX.dll=
 
 LINK_DIR_OPT=-L:
 LINK_LIB_OPT=-l:

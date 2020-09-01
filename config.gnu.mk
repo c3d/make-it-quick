@@ -101,20 +101,20 @@ LDFLAGS_TARGET_profile=	-pg
 #  File extensions
 #------------------------------------------------------------------------------
 
-EXE_EXT=
+EXT.exe=
 ifdef LIBTOOL
-OBJ_EXT=        .lo
-LIB_EXT=	.la
-DLL_EXT=	.la
+EXT.obj=        .lo
+EXT.lib=	.la
+EXT.dll=	.la
 else
-OBJ_EXT=        .o
-LIB_EXT=        .a
-DLL_EXT=        .so
+EXT.obj=        .o
+EXT.lib=        .a
+EXT.dll=        .so
 endif
 
-EXE_PFX=
-LIB_PFX=	lib
-DLL_PFX=	lib
+PFX.exe=
+PFX.lib=	lib
+PFX.dll=	lib
 
 
 #------------------------------------------------------------------------------

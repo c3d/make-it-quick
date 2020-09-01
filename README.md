@@ -81,8 +81,8 @@ The kind of output your makefile produces depends on the extension in
 The build commands for each case are defined in build environment
 configurations, e.g. `config.gnu.mk`, by variables called `MAKE_EXE`,
 `MAKE_LIB` and `MAKE_DLL`. The actual extension being used are also
-defined in the same file, as `EXE_EXT`, `LIB_EXT` and `DLL_EXT`. For
-example, on Linux, `LIB_EXT` is set to `.a`.
+defined in the same file, as `EXT.exe`, `EXT.lib` and `EXT.dll`. For
+example, on Linux, `EXT.lib` is set to `.a`.
 
 
 ## Building the products

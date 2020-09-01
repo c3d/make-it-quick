@@ -47,9 +47,9 @@ include $(MIQ)config.gnu.mk
 PREFIX_DLL:=$(PREFIX_DLL:$(PREFIX_LIB)=$(PREFIX_BIN))
 
 # Windows overrides for extensions
-EXE_EXT=        .exe
-LIB_EXT=        .a
-DLL_EXT=        .dll
+EXT.exe=        .exe
+EXT.lib=        .a
+EXT.dll=        .dll
 
 # MinGW has no 'install' program
 INSTALL=	cp
