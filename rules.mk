@@ -389,7 +389,7 @@ MIQ_PRINTCOUNT=	$(shell printf "%3d/%d" $(MIQ_INDEX) $(MIQ_COUNT))$(MIQ_INCRIDX)
 ifndef V
 PRINT_COMMAND= 	@
 PRINT_COMPILE=	$(PRINT_COMMAND) $(INFO) "[COMPILE$(MIQ_PRINTCOUNT)] " $<;
-PRINT_BUILD= 	$(PRINT_COMMAND) $(INFO) "[BUILD]" $(shell basename $@);
+PRINT_LINK= 	$(PRINT_COMMAND) $(INFO) "[LINK]" $(shell basename $@);
 PRINT_GENERATE= $(PRINT_COMMAND) $(INFO) "[GENERATE]" "$(shell basename "$@")";
 PRINT_VARIANT=  $(PRINT_COMMAND) $(INFO) "[VARIANT]" "$*";
 PRINT_INSTALL=  $(PRINT_COMMAND) $(INFO) "[INSTALL] " $(*F) in $(<D) $(COLORIZE);
@@ -493,11 +493,11 @@ MIQ_NOLIB=	$(MIQ_NOEXE:$(PFX.lib)%$(EXT.lib)=%)
 MIQ_NODLL=	$(MIQ_NOLIB:$(PFX.dll)%$(EXT.dll)=%)
 MIQ_OUT_SOURCES=$(SOURCES_$(MIQ_NODLL))
 $(MIQ_OUTLIB): $(MIQ_TOLINK) $$(MIQ_TOLINK)	 		$(MIQ_MAKEDEPS)
-	$(PRINT_BUILD) $(LINK.lib)
+	$(PRINT_LINK) $(LINK.lib)
 $(MIQ_OUTDLL): $(MIQ_TOLINK) $$(MIQ_TOLINK)			$(MIQ_MAKEDEPS)
-	$(PRINT_BUILD) $(LINK.dll)
+	$(PRINT_LINK) $(LINK.dll)
 $(MIQ_OUTEXE): $(MIQ_TOLINK) $$(MIQ_TOLINK)			$(MIQ_MAKEDEPS)
-	$(PRINT_BUILD) $(LINK.exe)
+	$(PRINT_LINK) $(LINK.exe)
 
 #------------------------------------------------------------------------------
 #   Package configuration
@@ -708,7 +708,7 @@ MIQ_GENPC=					  	 \
 	echo 'Cflags: -I$${includedir}'			)
 
 $(MIQ_PACKAGE):						$(MIQ_MAKEDEPS)
-	$(PRINT_BUILD)	$(MIQ_GENPC) > $@
+	$(PRINT_GENERATE)	$(MIQ_GENPC) > $@
 
 
 #------------------------------------------------------------------------------
