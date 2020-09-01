@@ -133,11 +133,11 @@ The output of the build will be located by default in the top-level
 directory for the build, or the directory specified by the `OUTPUT`
 environment variable if it's set.
 
-Temoprary files are placed in the `.objects` directory, or the
-directory set by the `OBJFILES` environment variable if it's set.
+Temoprary files are placed in the `.build` directory, or the
+directory set by the `BUILD` environment variable if it's set.
 There are subdirectories corresponding to the build environment and
 the build target, so the final product could be for instance under
-`.objects/macosx-clang/opt/hello`. This is explained below.
+`.build/macosx-clang/opt/hello`. This is explained below.
 
 The log files will be located by default in `.logs`, the latest
 one being called `make.log`, or in the directory specified by the
@@ -295,8 +295,8 @@ Some of the most useful environment variables include:
 * `OUTPUT` is the directory where all build products should go. The
   default is the `$(TOP)`.
 
-* `OBJFILES` is the directory where all build intermediate files
-  should go. The default is `.objects/` in `$(TOP)
+* `BUILD` is the directory where all build intermediate files
+  should go. The default is `.build/` in `$(TOP)
 
 * `LOGS` is the directory where all logs should go. The default is
   `.logs/` in `$(TOP)`.

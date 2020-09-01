@@ -55,7 +55,7 @@ TOP?=$(abspath .)/
 OUTPUT?=$(TOP)
 
 # Default location for object files
-OBJFILES?= $(TOP).objects/
+BUILD?= $(TOP).build/
 
 # Default location for build logs
 LOGS?=$(TOP).logs/
