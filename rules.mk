@@ -103,9 +103,7 @@ $1.build:	$1.hello		\
 		$1.goodbye
 
 $1.hello:
-	@$$(INFO) "[BEGIN]" $1 $(TARGET) $(BUILDENV) in "$(MIQ_PRETTYDIR)"
 $1.goodbye:
-	@$$(INFO) "[END]" $1 $(TARGET) $(BUILDENV) in "$$(MIQ_PRETTYDIR)"
 
 #------------------------------------------------------------------------------
 # Sequencing build steps and build step hooks
@@ -844,13 +842,5 @@ reformat clang-format:	$(CLANG_FORMAT_SOURCES:%=%.clang-format)
 
 # Build with a single shell for all commands
 .ONESHELL:
-
-# Only build the leaf projects in parallel,
-# since we don't have proper dependency between independent
-# libraries and we may otherwise end up building the same
-# library multiple times "in parallel" (wasting energy)
-ifneq ($(SUBDIRS)$(VARIANTS),)
-$(NOT_PARALLEL):
-endif
 
 endif
