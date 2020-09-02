@@ -33,9 +33,151 @@
 # If not, see <https://www.gnu.org/licenses/>.
 # ******************************************************************************
 
+
+ifndef MIQ_RULES
+MIQ_RULES=$(MIQ)
+
 # Include the Makefile configuration and local variables
 MIQ?=make-it-quick/
 include $(MIQ)config.mk
+
+#==============================================================================
+#
+#  The no-recursion engine
+#
+#==============================================================================
+# This defines the primary set of build rules in such a way that it can then be
+# leveraged for variants or subdirectories, without having to actually recurse
+# into child make instances.
+
+MIQ_CPY_VARS=	INCLUDES		\
+		DEFINES			\
+		CFLAGS			\
+		CXXFLAGS		\
+		CPPFLAGS		\
+		LDFLAGS
+
+MIQ_ADJ_VARS=	SOURCES			\
+		DIRS			\
+		SUBDIRS			\
+		TEST			\
+		TESTS			\
+		TO_INSTALL
+
+
+MIQ_VARS=	$(MIQ_CPY_VARS) $(MIQ_ADJ_VARS)
+
+
+define build
+
+# Per-build build root and configuration files
+$(eval $1_BUILD=	$(BUILD)$(BUILDENV)/$(CROSS_COMPILE:%=%-)$(TARGET)/$(1:%=%/))
+$(eval $1_CONFIG_H=	$(CONFIG:%=$($1_BUILD)config.h))
+$(eval $1_OUTPUT=	$(OUTPUT))
+$(eval $1_DIRS=	$($1DIRS) $($1SUBDIRS))
+$(eval $1_VARIANTS=	$($1VARIANTS))
+$(eval $1_OBJECTS=	$($1SOURCES:%=$($1_BUILD)%$(EXT.obj)))
+$(eval ALL+=		$($1_OBJECTS))
+
+$1.build:	$1.hello		\
+		$1.config		\
+		$1.prebuild		\
+	  	$1.recurse		\
+	  	$1.variants		\
+		$1.objects		\
+		$1.product		\
+		$1.tests		\
+		$1.install		\
+		$1.goodbye
+
+.PHONY:		$1.build		\
+		$1.hello		\
+		$1.config		\
+		$1.prebuild		\
+	  	$1.recurse		\
+	  	$1.variants		\
+		$1.objects		\
+		$1.product		\
+		$1.tests		\
+		$1.install		\
+		$1.goodbye
+
+$1.hello:
+	@$$(INFO) "[BEGIN]" $1 $(TARGET) $(BUILDENV) in "$(MIQ_PRETTYDIR)"
+$1.goodbye:
+	@$$(INFO) "[END]" $1 $(TARGET) $(BUILDENV) in "$$(MIQ_PRETTYDIR)"
+
+#------------------------------------------------------------------------------
+# Sequencing build steps and build step hooks
+#------------------------------------------------------------------------------
+$1.config:	$1.hello
+$1.prebuild:	$1.config
+$1.recurse:	$1.prebuild
+$1.variants:	$1.prebuild
+$1.objects:	$1.recurse
+$1.tests:	$1.product
+$i.install:	$1.tests
+$1.goodbye:	$1.install
+
+
+#------------------------------------------------------------------------------
+# Definition of the build steps
+#------------------------------------------------------------------------------
+$1.config: 	$1.hello		\
+		$($1_CONFIG_H)		\
+		$($1_NORMALIZED:%=$($1_BUILD)CFG_HAVE_%.mk)
+
+#  Make sure we have created the build directory before building anything
+$1.prebuild:	$($1_BUILD).mkdir
+
+# Building object files for $$($1SOURCES)
+$1.objects:	$($1_OBJECTS)
+
+# Compile sources
+$(foreach s, .c .cpp .cc .s .asm,
+$(if $1,$(foreach v, $(MIQ_VARS),
+$($1_BUILD)%$s$(EXT.obj): $v=$$($1$v)))
+$($1_BUILD)%$s$(EXT.obj): %$s
+	$$(PRINT_COMPILE) $$(COMPILE$s)))
+
+# Link objects
+$(foreach p, .lib .dll .exe,
+$(eval $1PRODUCT$p=$(filter %$p, $($1PRODUCT) $($1PRODUCTS)))
+$(eval $1OUT$p=$($1PRODUCT$p:%=$($1_OUTPUT)$(PFX$p)%$(EXT$p)))
+$(if $($1OUT$p),
+$($1OUT$p): $($1_OBJECTS)
+	$$(PRINT_LINK) $$(LINK$p)
+$1.product: $($1OUT$p)))
+
+# Recursion and variants
+$1.recurse:	$($1_DIRS:%=%/.build) $($1_VARIANTS:%=%-.build)
+
+# Tests
+$1.tests:	$(if $(DO_TESTS),  $($1TEST:%=%.test) $($1TESTS:%=%.test))
+$1.install:	$(if $(DO_INSTALL),$($1TO_INSTALL:%=%.install))
+
+# Variable that we need right away for recursive evaluation
+$(eval $1_BUILD=	$$(BUILD)$$(BUILDENV)/$$(CROSS_COMPILE:%=%-)$$(TARGET)$1/)
+$(eval $1_DIRS=		$$($1DIRS) $$($1SUBDIRS))
+$(eval $1_VARIANTS=	$$($1VARIANTS))
+
+# Compute variants if any
+$(foreach v, $($1_VARIANTS), $(call build,$v-))
+
+# Include subdirectory makefile after eliminating rules
+$(foreach d, $($1_DIRS),
+$(eval
+$$($1_BUILD)$d/Makefile.norules: $d/Makefile
+	@printf "%s...\\r" $d; mkdir -p $$@D && grep -v 'include.*rules\.mk' < $$< >$$@)
+$(foreach v, $(MIQ_VARS), $(eval save-$v := $(value $v)) $(eval $v := ))
+$(eval include $($1_BUILD)$d/Makefile.norules)
+$(foreach v, $(MIQ_CPY_VARS), $(eval $d/$v = $(value $v)))
+$(foreach v, $(MIQ_ADJ_VARS), $(eval $d/$v = $(value $v)))
+$(foreach v, $(MIQ_VARS), $(eval $v := $(value save-$v)))
+$(call build,$d/))
+
+endef
+
 
 # Default build settings (definitions in specific config..mkXYZ)
 MIQ_INCLUDES=  	$(INCLUDES)				\
@@ -257,38 +399,10 @@ help:
 #   Internal targets
 #------------------------------------------------------------------------------
 
-.build: .hello .config .libraries .prebuild		\
-	.recurse .objects .product			\
-	.postbuild $(RUN_TESTS:%=.tests) .goodbye
-
-.hello:
-	@$(INFO) "[BEGIN]" $(TARGET) $(BUILDENV) in "$(MIQ_PRETTYDIR)"
-.goodbye:
-	@$(INFO) "[END]" $(TARGET) $(BUILDENV) in "$(MIQ_PRETTYDIR)"
-
-# Sequencing build steps and build step hooks
-.config: .hello
-.config: $(VARIANTS:%=%.variant)
-ifeq ($(VARIANTS),)
-.config: $(CONFIG:%=config.h)
-.config: $(MIQ_NORMCONFIG:%=$(MIQ_OBJDIR)CFG_HAVE_%.mk)
-endif
-.libraries: .config
-.libraries: $(MIQ_OBJLIBS) $(MIQ_OBJDLLS)
-.prebuild: .config
-.objects: .prebuild
-.objects: $(MIQ_OBJDIR:%=%.mkdir)
-.product: $(MIQ_OUTPRODS)
-.postbuild: .product .install
-.install: $(DO_INSTALL:%=$(MIQ_INSTALL))
-.tests: $(TESTS:%=%.test)
-.goodbye: .postbuild
-
+#$(info $(call build))
+$(eval $(call build))
 
 .PHONY: all debug opt release profile build test install rebuild
-.PHONY: .hello .config .libraries .prebuild		\
-	.recurse .objects .product			\
-	.postbuild .goodbye
 .PHONY: .ALWAYS
 
 
@@ -382,7 +496,8 @@ $(OUTPUT)$(PFX.dll)%$(EXT.dll): $(DEEP_BUILD)
 #------------------------------------------------------------------------------
 
 MIQ_INCRIDX=	$(eval MIQ_INDEX:=$(shell echo $$(($(MIQ_INDEX)+1))))
-MIQ_START=	$(eval MIQ_INDEX:=1) $(eval MIQ_COUNT:=$(words $?))
+MIQ_START=	$(eval MIQ_INDEX:=1)
+MIQ_COUNT=	$(words $(ALL))
 MIQ_PRINTCOUNT=	$(shell printf "%3d/%d" $(MIQ_INDEX) $(MIQ_COUNT))$(MIQ_INCRIDX)
 
 # Printing out various kinds of statements
@@ -736,4 +851,6 @@ reformat clang-format:	$(CLANG_FORMAT_SOURCES:%=%.clang-format)
 # library multiple times "in parallel" (wasting energy)
 ifneq ($(SUBDIRS)$(VARIANTS),)
 $(NOT_PARALLEL):
+endif
+
 endif

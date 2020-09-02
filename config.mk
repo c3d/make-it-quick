@@ -57,6 +57,9 @@ OUTPUT?=$(TOP)
 # Default location for object files
 BUILD?= $(TOP).build/
 
+# Stuff to install (default is products)
+INSTALL?=$(PRODUCTS)
+
 # Default location for build logs
 LOGS?=$(TOP).logs/
 LAST_LOG?=$(LOGS)make.log
