@@ -148,6 +148,7 @@ $1.config: 	$1.hello		\
 
 #  Make sure we have created the build directory before building anything
 $1.prebuild:	$($1_BUILD).mkdir
+$($1_BUILD)%:	$($1_BUILD).mkdir
 
 # Building object files for $$($1SOURCES)=$($1SOURCES)
 $1.objects:	$($1_OBJECTS)
