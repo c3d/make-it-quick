@@ -205,7 +205,7 @@ TEST_ENV=	LD_LIBRARY_PATH=$(OUTPUT)
 #  Configuration checks
 #------------------------------------------------------------------------------
 
-MIQ_CFGUPPER=	$(shell echo -n "$(MIQ_ORIGTARGET)" | tr '[:lower:]' '[:upper:]' | tr -c '[:alnum:]' '_')
+MIQ_CFGUPPER=	$(shell echo -n "$(MIQ_MACRONAME)" | tr '[:lower:]' '[:upper:]' | tr -c '[:alnum:]' '_')
 MIQ_CFGLFLAGS=	$(MIQ_LDFLAGS)						\
 		$(shell grep '// [A-Z]*FLAGS=' "$<" |			\
 			sed -e 's|// [A-Z]*FLAGS=||g')			\
@@ -219,9 +219,11 @@ MIQ_CFGTEST=	"$<" -o "$<".exe > "$<".err 2>&1 &&			\
 		"$<".exe > "$<".out					\
 		$(MIQ_CFGSET)
 MIQ_CFG_PRINT=	if [ $$MIQ_CFGRC == 1 ]; then				\
-		    echo "$(POS_COLOR)OK$(DEF_COLOR)";			\
+			$(INFO_CONFIG) "[CONFIG]" "$(MIQ_ORIGTARGET)" 	\
+			"$(POS_COLOR)OK$(DEF_COLOR)";			\
 		else							\
-		    echo "$(ERR_COLOR)NO$(DEF_COLOR)";			\
+			$(INFO_CONFIG) "[CONFIG]" "$(MIQ_ORIGTARGET)"	\
+			"$(ERR_COLOR)NO$(DEF_COLOR)";			\
 		fi;
 MIQ_CFGUNDEF0=	$$MIQ_CFGRC						\
 	| sed -e 's|^\#define \(.*\) 0$$|/* \#undef \1 */|g' > "$@";	\

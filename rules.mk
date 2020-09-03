@@ -65,12 +65,19 @@ MIQ_VARS=	INCLUDES		\
 		VARIANTS		\
 		TO_INSTALL
 
+# Name of the configuration file (shared by all subdirectories and variants)
+CONFIG_H=	$(CONFIG:%=$(BUILD)config.h)
+
+# Generate safe names for configurations such as <foo.h>
+safe-name=	$(subst <,.lt.,$(subst >,.gt.,$(subst /,.sl.,$1)))
+original-name=	$(subst .lt.,<,$(subst .gt.,>,$(subst .sl.,/,$1)))
+
+
 # Generate rules for a build with given name in $1 and build directory in $2
 define build
 
 # Per-build build root and configuration files
 $(eval $1_BUILD=	$(BUILD)$(BUILDENV)/$(CROSS_COMPILE:%=%-)$(TARGET)/$2)
-$(eval $1_CONFIG_H=	$(CONFIG:%=$($1_BUILD)config.h))
 $(eval $1_OUTPUT=	$(OUTPUT))
 $(eval $1_DIRS=		$($1DIRS) $($1SUBDIRS))
 $(eval $1_VARIANTS=	$($1VARIANTS))
@@ -83,7 +90,10 @@ $(eval
 $(BUILD)$2$d/Makefile.norules: $2$d/Makefile
 	@printf "Directory %s...\\r" $d; mkdir -p $$@D && grep -v 'include.*rules\.mk' < $$< >$$@)
 $(foreach v, $(MIQ_VARS), $(eval save-$1-$v := $(value $v)) $(eval $v := ))
+$(eval save-$1-CONFIG := $(value CONFIG))
+$(eval CONFIG := )
 $(eval include $(BUILD)$2$d/Makefile.norules)
+$(eval CONFIG += $(value save-$1-CONFIG))
 $(foreach t, $(VARIANTS),
 $(foreach v, $(MIQ_VARS), $(eval $1$d/$t-$v = $(value $t-$v))))
 $(foreach v, $(MIQ_VARS), $(eval $1$d/$v = $(value $v)))
@@ -133,8 +143,8 @@ $1.goodbye:	$1.install
 # Definition of the build steps
 #------------------------------------------------------------------------------
 $1.config: 	$1.hello		\
-		$($1_CONFIG_H)		\
-		$($1_NORMALIZED:%=$($1_BUILD)CFG_HAVE_%.mk)
+		$(CONFIG_H)		\
+		$(MIQ_NORMCONFIG:%=$(BUILD)CFG_HAVE_%.mk)
 
 #  Make sure we have created the build directory before building anything
 $1.prebuild:	$($1_BUILD).mkdir
@@ -174,7 +184,8 @@ MIQ_INCLUDES=  	$(INCLUDES)				\
 		$(INCLUDES_BUILDENV_$(BUILDENV))	\
 		$(INCLUDES_TARGET_$(TARGET))		\
 		$(INCLUDES_VARIANT_$(VARIANT))		\
-		$(INCLUDES_$*)
+		$(INCLUDES_$*)				\
+		$(CONFIG:%=$(BUILD))
 
 MIQ_DEFINES=	$(DEFINES)				\
 		$(DEFINES_BUILDENV_$(BUILDENV))		\
@@ -502,7 +513,7 @@ PRINT_CLEAN=    $(PRINT_COMMAND) $(INFO) "[CLEAN] " $@ $(MIQ_PRETTYDIR) $(COLORI
 PRINT_COPY=     $(PRINT_COMMAND) $(INFO) "[COPY]" $< '=>' $@ ;
 PRINT_DEPEND= 	$(PRINT_COMMAND) $(INFO) "[DEPEND] " $< ;
 PRINT_TEST= 	$(PRINT_COMMAND) $(INFO) "[TEST]" $(@:.test=) ;
-PRINT_CONFIG= 	$(PRINT_COMMAND) $(INFO_NONL) "[CONFIG]" "$(MIQ_ORIGTARGET)" ;
+PRINT_CONFIG= 	$(PRINT_COMMAND)
 PRINT_PKGCONFIG=$(PRINT_COMMAND) $(INFO) "[PKGCONFIG]" "$*" ;
 PRINT_LIBCONFIG=$(PRINT_COMMAND) $(INFO) "[LIBCONFIG]" "lib$*" ;
 PRINT_REFORMAT= $(PRINT_COMMAND) $(INFO) "[REFORMAT]" "$*" $(COLORIZE);
@@ -610,15 +621,16 @@ $(MIQ_OBJDIR)lib%.cfg.ldflags: $(MIQ_OBJDIR)CFG_HAVE_lib%.h		$(MIQ_PKGDEPS)
 #------------------------------------------------------------------------------
 
 # Normalize header configuration name (turn <foo.h> into .lt.foo.h.gt. and back)
-MIQ_NORMCONFIG=$(subst <,.lt.,$(subst >,.gt.,$(subst /,.sl.,$(CONFIG) $(PKGCONFIGS:%=PACKAGE_%))))
-MIQ_ORIGTARGET=$(subst .lt.,<,$(subst .gt.,>,$(subst .sl.,/,$*)))
+MIQ_NORMCONFIG=	$(call safe-name, $(CONFIG) $(PKGCONFIGS:%=PACKAGE_%))
+MIQ_ORIGTARGET=	$(call original-name,$(@:$(MIQ_OBJDIR)CFG_HAVE_%.h=%))
+MIQ_MACRONAME=	$(call original-name,$*)
 MIQ_CONFIGDEPS=	$(MIQ_PKGDEPS) 						\
 		$(PKGCONFIGS:%=$(MIQ_OBJDIR)pkg-config.mk)		\
 		$(MIQ_PKGLIBS:%=$(MIQ_OBJDIR)pkg-config.mk)		\
 		$(MIQ_ORDERONLY:%=% .hello)
 
 # Generate the config.h by concatenating all the indiviual config files
-config.h: $(MIQ_NORMCONFIG:%=$(MIQ_OBJDIR)CFG_HAVE_%.h)
+$(BUILD)config.h: $(MIQ_NORMCONFIG:%=$(MIQ_OBJDIR)CFG_HAVE_%.h)
 	$(PRINT_GENERATE) cat $^ > $@
 
 # Build makefile configuration files from generated .h files
