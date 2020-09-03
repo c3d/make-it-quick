@@ -57,21 +57,23 @@ MIQ_CPY_VARS=	INCLUDES		\
 		CPPFLAGS		\
 		LDFLAGS
 
-MIQ_ADJ_VARS=	SOURCES			\
+MIQ_ADJ_VARS=	PRODUCTS		\
+		SOURCES			\
 		DIRS			\
 		SUBDIRS			\
 		TEST			\
 		TESTS			\
 		TO_INSTALL
 
+MIQ_VARS=	$(MIQ_CPY_VARS) 	\
+		$(MIQ_ADJ_VARS)
 
-MIQ_VARS=	$(MIQ_CPY_VARS) $(MIQ_ADJ_VARS)
 
-
+# Generate rules for a build with given name in $1 and build directory in $2
 define build
 
 # Per-build build root and configuration files
-$(eval $1_BUILD=	$(BUILD)$(BUILDENV)/$(CROSS_COMPILE:%=%-)$(TARGET)/$(1:%=%/))
+$(eval $1_BUILD=	$(BUILD)$(BUILDENV)/$(CROSS_COMPILE:%=%-)$(TARGET)/$2)
 $(eval $1_CONFIG_H=	$(CONFIG:%=$($1_BUILD)config.h))
 $(eval $1_OUTPUT=	$(OUTPUT))
 $(eval $1_DIRS=		$($1DIRS) $($1SUBDIRS))
@@ -141,38 +143,33 @@ $($1_BUILD)%$s$(EXT.obj): %$s
 # Link objects
 $(foreach p, .lib .dll .exe,
 $(eval $1PRODUCT$p=$(filter %$p, $($1PRODUCT) $($1PRODUCTS)))
-$(eval $1OUT$p=$($1PRODUCT$p:%=$($1_OUTPUT)$(PFX$p)%$(EXT$p)))
+$(eval $1OUT$p=$($1PRODUCT$p:%$p=$($1_OUTPUT)$(PFX$p)%$(EXT$p)))
 $(if $($1OUT$p),
 $($1OUT$p): $($1_OBJECTS)
 	$$(PRINT_LINK) $$(LINK$p)
 $1.product: $($1OUT$p)))
 
 # Recursion and variants
-$1.recurse:	$($1_DIRS:%=%/.build) $($1_VARIANTS:%=%-.build)
+$1.recurse:	$($1_DIRS:%=$1%/.build) $($1_VARIANTS:%=$1%-.build)
 
 # Tests
 $1.tests:	$(if $(DO_TESTS),  $($1TEST:%=%.test) $($1TESTS:%=%.test))
 $1.install:	$(if $(DO_INSTALL),$($1TO_INSTALL:%=%.install))
 
-# Variable that we need right away for recursive evaluation
-$(eval $1_BUILD=	$$(BUILD)$$(BUILDENV)/$$(CROSS_COMPILE:%=%-)$$(TARGET)$1/)
-$(eval $1_DIRS=		$$($1DIRS) $$($1SUBDIRS))
-$(eval $1_VARIANTS=	$$($1VARIANTS))
-
 # Compute variants if any
-$(foreach v, $($1_VARIANTS), $(call build,$v-))
+$(foreach v, $($1_VARIANTS), $(call build,$1$v-,$2-$v-/))
 
 # Include subdirectory makefile after eliminating rules
 $(foreach d, $($1_DIRS),
 $(eval
-$$($1_BUILD)$d/Makefile.norules: $d/Makefile
+$(BUILD)$2$d/Makefile.norules: $2$d/Makefile
 	@printf "%s...\\r" $d; mkdir -p $$@D && grep -v 'include.*rules\.mk' < $$< >$$@)
-$(foreach v, $(MIQ_VARS), $(eval save-$v := $(value $v)) $(eval $v := ))
-$(eval include $($1_BUILD)$d/Makefile.norules)
+$(foreach v, $(MIQ_VARS), $(eval save-$1-$v := $(value $v)) $(eval $v := ))
+$(eval include $(BUILD)$2$d/Makefile.norules)
 $(foreach v, $(MIQ_CPY_VARS), $(eval $d/$v = $(value $v)))
 $(foreach v, $(MIQ_ADJ_VARS), $(eval $d/$v = $(value $v)))
-$(foreach v, $(MIQ_VARS), $(eval $v := $(value save-$v)))
-$(call build,$d/))
+$(foreach v, $(MIQ_VARS), $(eval $v := $(value save-$1-$v)))
+$(call build,$1$d/,$2$d/))
 
 endef
 
@@ -397,8 +394,7 @@ help:
 #   Internal targets
 #------------------------------------------------------------------------------
 
-#$(info $(call build))
-$(eval $(call build))
+$(if $(NORECURSE_DEBUG),$(info $(call build)),$(eval $(call build)))
 
 .PHONY: all debug opt release profile build test install rebuild
 .PHONY: .ALWAYS
