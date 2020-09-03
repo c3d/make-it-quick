@@ -180,6 +180,9 @@ $1.recurse:	$($1_DIRS:%=$1%/.build)			\
 $1.tests:	$(if $(DO_TESTS),  $($1TEST:%=%.test) $($1TESTS:%=%.test))
 $1.install:	$(if $(DO_INSTALL),$($1TO_INSTALL:%=%.install))
 
+# Dependencies
+-include $($1_OBJECTS:%=%.d)
+
 endef
 
 

@@ -87,7 +87,7 @@ GEN_NEWS=	grep '^$(shell git tag -n1 `git describe`)' $@ || 	\
 
 CFLAGS_STD=		$(CC_STD:%=-std=%)	$(CFLAGS_PIC)
 CXXFLAGS_STD=		$(CXX_STD:%=-std=%)	$(CFLAGS_PIC)
-CFLAGS_DEPENDENCIES=	-MD -MP -MF "$(@).d" -MT "$(@:$(MIQ_OBJDIR)%=\$$(MIQ_OBJDIR)%)"
+CFLAGS_DEPENDENCIES=	-MD -MP -MF "$(@).d" -MT "$(@:$(BUILD)%=\$$(BUILD)%)"
 
 CFLAGS_TARGET_debug=	-g -Wall -fno-inline
 CFLAGS_TARGET_opt=	-g -O3 -Wall
