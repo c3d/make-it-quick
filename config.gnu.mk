@@ -148,12 +148,12 @@ MAKE_OBJDIR=	$(MAKE_DIR) && touch $@
 LDFLAGS_RPATH=	-Wl,-rpath,$(PREFIX_DLL)
 
 ifdef LIBTOOL
-MIQ_COMPILE=	$(LIBTOOL) --silent --mode=compile
-MIQ_LINK=	$(LIBTOOL) --silent --mode=link
-COMPILE.c=	$(MIQ_COMPILE) $(CC)  $(MIQ_CFLAGS)   -c $< -o $@
-COMPILE.cpp=	$(MIQ_COMPILE) $(CXX) $(MIQ_CXXFLAGS) -c $< -o $@
-COMPILE.s=	$(MIQ_COMPILE) $(CC)  $(MIQ_CFLAGS)   -c $< -o $@
-LINK.lib=	$(MIQ_LINK)    $(LD)  $(MIQ_LDFLAGS) $(MIQ_LINKARGS)	\
+COMPILE-lt=	$(LIBTOOL) --silent --mode=compile
+LINK-lt=	$(LIBTOOL) --silent --mode=link
+COMPILE.c=	$(COMPILE-lt) $(CC)  $(MIQ_CFLAGS)   -c $< -o $@
+COMPILE.cpp=	$(COMPILE-lt) $(CXX) $(MIQ_CXXFLAGS) -c $< -o $@
+COMPILE.s=	$(COMPILE-lt) $(CC)  $(MIQ_CFLAGS)   -c $< -o $@
+LINK.lib=	$(LINK-lt)    $(LD)  $(MIQ_LDFLAGS) $(MIQ_LINKARGS)	\
 			-o $@						\
 			$(MIQ_LT_VERS_OPT)
 LINK.dll=	$(LINK.lib)
@@ -166,7 +166,7 @@ CFLAGS_PIC=	-fPIC
 COMPILE.c=	$(CC)	$(MIQ_CFLAGS)	-c $< -o $@
 COMPILE.cpp=	$(CXX)	$(MIQ_CXXFLAGS)	-c $< -o $@
 COMPILE.s=	$(CC)	$(MIQ_CFLAGS)	-c $< -o $@
-LINK.lib=	$(AR) $@	$(MIQ_TOLINK)	&& $(RANLIB) $@
+LINK.lib=	$(AR) $@ $^ && $(RANLIB) $@
 LINK.dll=	$(LD) -shared	$(MIQ_LINKARGS)	$(MIQ_LDFLAGS)  \
 				-o $(MIQ_DLLNAME)		\
 				$(MIQ_SONAME_OPT)		\
