@@ -74,7 +74,7 @@ define build
 $(eval $1_BUILD=	$(BUILD)$(BUILDENV)/$(CROSS_COMPILE:%=%-)$(TARGET)/$(1:%=%/))
 $(eval $1_CONFIG_H=	$(CONFIG:%=$($1_BUILD)config.h))
 $(eval $1_OUTPUT=	$(OUTPUT))
-$(eval $1_DIRS=	$($1DIRS) $($1SUBDIRS))
+$(eval $1_DIRS=		$($1DIRS) $($1SUBDIRS))
 $(eval $1_VARIANTS=	$($1VARIANTS))
 $(eval $1_OBJECTS=	$($1SOURCES:%=$($1_BUILD)%$(EXT.obj)))
 $(eval ALL+=		$($1_OBJECTS))
@@ -572,45 +572,12 @@ endif
 #  Build inference rules
 #------------------------------------------------------------------------------
 
-# Compilation
-$(MIQ_OBJDIR)%.c$(EXT.obj): 	%.c				$(MIQ_OBJDEPS)
-	$(PRINT_COMPILE) $(COMPILE.c)
-$(MIQ_OBJDIR)%.cpp$(EXT.obj): 	%.cpp 				$(MIQ_OBJDEPS)
-	$(PRINT_COMPILE) $(COMPILE.cpp)
-$(MIQ_OBJDIR)%.cc$(EXT.obj): 	%.cc 				$(MIQ_OBJDEPS)
-	$(PRINT_COMPILE) $(COMPILE.cc)
-$(MIQ_OBJDIR)%.s$(EXT.obj): 	%.s				$(MIQ_OBJDEPS)
-	$(PRINT_COMPILE) $(COMPILE.s)
-$(MIQ_OBJDIR)%.asm$(EXT.obj): 	%.asm				$(MIQ_OBJDEPS)
-	$(PRINT_COMPILE) $(COMPILE.asm)
-
-# Skip headers
-$(MIQ_OBJDIR)%.h$(EXT.obj):
-$(MIQ_OBJDIR)%.hpp$(EXT.obj):
-$(MIQ_OBJDIR)%.hh$(EXT.obj):
-
 # Include dependencies from current directory
 # We only build when the target is set to avoid dependencies on 'clean'
 ifeq ($(MAKECMDGOALS),.build)
 -include $(MIQ_DEPENDENCIES)
 endif
 
-# Create output directory if necessary
-$(MIQ_OUTPRODS):			| $(OUTPUT).mkdir-only
-
-# Link
-.SECONDEXPANSION:
-MIQ_NOSRC=	$(@:$(OUTPUT)%=%)
-MIQ_NOEXE=	$(MIQ_NOSRC:$(PFX.exe)%$(EXT.exe)=%)
-MIQ_NOLIB=	$(MIQ_NOEXE:$(PFX.lib)%$(EXT.lib)=%)
-MIQ_NODLL=	$(MIQ_NOLIB:$(PFX.dll)%$(EXT.dll)=%)
-MIQ_OUT_SOURCES=$(SOURCES_$(MIQ_NODLL))
-$(MIQ_OUTLIB): $(MIQ_TOLINK) $$(MIQ_TOLINK)	 		$(MIQ_MAKEDEPS)
-	$(PRINT_LINK) $(LINK.lib)
-$(MIQ_OUTDLL): $(MIQ_TOLINK) $$(MIQ_TOLINK)			$(MIQ_MAKEDEPS)
-	$(PRINT_LINK) $(LINK.dll)
-$(MIQ_OUTEXE): $(MIQ_TOLINK) $$(MIQ_TOLINK)			$(MIQ_MAKEDEPS)
-	$(PRINT_LINK) $(LINK.exe)
 
 #------------------------------------------------------------------------------
 #   Package configuration
