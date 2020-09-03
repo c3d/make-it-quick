@@ -163,7 +163,7 @@ $(foreach v, $($1_VARIANTS), $(call build,$1$v-,$2-$v-/))
 $(foreach d, $($1_DIRS),
 $(eval
 $(BUILD)$2$d/Makefile.norules: $2$d/Makefile
-	@printf "%s...\\r" $d; mkdir -p $$@D && grep -v 'include.*rules\.mk' < $$< >$$@)
+	@printf "Directory %s...\\r" $d; mkdir -p $$@D && grep -v 'include.*rules\.mk' < $$< >$$@)
 $(foreach v, $(MIQ_VARS), $(eval save-$1-$v := $(value $v)) $(eval $v := ))
 $(eval include $(BUILD)$2$d/Makefile.norules)
 $(foreach v, $(MIQ_CPY_VARS), $(eval $d/$v = $(value $v)))
