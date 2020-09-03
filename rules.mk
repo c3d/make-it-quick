@@ -151,6 +151,7 @@ $1.prebuild:	$($1_BUILD).mkdir
 
 # Building object files for $$($1SOURCES)=$($1SOURCES)
 $1.objects:	$($1_OBJECTS)
+$($1_OBJECTS):	$$(MAKEFILE_LIST)
 
 # Compile sources
 $(foreach s, .c .cpp .cc .s .asm,
@@ -161,12 +162,13 @@ $($1_BUILD)%$s$(EXT.obj): $3%$s
 
 # Link objects
 $(foreach p, .lib .dll .exe,
-$(eval $1PRODUCT$p=$(filter %$p, $($1PRODUCT) $($1PRODUCTS)))
-$(eval $1OUT$p=$($1PRODUCT$p:%$p=$($1_OUTPUT)$(PFX$p)%$(EXT$p)))
+$(eval $1PRODUCT$p=	$(filter %$p, $($1PRODUCT) $($1PRODUCTS)))
+$(eval $1OUT$p=		$($1PRODUCT$p:%$p=$($1_OUTPUT)$(PFX$p)%$(EXT$p)))
 $(if $($1OUT$p),
-$($1OUT$p): $($1_OBJECTS)
+$($1OUT$p):	$$(MAKEFILE_LIST)
+$($1OUT$p):	$($1_OBJECTS)
 	$$(PRINT_LINK) $$(LINK$p)
-$1.product: $($1OUT$p)))
+$1.product:	$($1OUT$p)))
 
 # Recursion and variants
 $1.recurse:	$($1_DIRS:%=$1%/.build)			\
