@@ -81,6 +81,21 @@ $(eval $1_VARIANTS=	$($1VARIANTS))
 $(eval $1_OBJECTS=	$($1SOURCES:%=$($1_BUILD)%$(EXT.obj)))
 $(eval ALL+=		$($1_OBJECTS))
 
+# Compute variants if any
+$(foreach v, $($1_VARIANTS), $(call build,$1$v-,$2-$v-/))
+
+# Include subdirectory makefile after eliminating rules
+$(foreach d, $($1_DIRS),
+$(eval
+$(BUILD)$2$d/Makefile.norules: $2$d/Makefile
+	@printf "Directory %s...\\r" $d; mkdir -p $$@D && grep -v 'include.*rules\.mk' < $$< >$$@)
+$(foreach v, $(MIQ_VARS), $(eval save-$1-$v := $(value $v)) $(eval $v := ))
+$(eval include $(BUILD)$2$d/Makefile.norules)
+$(foreach v, $(MIQ_CPY_VARS), $(eval $1$d/$v = $(value $v)))
+$(foreach v, $(MIQ_ADJ_VARS), $(eval $1$d/$v = $(value $v)))
+$(foreach v, $(MIQ_VARS), $(eval $v := $(value save-$1-$v)))
+$(call build,$1$d/,$2$d/))
+
 $1.build:	$1.hello		\
 		$1.config		\
 		$1.prebuild		\
@@ -130,7 +145,7 @@ $1.config: 	$1.hello		\
 #  Make sure we have created the build directory before building anything
 $1.prebuild:	$($1_BUILD).mkdir
 
-# Building object files for $$($1SOURCES)
+# Building object files for $$($1SOURCES)=$($1SOURCES)
 $1.objects:	$($1_OBJECTS)
 
 # Compile sources
@@ -155,21 +170,6 @@ $1.recurse:	$($1_DIRS:%=$1%/.build) $($1_VARIANTS:%=$1%-.build)
 # Tests
 $1.tests:	$(if $(DO_TESTS),  $($1TEST:%=%.test) $($1TESTS:%=%.test))
 $1.install:	$(if $(DO_INSTALL),$($1TO_INSTALL:%=%.install))
-
-# Compute variants if any
-$(foreach v, $($1_VARIANTS), $(call build,$1$v-,$2-$v-/))
-
-# Include subdirectory makefile after eliminating rules
-$(foreach d, $($1_DIRS),
-$(eval
-$(BUILD)$2$d/Makefile.norules: $2$d/Makefile
-	@printf "Directory %s...\\r" $d; mkdir -p $$@D && grep -v 'include.*rules\.mk' < $$< >$$@)
-$(foreach v, $(MIQ_VARS), $(eval save-$1-$v := $(value $v)) $(eval $v := ))
-$(eval include $(BUILD)$2$d/Makefile.norules)
-$(foreach v, $(MIQ_CPY_VARS), $(eval $d/$v = $(value $v)))
-$(foreach v, $(MIQ_ADJ_VARS), $(eval $d/$v = $(value $v)))
-$(foreach v, $(MIQ_VARS), $(eval $v := $(value save-$1-$v)))
-$(call build,$1$d/,$2$d/))
 
 endef
 
