@@ -155,8 +155,10 @@ $($1_OBJECTS):	$$(MAKEFILE_LIST)
 
 # Compile sources
 $(foreach s, .c .cpp .cc .s .asm,
-$(if $1,$(foreach v, $(MIQ_VARS),
-$($1_BUILD)%$s$(EXT.obj): $v=$$($1$v)))
+$(if $1,
+$(foreach v, $(MIQ_VARS),
+$($1_BUILD)%$s$(EXT.obj): $v=$$($1$v))
+$($1_BUILD)%$s$(EXT.obj): INCLUDES+=$3
 $($1_BUILD)%$s$(EXT.obj): $3%$s
 	$$(PRINT_COMPILE) $$(COMPILE$s)))
 
@@ -187,7 +189,7 @@ MIQ_INCLUDES=  	$(INCLUDES)				\
 		$(INCLUDES_TARGET_$(TARGET))		\
 		$(INCLUDES_VARIANT_$(VARIANT))		\
 		$(INCLUDES_$*)				\
-		$(CONFIG:%=$(BUILD))
+		$(firstword $(CONFIG:%=$(BUILD)))
 
 MIQ_DEFINES=	$(DEFINES)				\
 		$(DEFINES_BUILDENV_$(BUILDENV))		\
