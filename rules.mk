@@ -50,24 +50,20 @@ include $(MIQ)config.mk
 # leveraged for variants or subdirectories, without having to actually recurse
 # into child make instances.
 
-MIQ_CPY_VARS=	INCLUDES		\
+MIQ_VARS=	INCLUDES		\
 		DEFINES			\
 		CFLAGS			\
 		CXXFLAGS		\
 		CPPFLAGS		\
-		LDFLAGS
-
-MIQ_ADJ_VARS=	PRODUCTS		\
+		LDFLAGS			\
+		PRODUCTS		\
 		SOURCES			\
 		DIRS			\
 		SUBDIRS			\
 		TEST			\
 		TESTS			\
+		VARIANTS		\
 		TO_INSTALL
-
-MIQ_VARS=	$(MIQ_CPY_VARS) 	\
-		$(MIQ_ADJ_VARS)
-
 
 # Generate rules for a build with given name in $1 and build directory in $2
 define build
@@ -81,9 +77,6 @@ $(eval $1_VARIANTS=	$($1VARIANTS))
 $(eval $1_OBJECTS=	$($1SOURCES:%=$($1_BUILD)%$(EXT.obj)))
 $(eval ALL+=		$($1_OBJECTS))
 
-# Compute variants if any
-$(foreach v, $($1_VARIANTS), $(call build,$1$v-,$2-$v-/))
-
 # Include subdirectory makefile after eliminating rules
 $(foreach d, $($1_DIRS),
 $(eval
@@ -91,16 +84,19 @@ $(BUILD)$2$d/Makefile.norules: $2$d/Makefile
 	@printf "Directory %s...\\r" $d; mkdir -p $$@D && grep -v 'include.*rules\.mk' < $$< >$$@)
 $(foreach v, $(MIQ_VARS), $(eval save-$1-$v := $(value $v)) $(eval $v := ))
 $(eval include $(BUILD)$2$d/Makefile.norules)
-$(foreach v, $(MIQ_CPY_VARS), $(eval $1$d/$v = $(value $v)))
-$(foreach v, $(MIQ_ADJ_VARS), $(eval $1$d/$v = $(value $v)))
+$(foreach t, $(VARIANTS),
+$(foreach v, $(MIQ_VARS), $(eval $1$d/$t-$v = $(value $t-$v))))
+$(foreach v, $(MIQ_VARS), $(eval $1$d/$v = $(value $v)))
 $(foreach v, $(MIQ_VARS), $(eval $v := $(value save-$1-$v)))
-$(call build,$1$d/,$2$d/))
+$(call build,$1$d/,$2$d/,$3$d/))
+
+# Compute variants if any
+$(foreach v, $($1_VARIANTS), $(call build,$1$v-,$2-$v-/,$3))
 
 $1.build:	$1.hello		\
 		$1.config		\
 		$1.prebuild		\
 	  	$1.recurse		\
-	  	$1.variants		\
 		$1.objects		\
 		$1.product		\
 		$1.tests		\
@@ -112,7 +108,6 @@ $1.build:	$1.hello		\
 		$1.config		\
 		$1.prebuild		\
 	  	$1.recurse		\
-	  	$1.variants		\
 		$1.objects		\
 		$1.product		\
 		$1.tests		\
@@ -128,7 +123,6 @@ $1.goodbye:
 $1.config:	$1.hello
 $1.prebuild:	$1.config
 $1.recurse:	$1.prebuild
-$1.variants:	$1.prebuild
 $1.objects:	$1.recurse
 $1.tests:	$1.product
 $i.install:	$1.tests
@@ -152,7 +146,7 @@ $1.objects:	$($1_OBJECTS)
 $(foreach s, .c .cpp .cc .s .asm,
 $(if $1,$(foreach v, $(MIQ_VARS),
 $($1_BUILD)%$s$(EXT.obj): $v=$$($1$v)))
-$($1_BUILD)%$s$(EXT.obj): %$s
+$($1_BUILD)%$s$(EXT.obj): $3%$s
 	$$(PRINT_COMPILE) $$(COMPILE$s)))
 
 # Link objects
@@ -165,7 +159,8 @@ $($1OUT$p): $($1_OBJECTS)
 $1.product: $($1OUT$p)))
 
 # Recursion and variants
-$1.recurse:	$($1_DIRS:%=$1%/.build) $($1_VARIANTS:%=$1%-.build)
+$1.recurse:	$($1_DIRS:%=$1%/.build)			\
+		$($1_VARIANTS:%=$1%-.build)
 
 # Tests
 $1.tests:	$(if $(DO_TESTS),  $($1TEST:%=%.test) $($1TESTS:%=%.test))
