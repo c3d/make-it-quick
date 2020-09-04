@@ -135,6 +135,38 @@ PACKAGE_INSTALL_SYSCONFIG?=$(DESTDIR)$(SYSCONFIG)$(PACKAGE_DIR)
 
 
 #------------------------------------------------------------------------------
+#  Tools
+#------------------------------------------------------------------------------
+
+AR=             $(CROSS_COMPILE:%=%-)ar -rcs
+ASM=		$(CROSS_COMPILE:%=%-)gcc
+CAT=		cat /dev/null
+CC=             $(CROSS_COMPILE:%=%-)gcc
+CPP=            $(CC) -E
+CP=		cp
+CXX=            $(CROSS_COMPILE:%=%-)g++
+ECHO=		/bin/echo
+GIT=		git
+GREP=		grep
+INSTALL=	install
+LD=		$(LD_$(words $(filter-out 0,$(words $(filter %.cpp,$(MIQ_SOURCES))))))
+LD_0=		$(CC)
+LD_1=           $(CXX)
+# MAKE=		make
+MKDIR=		mkdir
+PRINTF=		printf
+PYTHON=         python
+RANLIB=         $(CROSS_COMPILE:%=%-)ranlib
+RMDIR=		rmdir
+RM=		rm
+SED=		sed
+TAR=		tar
+TIME=		time
+TOUCH=		touch
+UNINSTALL=	$(RM) -f
+
+
+#------------------------------------------------------------------------------
 #   Compilation flags
 #------------------------------------------------------------------------------
 
@@ -156,14 +188,6 @@ CXXFLAGS_TARGET_debug=     $(CFLAGS_TARGET_debug)
 CXXFLAGS_TARGET_opt=       $(CFLAGS_TARGET_opt)
 CXXFLAGS_TARGET_release=   $(CFLAGS_TARGET_release)
 
-
-#------------------------------------------------------------------------------
-#   Toools we use
-#------------------------------------------------------------------------------
-
-ECHO=           /bin/echo
-TIME=           time
-MKDIR=		mkdir
 
 #------------------------------------------------------------------------------
 #   OS name for a given build environment
@@ -196,18 +220,18 @@ INFO_WRN_COL=   \\033[33m
 INFO_POS_COL=   \\033[32m
 INFO_RST_COL=   \\033[39;49;27m
 INFO_CLR_EOL=   \\033[K
-INFO=           printf "%-20s %s %s %s %s %s %s %s\n"
-INFO_CONFIG=    printf "%-20s %-40s %s\n"
+INFO=           $(PRINTF) "%-20s %s %s %s %s %s %s %s\n"
+INFO_CONFIG=    $(PRINTF) "%-20s %-40s %s\n"
 
 # Color for build steps
-STEP_COLOR:=    $(shell printf "$(INFO_STEP_COL)")
-LINE_COLOR:=    $(shell printf "$(INFO_NAME_COL)")
-NAME_COLOR:=    $(shell printf "$(INFO_LINE_COL)")
-ERR_COLOR:=     $(shell printf "$(INFO_ERR_COL)")
-WRN_COLOR:=     $(shell printf "$(INFO_WRN_COL)")
-POS_COLOR:=     $(shell printf "$(INFO_POS_COL)")
-DEF_COLOR:=     $(shell printf "$(INFO_RST_COL)")
-CLR_EOLINE:=    $(shell printf "$(INFO_CLR_EOL)")
+STEP_COLOR:=    $(shell $(PRINTF) "$(INFO_STEP_COL)")
+LINE_COLOR:=    $(shell $(PRINTF) "$(INFO_NAME_COL)")
+NAME_COLOR:=    $(shell $(PRINTF) "$(INFO_LINE_COL)")
+ERR_COLOR:=     $(shell $(PRINTF) "$(INFO_ERR_COL)")
+WRN_COLOR:=     $(shell $(PRINTF) "$(INFO_WRN_COL)")
+POS_COLOR:=     $(shell $(PRINTF) "$(INFO_POS_COL)")
+DEF_COLOR:=     $(shell $(PRINTF) "$(INFO_RST_COL)")
+CLR_EOLINE:=    $(shell $(PRINTF) "$(INFO_CLR_EOL)")
 
 SEDOPT_windows=	-u
 
@@ -239,7 +263,7 @@ LOG_COMMANDS=       PRINT_COMMAND="true && " 2>&1                     | \
                             `grep -v '^true &&' $(MIQ_BUILDLOG)       | \
                              grep -i $(WARNING_MSG)                   | \
                              wc -l` Warnings in $(MIQ_BUILDLOG);        \
-                    cp $(MIQ_BUILDLOG) $(LAST_LOG);                     \
+                    $(CP) $(MIQ_BUILDLOG) $(LAST_LOG);                  \
                     exit $$RC
 endif
 

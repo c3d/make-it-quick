@@ -89,7 +89,7 @@ $(eval ALL+=		$($1_OBJECTS))
 $(foreach d, $($1_DIRS),
 $(eval
 $(BUILD)$2$d/Makefile.norules: $2$d/Makefile
-	@printf "Directory %s...\\r" $d; mkdir -p $$@D && grep -v 'include.*rules\.mk' < $$< >$$@)
+	@$(PRINTF) "Directory %s...\\r" $d; $(MKDIR) -p $$@D && grep -v 'include.*rules\.mk' < $$< >$$@)
 $(foreach v, $(MIQ_VARS), $(eval save-$1-$v := $(value $v)) $(eval $v := ))
 $(eval save-$1-CONFIG := $(value CONFIG))
 $(eval CONFIG := )
@@ -507,7 +507,7 @@ $(OUTPUT)$(PFX.dll)%$(EXT.dll): $(DEEP_BUILD)
 MIQ_INCRIDX=	$(eval MIQ_INDEX:=$(shell echo $$(($(MIQ_INDEX)+1))))
 MIQ_START=	$(eval MIQ_INDEX:=1)
 MIQ_COUNT=	$(words $(ALL))
-MIQ_PRINTCOUNT=	$(shell printf "%3d/%d" $(MIQ_INDEX) $(MIQ_COUNT))$(MIQ_INCRIDX)
+MIQ_PRINTCOUNT=	$(shell $(PRINTF) "%3d/%d" $(MIQ_INDEX) $(MIQ_COUNT))$(MIQ_INCRIDX)
 
 # Printing out various kinds of statements
 ifndef V
@@ -672,11 +672,11 @@ $(MIQ_OBJDIR)CFGLIB%.c: 					$(MIQ_PKGDEPS)
 $(MIQ_OBJDIR)CFG_HAVE_%.h: $(MIQ_OBJDIR)CFGFN%.c		$(MIQ_CONFIGDEPS)
 	$(PRINT_CONFIG)	$(MIQ_FN_CFG)
 $(MIQ_OBJDIR)CFGFN%.c: $(CONFIG_SOURCES)check_%.c		$(MIQ_CONFIGDEPS)
-	$(PRINT_COMMAND) cp $< $@
+	$(PRINT_COMMAND) $(CP) $< $@
 $(MIQ_OBJDIR)CFGFN%.c: $(MIQ)config/check_%.c			$(MIQ_CONFIGDEPS)
-	$(PRINT_COMMAND) cp $< $@
+	$(PRINT_COMMAND) $(CP) $< $@
 $(MIQ_OBJDIR)CFGFN%.c: config/check_%.c				$(MIQ_CONFIGDEPS)
-	$(PRINT_COMMAND) cp $< $@
+	$(PRINT_COMMAND) $(CP) $< $@
 .PRECIOUS: $(MIQ_OBJDIR)CFGFN%.c
 
 # Packages

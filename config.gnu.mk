@@ -37,17 +37,33 @@
 #  Tools
 #------------------------------------------------------------------------------
 
-CC=             $(CROSS_COMPILE:%=%-)gcc
-CXX=            $(CROSS_COMPILE:%=%-)g++
+AR=             $(CROSS_COMPILE:%=%-)ar -rcs
 ASM=		$(CROSS_COMPILE:%=%-)gcc
+CAT=		cat /dev/null
+CC=             $(CROSS_COMPILE:%=%-)gcc
+CPP=            $(CC) -E
+CP=		cp
+CXX=            $(CROSS_COMPILE:%=%-)g++
+ECHO=		/bin/echo
+GIT=		git
+GREP=		grep
+INSTALL=	install
 LD=		$(LD_$(words $(filter-out 0,$(words $(filter %.cpp,$(MIQ_SOURCES))))))
 LD_0=		$(CC)
 LD_1=           $(CXX)
-CPP=            $(CC) -E
+# MAKE=		make
+MKDIR=		mkdir
+PRINTF=		printf
 PYTHON=         python
-AR=             $(CROSS_COMPILE:%=%-)ar -rcs
 RANLIB=         $(CROSS_COMPILE:%=%-)ranlib
-INSTALL=	install
+RMDIR=		rmdir
+RM=		rm
+SED=		sed
+TAR=		tar
+TIME=		time
+TOUCH=		touch
+UNINSTALL=	$(RM) -f
+
 INSTALL_DATA=   $(INSTALL) -m 644
 INSTALL_BIN=	$(INSTALL)
 INSTALL_HDR=	$(INSTALL_DATA)
@@ -56,30 +72,27 @@ INSTALL_LIB=	$(INSTALL)
 INSTALL_MAN=	$(INSTALL_DATA)
 INSTALL_DOC=	$(INSTALL_DATA)
 INSTALL_ETC=	$(INSTALL_DATA)
-UNINSTALL=	/bin/rm -f
-UNINSTALL_DIR=	/bin/rmdir > /dev/null 2>&1
+UNINSTALL_DIR=	$(RMDIR) > /dev/null 2>&1
 UNINSTALL_OK=	|| true
-CAT=		cat /dev/null
-SED=		sed
 
 # Tarball generation
-GEN_TARBALL=	mkdir $(MIQ_TARNAME) &&					\
+GEN_TARBALL=	$(MKDIR) $(MIQ_TARNAME) &&				\
 		$(TAR) cf - AUTHORS NEWS $(shell git ls-files)  |	\
-		(cd $(MIQ_TARNAME); tar xf - ) &&			\
+		(cd $(MIQ_TARNAME); $(TAR) xf - ) &&			\
 		$(TAR) cfj $@ $(MIQ_TARNAME) &&				\
-		rm -rf $(MIQ_TARNAME)
+		$(RM) -rf $(MIQ_TARNAME)
 
-GEN_AUTHORS=	(echo "This software was brought to you by:";		\
-	         echo "" ;						\
-		 git log --format='%aN <%aE>' | sort -u |		\
+GEN_AUTHORS=	($(ECHO) "This software was brought to you by:";	\
+	         $(ECHO) "" ;						\
+		 $(GIT) log --format='%aN <%aE>' | sort -u |		\
 		 $(SED) -e 's/^/- /g';					\
-		 echo ""; 						\
-		 echo "Thank you!")
-GEN_NEWS=	grep '^$(shell git tag -n1 `git describe`)' $@ || 	\
-		(touch $@;						\
-		  (git tag -l $(shell git describe) -n999 ;		\
-		  echo "";						\
-		  cat $@)						\
+		 $(ECHO) ""; 						\
+		 $(ECHO) "Thank you!")
+GEN_NEWS=	$(GREP) '^$(shell git tag -n1 `git describe`)' $@ || 	\
+		($(TOUCH) $@;						\
+		  ($(GIT) tag -l $(shell git describe) -n999 ;		\
+		  $(ECHO) "";						\
+		  $(CAT) $@)						\
 		  > $@.latest && mv $@.latest $@)
 
 
@@ -145,7 +158,7 @@ MIQ_SYMLINKS=	$(PRODUCTS_VERSION:%=&& $(MIQ_SYMLINKS_SO))
 #  Build rules
 #------------------------------------------------------------------------------
 
-MAKE_DIR=	mkdir -p $*
+MAKE_DIR=	$(MKDIR) -p $*
 MAKE_OBJDIR=	$(MAKE_DIR) && touch $@
 LDFLAGS_RPATH=	-Wl,-rpath,$(PREFIX_DLL)
 

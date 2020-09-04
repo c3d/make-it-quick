@@ -39,7 +39,7 @@ output() {
     echo $1 >> $SETUP
 }
 
-rm -f $SETUP
+/bin/rm -f $SETUP
 
 # DD='$(DESTDIR)'
 while [ $# -ne 0 ]; do
