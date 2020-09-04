@@ -63,7 +63,7 @@ MIQ_VARS=	INCLUDES		\
 		TEST			\
 		TESTS			\
 		VARIANTS		\
-		TO_INSTALL
+		WAREZ
 
 # Name of the configuration file (shared by all subdirectories and variants)
 CONFIG_H=	$(CONFIG:%=$(BUILD)config.h)
@@ -179,7 +179,7 @@ $1.recurse:	$($1_DIRS:%=$1%/.build)			\
 
 # Tests
 $1.tests:	$(if $(DO_TESTS),  $($1TEST:%=%.test) $($1TESTS:%=%.test))
-$1.install:	$(if $(DO_INSTALL),$($1TO_INSTALL:%=%.install))
+$1.install:	$(if $(DO_INSTALL),$($1WAREZ:%=%.install))
 
 # Dependencies
 -include $($1_OBJECTS:%=%.d)
@@ -239,7 +239,7 @@ MIQ_LDFLAGS=	$(LDFLAGS)				\
 
 MIQ_PACKAGE= 	$(PACKAGE_NAME:%=$(MIQ_OBJDIR)%.pc)
 
-MIQ_INSTALL=	$(TO_INSTALL:%=%.$(DO_INSTALL))		\
+MIQ_INSTALL=	$(WAREZ:%=%.$(DO_INSTALL))		\
 		$(MIQ_OUTEXE:%=%.$(DO_INSTALL)_exe)	\
 		$(MIQ_OUTLIB:%=%.$(DO_INSTALL)_lib)	\
 		$(MIQ_OUTDLL:%=%.$(DO_INSTALL)_dll)	\

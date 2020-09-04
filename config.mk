@@ -58,7 +58,7 @@ OUTPUT?=$(TOP)
 BUILD?= $(TOP).build/
 
 # Stuff to install (default is products)
-INSTALL?=$(PRODUCTS)
+WAREZ?=$(PRODUCTS)
 
 # Default location for build logs
 LOGS?=$(TOP).logs/
@@ -66,9 +66,6 @@ LAST_LOG?=$(LOGS)make.log
 
 # Stuff to clean
 TO_CLEAN=	*~ *.bak
-
-# Stuff to install
-TO_INSTALL=
 
 # Buildenv for recursive builds
 RECURSE_BUILDENV=$(BUILDENV)
