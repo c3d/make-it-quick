@@ -1,18 +1,18 @@
 #!/bin/bash
 # *****************************************************************************
-#  configure                                                     TaoJS project 
+#  configure                                                     TaoJS project
 # *****************************************************************************
-# 
+#
 #   File Description:
-# 
+#
 #      Configure 'make-it-quick' with the most-common options
-#      Those will be used by the Makefile to generate config.system-setup.mk
+#      Those will be used by the Makefile to generate config-system.mk
 #      This script is mostly to inferface "like autoconf"
-# 
-# 
-# 
-# 
-# 
+#
+#
+#
+#
+#
 # *****************************************************************************
 #  (C) 2017 Christophe de Dinechin <christophe@dinechin.org>
 #  This software is licensed under the GNU General Public License v3
@@ -33,7 +33,7 @@
 #     along with make-it-quick.  If not, see <https://www.gnu.org/licenses/>.
 # *****************************************************************************
 
-SETUP=configured.mk
+SETUP=config-local.mk
 
 output() {
     echo $1 >> $SETUP

@@ -65,6 +65,7 @@ MIQ_VARS=	INCLUDES		\
 		VARIANTS		\
 		WAREZ
 
+
 # Name of the configuration file (shared by all subdirectories and variants)
 CONFIG_H=	$(CONFIG:%=$(BUILD)config.h)
 

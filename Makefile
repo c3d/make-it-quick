@@ -44,7 +44,7 @@ HDR_INSTALL=			\
 	rules.mk		\
 	config.mk		\
 	$(wildcard config.*.mk)	\
-	$(MIQ_OBJDIR)config.system-setup.mk
+	$(MIQ_OBJDIR)config-system.mk
 
 PREFIX_CONFIG=$(PREFIX_SHR)$(PACKAGE_DIR)config/
 PACKAGE_INSTALL_LIB=$(DESTDIR)$(PREFIX_CONFIG)
@@ -78,5 +78,5 @@ $(PREFIX_DOC:%=PREFIX_DOC?="$(PREFIX_DOC)")			\
 $(PREFIX_VAR:%=PREFIX_VAR?="$(PREFIX_VAR)")			\
 CONFIG_SOURCES="$(PREFIX_CONFIG)"
 
-$(MIQ_OBJDIR)config.system-setup.mk:
+$(MIQ_OBJDIR)config-system.mk:
 	$(PRINT_GENERATE) ( $(SYSTEM_SETUP:%=echo %;) true ) > $@

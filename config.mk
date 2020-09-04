@@ -77,10 +77,10 @@ NOT_PARALLEL?=  .NOTPARALLEL
 GIT_REVISION:=  $(shell git rev-parse --short HEAD 2> /dev/null || echo "unknown")
 
 # System configuration if installed
--include $(MIQ)config.system-setup.mk
+-include $(MIQ)config-system.mk
 
 # Local configuration if any
--include $(MIQ)config.local-setup.mk
+-include $(MIQ)config-local.mk
 
 # Extract defaults for package name and version if not set
 PACKAGE_NAME?=$(firstword $(PRODUCTS) $(notdir $(shell pwd)))
