@@ -555,10 +555,10 @@ ifndef CFLAGS_DEPENDENCIES
 # generated dependency but no longer in the source code.
 # The trick is quite ugly, but fortunately documented here:
 # http://scottmcpeak.com/autodepend/autodepend.html
-POSTPROCESS_DEPENDENCY?=                            \
-    ( sed -e 's/.*://' -e 's/\\$$//' < $@ |         \
-      fmt -1 |                                      \
-      sed -e 's/^ *//' -e 's/$$/:/' >> $@ )
+POSTPROCESS_DEPENDENCY?=				\
+    ( $(SED) -e 's/.*://' -e 's/\\$$//' < $@ |		\
+      fmt -1 |						\
+      $(SED) -e 's/^ *//' -e 's/$$/:/' >> $@ )
 
 $(MIQ_OBJDIR)%.c$(EXT.obj).d:		%.c			$(MIQ_OBJDEPS)
 	$(PRINT_DEPEND) ( $(CC_DEPEND) && $(POSTPROCESS_DEPENDENCY) )

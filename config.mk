@@ -84,7 +84,7 @@ GIT_REVISION:=  $(shell git rev-parse --short HEAD 2> /dev/null || echo "unknown
 
 # Extract defaults for package name and version if not set
 PACKAGE_NAME?=$(firstword $(PRODUCTS) $(notdir $(shell pwd)))
-PACKAGE_VERSION?=$(shell (git describe --always --match 'v[0-9].*' 2> /dev/null | sed -e 's/^v//') || echo unknown)
+PACKAGE_VERSION?=$(shell (git describe --always --match 'v[0-9].*' 2> /dev/null | $(SED) -e 's/^v//') || echo unknown)
 
 # Use package version for products version if not set
 PRODUCTS_VERSION?=$(PACKAGE_VERSION)
@@ -216,7 +216,7 @@ LINE_BUFFERED=--line-buffered
 COLOR_FILTER=   | grep $(LINE_BUFFERED) -v -e "^true &&" -e "^[A-Za-z0-9_-]\+\.\(c\|h\|cpp\|hpp\)$$"            \
 	    $(COLORIZE)
 
-COLORIZE= | sed $(SEDOPT_$(OS_NAME))                                                                        \
+COLORIZE= | $(SED) $(SEDOPT_$(OS_NAME))                                                                        \
             -e 's/^\(.*[,:(]\{1,\}[0-9]*[ :)]*\)\([Ww]arning\)/$(POS_COLOR)\1$(WRN_COLOR)\2$(DEF_COLOR)/g'  \
             -e 's/^\(.*[,:(]\{1,\}[0-9]*[ :)]*\)\([Ee]rror\)/$(POS_COLOR)\1$(ERR_COLOR)\2$(DEF_COLOR)/g'    \
             -e 's/^\(\[BEGIN\]\)\(.*\)$$/$(STEP_COLOR)\1\2$(CLR_EOLINE)$(DEF_COLOR)/g'                      \

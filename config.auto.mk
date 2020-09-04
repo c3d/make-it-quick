@@ -34,7 +34,8 @@
 # ******************************************************************************
 
 # Identification of the default build environment
-BUILDENV=$(BUILDENV_$(shell uname -s | sed s/CYGWIN.*/Cygwin/ | sed s/MINGW.*/MinGW/ | sed s/MSYS.*/MSYS/g))
+SED=sed
+BUILDENV=$(BUILDENV_$(shell uname -s | $(SED) s/CYGWIN.*/Cygwin/ | $(SED) s/MINGW.*/MinGW/ | $(SED) s/MSYS.*/MSYS/g))
 BUILDENV_Darwin=$(shell clang --version > /dev/null 2>&1 && echo macosx-clang || echo macosx)
 BUILDENV_Linux=linux
 BUILDENV_Cygwin=cygwin

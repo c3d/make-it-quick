@@ -60,6 +60,7 @@ UNINSTALL=	/bin/rm -f
 UNINSTALL_DIR=	/bin/rmdir > /dev/null 2>&1
 UNINSTALL_OK=	|| true
 CAT=		cat /dev/null
+SED=		sed
 
 # Tarball generation
 GEN_TARBALL=	mkdir $(MIQ_TARNAME) &&				\
@@ -71,7 +72,7 @@ GEN_TARBALL=	mkdir $(MIQ_TARNAME) &&				\
 GEN_AUTHORS=	(echo "This software was brought to you by:";	\
 	         echo "" ;					\
 		 git log --format='%aN <%aE>' | sort -u |	\
-		 sed -e 's/^/- /g';				\
+		 $(SED) -e 's/^/- /g';				\
 		 echo ""; 					\
 		 echo "Thank you!")
 GEN_NEWS=	grep '^$(shell git tag -n1 `git describe`)' $@ || 	\
@@ -209,7 +210,7 @@ TEST_ENV=	LD_LIBRARY_PATH=$(OUTPUT)
 MIQ_CFGUPPER=	$(shell echo -n "$(MIQ_MACRONAME)" | tr '[:lower:]' '[:upper:]' | tr -c '[:alnum:]' '_')
 MIQ_CFGLFLAGS=	$(MIQ_LDFLAGS)						\
 		$(shell grep '// [A-Z]*FLAGS=' "$<" |			\
-			sed -e 's|// [A-Z]*FLAGS=||g')			\
+			$(SED) -e 's|// [A-Z]*FLAGS=||g')		\
 		$(shell $(CAT) $(MIQ_PKGLDFLAGS))
 MIQ_CFGFLAGS=	$(MIQ_CFGLFLAGS)					\
 		$(shell $(CAT) $(MIQ_PKGCFLAGS))
@@ -227,7 +228,7 @@ MIQ_CFG_PRINT=	if [ $$MIQ_CFGRC == 1 ]; then				\
 			"$(ERR_COLOR)NO$(DEF_COLOR)";			\
 		fi;
 MIQ_CFGUNDEF0=	$$MIQ_CFGRC						\
-	| sed -e 's|^\#define \(.*\) 0$$|/* \#undef \1 */|g' > "$@";	\
+	| $(SED) -e 's|^\#define \(.*\) 0$$|/* \#undef \1 */|g' > "$@";	\
 	[ -f "$<".out ] && cat >> "$@" "$<".out; 			\
 	$(MIQ_CFG_PRINT)						\
 	true
@@ -249,7 +250,7 @@ MIQ_LIB_CFG=	$(MIQ_CFGLIB_CMD) $(MIQ_CFGDEF) HAVE_LIB$(MIQ_CFGUPPER)	$(MIQ_CFGUN
 MIQ_FN_CFG=	$(MIQ_CFGFN_CMD)  $(MIQ_CFGDEF) HAVE_$(MIQ_CFGUPPER) 	$(MIQ_CFGUNDEF0)
 MIQ_PK_CFG=	$(MIQ_CFGPK_CMD)  $(MIQ_CFGDEF) HAVE_$(MIQ_CFGUPPER)    $(MIQ_CFGUNDEF0)
 
-MIQ_MK_CFG=	sed	-e 's|^\#define \([^ ]*\) \(.*\)$$|\1=\2|g' 	\
+MIQ_MK_CFG=	$(SED)	-e 's|^\#define \([^ ]*\) \(.*\)$$|\1=\2|g' 	\
 			-e 's|.*undef.*||g' < "$<" > "$@"
 
 
