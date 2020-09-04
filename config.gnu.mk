@@ -63,17 +63,17 @@ CAT=		cat /dev/null
 SED=		sed
 
 # Tarball generation
-GEN_TARBALL=	mkdir $(MIQ_TARNAME) &&				\
-		tar cf - AUTHORS NEWS $(shell git ls-files)  |	\
-		(cd $(MIQ_TARNAME); tar xf - ) &&		\
-		tar cfj $@ $(MIQ_TARNAME) &&			\
+GEN_TARBALL=	mkdir $(MIQ_TARNAME) &&					\
+		$(TAR) cf - AUTHORS NEWS $(shell git ls-files)  |	\
+		(cd $(MIQ_TARNAME); tar xf - ) &&			\
+		$(TAR) cfj $@ $(MIQ_TARNAME) &&				\
 		rm -rf $(MIQ_TARNAME)
 
-GEN_AUTHORS=	(echo "This software was brought to you by:";	\
-	         echo "" ;					\
-		 git log --format='%aN <%aE>' | sort -u |	\
-		 $(SED) -e 's/^/- /g';				\
-		 echo ""; 					\
+GEN_AUTHORS=	(echo "This software was brought to you by:";		\
+	         echo "" ;						\
+		 git log --format='%aN <%aE>' | sort -u |		\
+		 $(SED) -e 's/^/- /g';					\
+		 echo ""; 						\
 		 echo "Thank you!")
 GEN_NEWS=	grep '^$(shell git tag -n1 `git describe`)' $@ || 	\
 		(touch $@;						\
