@@ -39,6 +39,7 @@
 
 CC=             $(CROSS_COMPILE:%=%-)gcc
 CXX=            $(CROSS_COMPILE:%=%-)g++
+ASM=		$(CROSS_COMPILE:%=%-)gcc
 LD=		$(LD_$(words $(filter-out 0,$(words $(filter %.cpp,$(MIQ_SOURCES))))))
 LD_0=		$(CC)
 LD_1=           $(CXX)
@@ -152,7 +153,7 @@ COMPILE-lt=	$(LIBTOOL) --silent --mode=compile
 LINK-lt=	$(LIBTOOL) --silent --mode=link
 COMPILE.c=	$(COMPILE-lt) $(CC)  $(MIQ_CFLAGS)   -c $< -o $@
 COMPILE.cpp=	$(COMPILE-lt) $(CXX) $(MIQ_CXXFLAGS) -c $< -o $@
-COMPILE.s=	$(COMPILE-lt) $(CC)  $(MIQ_CFLAGS)   -c $< -o $@
+COMPILE.s=	$(COMPILE-lt) $(ASM) $(MIQ_CFLAGS)   -c $< -o $@
 LINK.lib=	$(LINK-lt)    $(LD)  $(MIQ_LDFLAGS) $(MIQ_LINKARGS)	\
 			-o $@						\
 			$(MIQ_LT_VERS_OPT)
