@@ -174,7 +174,7 @@ LINK.lib=	$(LINK-lt)    $(LD)  $(MIQ_LDFLAGS) $(MIQ_LINKARGS)	\
 LINK.dll=	$(LINK.lib)
 INSTALL.dll=	$(LIBTOOL) --silent --mode=install			\
 			$(INSTALL) $(MIQ_DLLNAME) $(PACKAGE_INSTALL_DLL)
-LINK.exe=	$(MIQ_LINK)    $(LD)  $(MIQ_LINKARGS) $(MIQ_LDFLAGS) -o $@
+LINK.exe=	$(LD)  $(MIQ_LINKARGS) $(MIQ_LDFLAGS) -o $(@:%.exe=$(PFX.exe)%$(EXT.exe))
 else
 # Non-libtool case: manage manually
 CFLAGS_PIC=	-fPIC
