@@ -149,6 +149,7 @@ $($1_BUILD)%:	$($1_BUILD).mkdir
 
 # Building object files for $$($1SOURCES)=$($1SOURCES)
 $1.objects:	$($1_OBJECTS)
+$($1_OBJECTS):	$1.prebuild
 $($1_OBJECTS):	$$(MAKEFILE_LIST)
 
 # Compile sources
