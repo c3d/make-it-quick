@@ -25,7 +25,7 @@ for at least one much larger program.
 * Built-in help (`make help`)
 * Pure `make`, allowing you to use all standard `Makefile` syntax and features
 * Automatic, single-pass generation of header-file dependencies
-* Supports parallel builds
+* Supports parallel builds, including across subdirectories
 * Supports separate libraries, to accelerate builds (libraries are
   only built the first time, unless you request a "deep" build)
 * Portable (tested on Linux, macOS and Windows platforms)
@@ -418,7 +418,7 @@ is optional.
                     gstreamer-1.0
 
 
-# Package configuration (for `pkg-config`)
+## Package configuration (for `pkg-config`)
 
 To generate a `.pc` file suitable for `pkg-config`, set variables
 in your makefile as follows:
@@ -433,7 +433,7 @@ in your makefile as follows:
 A file called `my-great-stuff.pc` will be generated and installed
 along with your product.
 
-# Shared library versioning
+## Shared library versioning
 
 Shared libraries can be versioned. Version numbers are typically
 in the form major.minor.patch. The version number for a shared library
@@ -444,6 +444,179 @@ interpreted as major version 1, minor version 3 and patchlevel 2.
 Accordingly, the library name is set to `libfoo.so.1.3.2`, the
 soname is set to `libfoo.so.1`, and symbolc links `libfoo.so`
 and `libfoo.so.1` will both point to `libfoo.so.1.3.2`.
+
+
+## Summary of useful variables
+
+This section describes the interesting variables for `make-it-quick`.
+
+### Build configuration
+
+* `BUILD` (default `.build`): The directory where all build intermediate
+  products will be generated. See also `OUTPUT`.
+
+* `BUILDENV` (default: `auto`): The build environment, i.e. a set of tools.
+  The tools are defined in `config.$(BUILDENV).mk`.
+
+* `CROSS_COMPILE`: Cross-compilation target, which is used as a prefix for tools
+  such as `CC`. For example, set `CROSS_COMPILE=arm-linux-gnu` will select
+  `arm-linux-gnu-gcc`, `arm-linux-gnu-ld`, and so on.
+
+* `LOGS` (default `.logs`): The location of the build logs
+
+* `MIQ` (default: `make-it-quick`): The directory containing `make-it-quick`.
+
+* `TARGET` (default `debug`): The default build target. Most common build
+  targets are `debug`, `opt` and `release`.
+
+
+### Build tools
+
+THe following variables specify commands to run various tools:
+
+* `AR`: Library archiver
+* `ASM`: Assembler
+* `CAT`: Concatenate files
+* `CC`: C compiler
+* `CPP`: C/C++ preprocessor
+* `CP`: Copy files
+* `CXX`: C++ compiler
+* `ECHO`: Print messages
+* `GIT`: The stupid content tracker
+* `GREP`: Find lines that match patterns
+* `INSTALL`: Installer
+* `LD`: Linker
+* `MAKE`: Evaluate a makefile
+* `MKDIR`: Make directory
+* `PYTHON`: Python interpreter
+* `RANLIB`: Library archive indexer
+* `RMDIR`: remove directories
+* `RM`: Remove files
+* `SED`: Stream editor
+* `TAR`: Create archives
+* `TIME`: Time a command
+* `TOUCH`: Change file timestamps
+* `UNINSTALL`: Uninstaller
+
+
+### Flags for build tools
+
+Flags can be passed to the commands using the name of the command followed by
+`FLAGS`. A notable exception for historical reasons is `CC` where the name
+`CFLAGS` is also accepted.
+
+The most frequently used flag variables are:
+
+* `CFLAGS` or `CCFLAGS`: Flags for the C compiler
+* `CPPFLAGS`: Flags for the C preprocessor.
+* `CXXFLAGS`: Flags for the C++ compiler
+* `LDFLAGS`: Flags for the linker
+
+Note: for historical reasons, not all commands accept flags at the moment.
+
+
+### Build definition
+
+The following variables are used to configure a build.
+
+* `SOURCES`: Sources files
+* `DEFINES`: Symbols to be defined, possibly with their value
+* `DIRS`: Directories to build
+* `INCLUDES`: Include paths
+* `PRODUCTS`: Products to generate
+* `TESTS`: Tests to run
+* `VARIANTS`: Variants to build
+* `WAREZ`: Artefacts to ship
+
+Note that all variables consistenly use a plural form even if there is a single
+item being given. So you would write:
+
+    SOURCES=foo.c
+    INCLUDES=mydirectory
+    DEFINES=MAGIC_NUMBER=42
+    PRODUCTS=foo.exe
+    WAREZ-foo.exe
+
+
+### Debug variables
+
+There are a few debug variables.
+
+* `V`: Make the build verbose. Setting `V` to a non-empty value will show all
+  the build commands.
+
+* `NORECURSE_DEBUG`: show the rules being generated for each of the subtargets.
+
+### "No-recursion" builds
+
+The `make-it-quick` system is designed to be really easy for small projects,
+while at the same time allow large projects.
+
+Large projects typically consists in a number of directories, possibly variants
+of the same products that you want to build at the same time (for example
+corresponding to different options), configurations, package dependencies, and
+more. The typical approach in this case is to use recursive make invokations,
+i.e. you run `make` on a subdirectory. This is the approach that `make-it-quick`
+used up to version 0.2.7. It has the benefit of being relatively simple, but the
+drawback of limiting the parallelism that you can get across different
+directories.
+
+Starting with version 0.5, `make-it-quick` switched to a "no-recursion"
+approach, where the build rules across multiple directories are collected into
+the top-level makefile to be executed in parallel.
+
+As a result of this approach, most variables can be prefixed by a pattern that
+describes the combination of directories, variants, products, etc, called a
+_subtarget_. This subtarget prefix is identified as `$1` in the `rules.mk`
+file, more precisely in the `build` definition.
+
+The prefix is in the form:
+* `dirname/` for a directory,
+* `variant-` for a variant or option,
+* `product_` for a product or intermediate object.
+
+These can be combined, i.e. a prefix like `foo/bar/zoo-baz/module.lib_`
+would be product `module.lib` in subdirectory `/baz` built under variant `zoo`
+defined in subdirectory `/foo/bar/`. The sources in that case would end up in a
+variable named `foo/bar/zoo-baz/module.lib_SOURCES`.
+
+In a given directory, a same variable can exist in the "base" version,
+e.g. `SOURCES` and in more "specialized" versions such as `module.lib_SOURCES`
+or `foo.c_CFLAGS`. The name of the specialized version is always derived from
+what is given in the makefile, i.e. you would use `foo.c_CFLAGS` for source
+`foo.c` and not, for example, the name of the object file.
+
+### Variable suffixes
+
+Finally, if there are variants of the same variable that correspond to different
+use cases in `make-it-quick`, a suffix will separate them. The suffix can be one
+of:
+
+* `-target` for variables that depend on the value of `TARGET`. For example, you
+  can have `CFLAGS-debug` for the `debug` build target.
+
+* `.ext` for variables that depend on an extension. For example, you can have
+  `COMPILE.c` to compile source files ending in `.c`, and `COMPILE.cpp` to
+  compile source files ending in `cpp`. Similarly, you have `LINK.exe` to link
+  the `.exe` products (executables) and `LINK.lib` for static libraries.
+
+* `_os` or `_buildenv` for variables that depend on the operating system or
+  build environment. For example, you will have `SEDFLAGS_windows` for the
+  Windows variant of `SEDFLAGS`, or `DEFINES_macosx-clang` for the value of
+  `DEFINES` specific to the `macosx-clang` build environment.
+
+
+### Conventions for internal variables
+
+Some conventions have slowly matured in `make-it-quick`, "_slowly_" meaning that
+they are not yet uniformly enforced.
+
+* Internal variables begin with `_`, e.g. `_DIRS`,
+* Internal targets begin with `.`, e.g. `.build`.
+
+A former convention was to prefix internal variables with `MIQ_`. This is now
+deprecated, and these internal variables are slowly being replaced.
+
 
 ## Other stuff
 
