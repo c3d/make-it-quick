@@ -33,10 +33,6 @@
 # If not, see <https://www.gnu.org/licenses/>.
 # ******************************************************************************
 
-
-ifndef MIQ_RULES
-MIQ_RULES=$(MIQ)
-
 # Include the Makefile configuration and local variables
 MIQ?=make-it-quick/
 include $(MIQ)config.mk
@@ -821,5 +817,3 @@ reformat clang-format:	$(CLANG_FORMAT_SOURCES:%=%.clang-format)
 
 # Build with a single shell for all commands
 .ONESHELL:
-
-endif
