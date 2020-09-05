@@ -43,6 +43,8 @@ OS_NAME_BUILDENV_mingw=windows
 
 include $(MIQ)config.gnu.mk
 
+SEDFLAGS_windows=-u
+
 # On Windows, DLLs have to go with the .exe
 PREFIX_DLL:=$(PREFIX_DLL:$(PREFIX_LIB)=$(PREFIX_BIN))
 

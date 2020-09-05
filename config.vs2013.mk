@@ -99,6 +99,8 @@ CFLAGS_TARGET_profile=	-Fd$(MIQ_PDB)	-O2 -Zi            -DEBUG
 CXXFLAGS_TARGET_profile=-Fd$(MIQ_PDB)	-O2 -Zi -EHa -EHsc -DEBUG
 LDFLAGS_TARGET_profile=	-pdb:$(MIQ_PDB) -debug
 
+SEDFLAGS_windows=-u
+
 
 #------------------------------------------------------------------------------
 #  File extensions

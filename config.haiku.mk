@@ -40,4 +40,4 @@ OS_NAME_BUILDENV_haiku=haiku
 include $(MIQ)config.gnu.mk
 
 TEST_ENV=	LIBRARY_PATH=$$LIBRARY_PATH:$(OUTPUT)
-SEDOPT_haiku=	-u
+SEDFLAGS_haiku=	-u

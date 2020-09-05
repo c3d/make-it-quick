@@ -39,6 +39,8 @@ OS_NAME_BUILDENV_cygwin=windows
 
 include $(MIQ)config.gnu.mk
 
+SEDFLAGS_windows=-u
+
 # Cygwin uses Windows extensions, e.g. ld looks for .dll files
 EXT.exe=	.exe
 EXT.lib=	.a
