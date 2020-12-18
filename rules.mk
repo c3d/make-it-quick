@@ -644,7 +644,7 @@ benchmark:	$(BENCHMARKS:%=%.benchmark)
 %.install_lib: $(PACKAGE_INSTALL_LIB).mkdir-only %
 	$(PRINT_INSTALL) $(INSTALL_LIB) $* $(PACKAGE_INSTALL_LIB)
 %.install_dll: $(PACKAGE_INSTALL_DLL).mkdir-only %
-	$(PRINT_INSTALL) $(INSTALL_DLL)
+	$(PRINT_INSTALL) $(INSTALL.dll)
 %.install_hdr: $(PACKAGE_INSTALL_HDR).mkdir-only %
 	$(PRINT_INSTALL) $(INSTALL_HDR) $* $(PACKAGE_INSTALL_HDR)
 %.install_shr: $(PACKAGE_INSTALL_SHR).mkdir-only %
