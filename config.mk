@@ -108,30 +108,30 @@ CLANG_FORMAT_SOURCES=$(SOURCES) $(HDR_INSTALL)
 # Variables typically provided by configure scripts
 SYSCONFIG?=/etc/
 PREFIX?=/usr/local/
-PREFIX_BIN?=$(PREFIX)bin/
-PREFIX_SBIN?=$(PREFIX)sbin/
-PREFIX_LIB?=$(PREFIX)lib/
-PREFIX_LIBEXEC?=$(PREFIX)libexec/
-PREFIX_DLL?=$(PREFIX_LIB)
-PREFIX_HDR?=$(PREFIX)include/
-PREFIX_SHR?=$(PREFIX)share/
-PREFIX_MAN?=$(PREFIX_SHR)man/
-PREFIX_DOC?=$(PREFIX_SHR)doc/
-PREFIX_VAR?=$(PREFIX)var/
+PREFIX.bin?=$(PREFIX)bin/
+PREFIX.sbin?=$(PREFIX)sbin/
+PREFIX.lib?=$(PREFIX)lib/
+PREFIX.libexec?=$(PREFIX)libexec/
+PREFIX.dll?=$(PREFIX.lib)
+PREFIX.h?=$(PREFIX)include/
+PREFIX.share?=$(PREFIX)share/
+PREFIX.man?=$(PREFIX.share)man/
+PREFIX.doc?=$(PREFIX.share)doc/
+PREFIX.var?=$(PREFIX)var/
 
 # Package configuration directories by default
 # The defaut is to install binaries and shared libraries in the prefix
 # but to install headers and data items under a directory named after project
 PACKAGE_INSTALL?=$(DESTDIR)$(PREFIX)
-PACKAGE_INSTALL_BIN?=$(DESTDIR)$(PREFIX_BIN)
-PACKAGE_INSTALL_LIB?=$(DESTDIR)$(PREFIX_LIB)
-PACKAGE_INSTALL_DLL?=$(DESTDIR)$(PREFIX_DLL)
-PACKAGE_INSTALL_HDR?=$(DESTDIR)$(PREFIX_HDR)$(PACKAGE_DIR)
-PACKAGE_INSTALL_SHR?=$(DESTDIR)$(PREFIX_SHR)$(PACKAGE_DIR)
-PACKAGE_INSTALL_MAN?=$(DESTDIR)$(PREFIX_MAN)
-PACKAGE_INSTALL_DOC?=$(DESTDIR)$(PREFIX_DOC)$(PACKAGE_DIR)
-PACKAGE_INSTALL_PKGCONFIG?=$(DESTDIR)$(PREFIX_SHR)pkgconfig/
-PACKAGE_INSTALL_SYSCONFIG?=$(DESTDIR)$(SYSCONFIG)$(PACKAGE_DIR)
+PACKAGE_INSTALL.bin?=$(DESTDIR)$(PREFIX.bin)
+PACKAGE_INSTALL.lib?=$(DESTDIR)$(PREFIX.lib)
+PACKAGE_INSTALL.dll?=$(DESTDIR)$(PREFIX.dll)
+PACKAGE_INSTALL.h?=$(DESTDIR)$(PREFIX.h)$(PACKAGE_DIR)
+PACKAGE_INSTALL.share?=$(DESTDIR)$(PREFIX.share)$(PACKAGE_DIR)
+PACKAGE_INSTALL.man?=$(DESTDIR)$(PREFIX.man)
+PACKAGE_INSTALL.doc?=$(DESTDIR)$(PREFIX.doc)$(PACKAGE_DIR)
+PACKAGE_INSTALL.pkgconfig?=$(DESTDIR)$(PREFIX.share)pkgconfig/
+PACKAGE_INSTALL.sysconfig?=$(DESTDIR)$(SYSCONFIG)$(PACKAGE_DIR)
 
 
 #------------------------------------------------------------------------------

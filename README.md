@@ -284,8 +284,8 @@ Some of the most useful environment variables include:
   the default `make` will become equivalent to `make debug`.
 
 * `PREFIX` specifies the installation location. You can also specify
-  the installation location for executables (`PREFIX_BIN`), libraries
-  (`PREFIX_LIB`) or shared libraries (`PREFIX_DLL`).
+  the installation location for executables (`PREFIX.bin`), libraries
+  (`PREFIX.lib`) or shared libraries (`PREFIX.dll`).
   For compatibility with `automake`-generated makefiles, you can also
   execute a staged install by setting `DESTDIR` when running `make`.
 

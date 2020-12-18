@@ -47,17 +47,17 @@ PYTHON=         python
 AR=             $(CROSS_COMPILE:%=%-)ar -rcs
 RANLIB=         $(CROSS_COMPILE:%=%-)ranlib
 INSTALL=	install
-INSTALL_DATA=   $(INSTALL) -m 644
-INSTALL_BIN=	$(INSTALL)
-INSTALL_HDR=	$(INSTALL_DATA)
-INSTALL_SHR=	$(INSTALL_DATA)
-INSTALL_LIB=	$(INSTALL)
-INSTALL_MAN=	$(INSTALL_DATA)
-INSTALL_DOC=	$(INSTALL_DATA)
-INSTALL_ETC=	$(INSTALL_DATA)
+INSTALL.data=   $(INSTALL) -m 644
+INSTALL.bin=	$(INSTALL)
+INSTALL.h=	$(INSTALL.data)
+INSTALL.share=	$(INSTALL.data)
+INSTALL.lib=	$(INSTALL)
+INSTALL.man=	$(INSTALL.data)
+INSTALL.doc=	$(INSTALL.data)
+INSTALL.etc=	$(INSTALL.data)
 UNINSTALL=	/bin/rm -f
-UNINSTALL_DIR=	/bin/rmdir > /dev/null 2>&1
-UNINSTALL_OK=	|| true
+UNINSTALL.dir=	/bin/rmdir > /dev/null 2>&1
+UNINSTALL.ok=	|| true
 CAT=		cat /dev/null
 
 # Tarball generation
@@ -145,7 +145,7 @@ MIQ_SYMLINKS=	$(PRODUCTS_VERSION:%=&& $(MIQ_SYMLINKS_SO))
 
 MAKE_DIR=	mkdir -p $*
 MAKE_OBJDIR=	$(MAKE_DIR) && touch $@
-LDFLAGS_RPATH=	-Wl,-rpath,$(PREFIX_DLL)
+LDFLAGS_RPATH=	-Wl,-rpath,$(PREFIX.dll)
 
 ifdef LIBTOOL
 COMPILE-lt=	$(LIBTOOL) --silent --mode=compile
@@ -158,7 +158,7 @@ LINK.lib=	$(LINK-lt)    $(LD)  $(MIQ_LDFLAGS) $(MIQ_LINKARGS)	\
 			$(MIQ_LT_VERS_OPT)
 LINK.dll=	$(LINK.lib)
 INSTALL.dll=	$(LIBTOOL) --silent --mode=install			\
-			$(INSTALL) $(MIQ_DLLNAME) $(PACKAGE_INSTALL_DLL)
+			$(INSTALL) $(MIQ_DLLNAME) $(PACKAGE_INSTALL.dll)
 LINK.exe=	$(MIQ_LINK)    $(LD)  $(MIQ_LINKARGS) $(MIQ_LDFLAGS) -o $@
 else
 # Non-libtool case: manage manually
@@ -171,8 +171,8 @@ LINK.dll=	$(LD) -shared	$(MIQ_LINKARGS)	$(MIQ_LDFLAGS)  \
 				-o $(MIQ_DLLNAME)		\
 				$(MIQ_SONAME_OPT)		\
 		&& (cd $(OUTPUT) $(MIQ_SYMLINKS))
-INSTALL.dll= 	$(INSTALL) $(MIQ_DLLNAME) $(PACKAGE_INSTALL_DLL) \
-		&& (cd $(PACKAGE_INSTALL_DLL) $(MIQ_SYMLINKS))
+INSTALL.dll= 	$(INSTALL) $(MIQ_DLLNAME) $(PACKAGE_INSTALL.dll) \
+		&& (cd $(PACKAGE_INSTALL.dll) $(MIQ_SYMLINKS))
 LINK.exe=	$(LD)		 $(MIQ_LINKARGS) $(MIQ_LDFLAGS) -o $@
 endif
 

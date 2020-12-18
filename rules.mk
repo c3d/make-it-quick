@@ -111,7 +111,7 @@ MIQ_SOURCES=	$(SOURCES)				\
 		$(MIQ_OUT_SOURCES)
 
 # Automatically put the man pages in the correct section
-MIQ_MANDIR=	$(PACKAGE_INSTALL_MAN)man$(MIQ_MANSECT)/
+MIQ_MANDIR=	$(PACKAGE_INSTALL.man)man$(MIQ_MANSECT)/
 MIQ_MANSECT=	$(subst .,,$(suffix $(*:.gz=)))
 
 ifndef MIQ_DIR
@@ -638,48 +638,48 @@ benchmark:	$(BENCHMARKS:%=%.benchmark)
 
 # Installing the product: always need to build it first
 %.install: $(PACKAGE_INSTALL).mkdir-only %
-	$(PRINT_INSTALL) $(INSTALL_DATA) $* $(PACKAGE_INSTALL)
-%.install_exe: $(PACKAGE_INSTALL_BIN).mkdir-only %
-	$(PRINT_INSTALL) $(INSTALL_BIN) $* $(PACKAGE_INSTALL_BIN)
-%.install_lib: $(PACKAGE_INSTALL_LIB).mkdir-only %
-	$(PRINT_INSTALL) $(INSTALL_LIB) $* $(PACKAGE_INSTALL_LIB)
-%.install_dll: $(PACKAGE_INSTALL_DLL).mkdir-only %
+	$(PRINT_INSTALL) $(INSTALL.data) $* $(PACKAGE_INSTALL)
+%.install_exe: $(PACKAGE_INSTALL.bin).mkdir-only %
+	$(PRINT_INSTALL) $(INSTALL.bin) $* $(PACKAGE_INSTALL.bin)
+%.install_lib: $(PACKAGE_INSTALL.lib).mkdir-only %
+	$(PRINT_INSTALL) $(INSTALL.lib) $* $(PACKAGE_INSTALL.lib)
+%.install_dll: $(PACKAGE_INSTALL.dll).mkdir-only %
 	$(PRINT_INSTALL) $(INSTALL.dll)
-%.install_hdr: $(PACKAGE_INSTALL_HDR).mkdir-only %
-	$(PRINT_INSTALL) $(INSTALL_HDR) $* $(PACKAGE_INSTALL_HDR)
-%.install_shr: $(PACKAGE_INSTALL_SHR).mkdir-only %
-	$(PRINT_INSTALL) $(INSTALL_SHR) $* $(PACKAGE_INSTALL_SHR)
-%.install_man: $(PACKAGE_INSTALL_MAN).mkdir-only %
+%.install_hdr: $(PACKAGE_INSTALL.h).mkdir-only %
+	$(PRINT_INSTALL) $(INSTALL.h) $* $(PACKAGE_INSTALL.h)
+%.install_shr: $(PACKAGE_INSTALL.share).mkdir-only %
+	$(PRINT_INSTALL) $(INSTALL.share) $* $(PACKAGE_INSTALL.share)
+%.install_man: $(PACKAGE_INSTALL.man).mkdir-only %
 	$(PRINT_COMMAND) $(MKDIR) -p $(MIQ_MANDIR)
-	$(PRINT_INSTALL) $(INSTALL_MAN) $* $(MIQ_MANDIR)
-%.install_doc: $(PACKAGE_INSTALL_DOC).mkdir-only %
-	$(PRINT_INSTALL) $(INSTALL_DOC) $* $(PACKAGE_INSTALL_DOC)
-%.install_etc: $(PACKAGE_INSTALL_SYSCONFIG).mkdir-only %
-	$(PRINT_INSTALL) $(INSTALL_ETC) $* $(PACKAGE_INSTALL_SYSCONFIG)
-%.install_pc: $(PACKAGE_INSTALL_PKGCONFIG).mkdir-only %
-	$(PRINT_INSTALL) $(INSTALL_DATA) $* $(PACKAGE_INSTALL_PKGCONFIG)
+	$(PRINT_INSTALL) $(INSTALL.man) $* $(MIQ_MANDIR)
+%.install_doc: $(PACKAGE_INSTALL.doc).mkdir-only %
+	$(PRINT_INSTALL) $(INSTALL.doc) $* $(PACKAGE_INSTALL.doc)
+%.install_etc: $(PACKAGE_INSTALL.sysconfig).mkdir-only %
+	$(PRINT_INSTALL) $(INSTALL.etc) $* $(PACKAGE_INSTALL.sysconfig)
+%.install_pc: $(PACKAGE_INSTALL.pkgconfig).mkdir-only %
+	$(PRINT_INSTALL) $(INSTALL.data) $* $(PACKAGE_INSTALL.pkgconfig)
 
 # Uninstalling the product
 %.uninstall:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL)%) ; $(UNINSTALL_DIR) $(PACKAGE_INSTALL) $(UNINSTALL_OK)
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL)%) ; $(UNINSTALL.dir) $(PACKAGE_INSTALL) $(UNINSTALL.ok)
 %.uninstall_exe:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_BIN)%) ; $(UNINSTALL_DIR) $(PACKAGE_INSTALL_BIN) $(UNINSTALL_OK)
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL.bin)%) ; $(UNINSTALL.dir) $(PACKAGE_INSTALL.bin) $(UNINSTALL.ok)
 %.uninstall_lib:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_LIB)%) ; $(UNINSTALL_DIR) $(PACKAGE_INSTALL_LIB) $(UNINSTALL_OK)
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL.lib)%) ; $(UNINSTALL.dir) $(PACKAGE_INSTALL.lib) $(UNINSTALL.ok)
 %.uninstall_dll:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_DLL)%) ; $(UNINSTALL_DIR) $(PACKAGE_INSTALL_DLL) $(UNINSTALL_OK)
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL.dll)%) ; $(UNINSTALL.dir) $(PACKAGE_INSTALL.dll) $(UNINSTALL.ok)
 %.uninstall_hdr:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_HDR)%) ; $(UNINSTALL_DIR) $(PACKAGE_INSTALL_HDR) $(UNINSTALL_OK)
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL.h)%) ; $(UNINSTALL.dir) $(PACKAGE_INSTALL.h) $(UNINSTALL.ok)
 %.uninstall_shr:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_SHR)%) ; $(UNINSTALL_DIR) $(PACKAGE_INSTALL_SHR) $(UNINSTALL_OK)
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL.share)%) ; $(UNINSTALL.dir) $(PACKAGE_INSTALL.share) $(UNINSTALL.ok)
 %.uninstall_doc:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_DOC)%) ; $(UNINSTALL_DIR) $(PACKAGE_INSTALL_DOC) $(UNINSTALL_OK)
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL.doc)%) ; $(UNINSTALL.dir) $(PACKAGE_INSTALL.doc) $(UNINSTALL.ok)
 %.uninstall_man:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_MAN)%)
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL.man)%)
 %.uninstall_etc:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_SYSCONFIG)%)
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL.sysconfig)%)
 %.uninstall_pc:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL_PKGCONFIG)%) ; $(UNINSTALL_DIR) $(PACKAGE_INSTALL_PKGCONFIG) $(UNINSTALL_OK)
+	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL.pkgconfig)%) ; $(UNINSTALL.dir) $(PACKAGE_INSTALL.pkgconfig) $(UNINSTALL.ok)
 
 
 #------------------------------------------------------------------------------
@@ -694,10 +694,10 @@ MIQ_PACKAGELDPATH=$(firstword 				\
 		$(PACKAGE_DLLS:%=-L$${libdir}))
 
 MIQ_GENPC=					  	 \
-	(echo 'prefix=$(PREFIX_BIN)'			;\
+	(echo 'prefix=$(PREFIX.bin)'			;\
 	echo 'exec_prefix=$${prefix}'			;\
-	echo 'libdir=$(PREFIX_LIB)'			;\
-	echo 'includedir=$(PREFIX_HDR)'			;\
+	echo 'libdir=$(PREFIX.lib)'			;\
+	echo 'includedir=$(PREFIX.h)'			;\
 	echo 'Name: $(PACKAGE_NAME)'			;\
 	echo 'Description: $(PACKAGE_DESCRIPTION)'	;\
 	echo 'Version: $(PACKAGE_VERSION)'		;\

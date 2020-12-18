@@ -1,18 +1,18 @@
 #!/bin/bash
 # *****************************************************************************
-#  configure                                                     TaoJS project 
+#  configure                                                     TaoJS project
 # *****************************************************************************
-# 
+#
 #   File Description:
-# 
+#
 #      Configure 'make-it-quick' with the most-common options
 #      Those will be used by the Makefile to generate config.system-setup.mk
 #      This script is mostly to inferface "like autoconf"
-# 
-# 
-# 
-# 
-# 
+#
+#
+#
+#
+#
 # *****************************************************************************
 #  (C) 2017 Christophe de Dinechin <christophe@dinechin.org>
 #  This software is licensed under the GNU General Public License v3
@@ -49,24 +49,24 @@ while [ $# -ne 0 ]; do
     --program-prefix=*)                 output IGNORED_PROGRAM_PREFIX=${1/--program-prefix=/}/;;
     --disable-dependency-tracking)      output IGNORED_DEPENDENCY_TRACKING=0;;
     --prefix=*)                         output PREFIX=$DD${1/--prefix=/}/;;
-    --exec-prefix=*)                    output PREFIX_EXEC=$DD${1/--exec-prefix=/}/;;
-    --bindir=*)                         output PREFIX_BIN=$DD${1/--bindir=/}/;;
-    --sbindir=*)                        output PREFIX_SBIN=$DD${1/--sbindir=/}/;;
+    --exec-prefix=*)                    output PREFIX.exec=$DD${1/--exec-prefix=/}/;;
+    --bindir=*)                         output PREFIX.bin=$DD${1/--bindir=/}/;;
+    --sbindir=*)                        output PREFIX.sbin=$DD${1/--sbindir=/}/;;
     --sysconfigdir=*)                   output SYSCONFIG=$DD${1/--sysconfigdir=/}/;;
-    --datadir=*)                        output PREFIX_SHR=$DD${1/--datadir=/}/;;
-    --includedir=*)                     output PREFIX_HDR=$DD${1/--includedir=/}/;;
-    --libdir=*)                         output PREFIX_LIB=$DD${1/--libdir=/}/;;
-    --libexecdir=*)                     output PREFIX_LIBEXEC=$DD${1/--libexecdir=/}/;;
-    --localstatedir=*)                  output PREFIX_VAR=$DD${1/--localstatedir=/}/;;
-    --sharedstatedir==*)                output PREFIX_STR=$DD${1/--sharedstatedir=/}/;;
-    --mandir==*)                        output PREFIX_MAN=$DD${1/--mandir=/}/;;
-    --infodir==*)                       output PREFIX_INFO=$DD${1/--infodir=/}/;;
+    --datadir=*)                        output PREFIX.share=$DD${1/--datadir=/}/;;
+    --includedir=*)                     output PREFIX.h=$DD${1/--includedir=/}/;;
+    --libdir=*)                         output PREFIX.lib=$DD${1/--libdir=/}/;;
+    --libexecdir=*)                     output PREFIX.libexec=$DD${1/--libexecdir=/}/;;
+    --localstatedir=*)                  output PREFIX.var=$DD${1/--localstatedir=/}/;;
+    --sharedstatedir==*)                output PREFIX.str=$DD${1/--sharedstatedir=/}/;;
+    --mandir==*)                        output PREFIX.man=$DD${1/--mandir=/}/;;
+    --infodir==*)                       output PREFIX.info=$DD${1/--infodir=/}/;;
     esac
     shift
 done
 
 # Emit the location of configuration sources
-output 'CONFIG_SOURCES=$(PREFIX_LIB)make-it-quick/config/'
+output 'CONFIG_SOURCES=$(PREFIX.lib)make-it-quick/config/'
 
 echo "# Summary of configuration:"
 cat $SETUP

@@ -44,7 +44,7 @@ OS_NAME_BUILDENV_mingw=windows
 include $(MIQ)config.gnu.mk
 
 # On Windows, DLLs have to go with the .exe
-PREFIX_DLL:=$(PREFIX_DLL:$(PREFIX_LIB)=$(PREFIX_BIN))
+PREFIX.dll:=$(PREFIX.dll:$(PREFIX.lib)=$(PREFIX.bin))
 
 # Windows overrides for extensions
 EXT.exe=        .exe
@@ -53,7 +53,7 @@ EXT.dll=        .dll
 
 # MinGW has no 'install' program
 INSTALL=	cp
-INSTALL_DATA=	$(INSTALL)
+INSTALL.data=	$(INSTALL)
 
 # All code is PIC in MinGW, so avoid a warning
 CFLAGS_PIC=

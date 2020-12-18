@@ -46,8 +46,8 @@ HDR_INSTALL=			\
 	$(wildcard config.*.mk)	\
 	$(MIQ_OBJDIR)config.system-setup.mk
 
-PREFIX_CONFIG=$(PREFIX_SHR)$(PACKAGE_DIR)config/
-PACKAGE_INSTALL_LIB=$(DESTDIR)$(PREFIX_CONFIG)
+PREFIX.config=$(PREFIX.share)$(PACKAGE_DIR)config/
+PACKAGE_INSTALL.lib=$(DESTDIR)$(PREFIX.config)
 LIB_INSTALL=$(wildcard config/check*.c)
 DOC_INSTALL= README.md AUTHORS NEWS
 TESTS=example/
@@ -60,23 +60,23 @@ MIQ=./
 include $(MIQ)rules.mk
 
 # Install the check*.c files as data
-INSTALL_LIB=$(INSTALL_DATA)
+INSTALL.lib=$(INSTALL.data)
 
 # Generation of the system setup file
 SYSTEM_SETUP=							\
 $(SYSCONFIG:%=SYSCONFIG?="$(SYSCONFIG)")			\
 $(PREFIX:%=PREFIX?="$(PREFIX)")					\
-$(PREFIX_BIN:%=PREFIX_BIN?="$(PREFIX_BIN)")			\
-$(PREFIX_SBIN:%=PREFIX_SBIN?="$(PREFIX_SBIN)")			\
-$(PREFIX_HDR:%=PREFIX_HDR?="$(PREFIX_HDR)")			\
-$(PREFIX_SHR:%=PREFIX_SHR?="$(PREFIX_SHR)")			\
-$(PREFIX_LIB:%=PREFIX_LIB?="$(PREFIX_LIB)")			\
-$(PREFIX_DLL:%=PREFIX_DLL?="$(PREFIX_DLL)")			\
-$(PREFIX_LIBEXEC:%=PREFIX_LIBEXEC?="$(PREFIX_LIBEXEC)")		\
-$(PREFIX_MAN:%=PREFIX_MAN?="$(PREFIX_MAN)")			\
-$(PREFIX_DOC:%=PREFIX_DOC?="$(PREFIX_DOC)")			\
-$(PREFIX_VAR:%=PREFIX_VAR?="$(PREFIX_VAR)")			\
-CONFIG_SOURCES="$(PREFIX_CONFIG)"
+$(PREFIX.bin:%=PREFIX.bin?="$(PREFIX.bin)")			\
+$(PREFIX.sbin:%=PREFIX.sbin?="$(PREFIX.sbin)")			\
+$(PREFIX.hdr:%=PREFIX.hdr?="$(PREFIX.hdr)")			\
+$(PREFIX.share:%=PREFIX.share?="$(PREFIX.share)")		\
+$(PREFIX.lib:%=PREFIX.lib?="$(PREFIX.lib)")			\
+$(PREFIX.dll:%=PREFIX.dll?="$(PREFIX.dll)")			\
+$(PREFIX.libexec:%=PREFIX.libexec?="$(PREFIX.libexec)")		\
+$(PREFIX.man:%=PREFIX.man?="$(PREFIX.man)")			\
+$(PREFIX.doc:%=PREFIX.doc?="$(PREFIX.doc)")			\
+$(PREFIX.var:%=PREFIX.var?="$(PREFIX.var)")			\
+CONFIG_SOURCES="$(PREFIX.config)"
 
 $(MIQ_OBJDIR)config.system-setup.mk:
 	$(PRINT_GENERATE) ( $(SYSTEM_SETUP:%=echo %;) true ) > $@
