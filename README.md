@@ -149,7 +149,7 @@ build with `make rebuild`.
 ### Build tips
 
 The makefiles are self-documented. You can get information
-about the avaiable build targets using `make help`, and add your
+about the available build targets using `make help`, and add your
 own documentation by adding dependencies to the `help` target.
 
 There are three primary build targets, `debug`, `opt` and
