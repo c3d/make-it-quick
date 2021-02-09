@@ -1,5 +1,27 @@
+v0.2.7
+    - Add configuration check for long double
+    - config: Add tests for _Float80 and _Float128
+    - Add configuration check for _Float16
+    - Merge pull request #3 from FreedomBen/FreedomBen-typo-fix
+    - Fix simple typo avaiable -> available
+    - More renaming using the .ext convention
+    - Repair installation of DLLs
+    - Rename MIQ_COMPILE to COMPILE-lt (for libtool)
+    - Replace [BUILD] with [LINK] in the output
+    - Make the COMPILE and LINK build steps more generic
+    - Rename OBJFILES to BUILD
+    - Replace OBJ_EXT with EXT.obj and similar for other extensions
+    - Add a test printout for the count-characters test
+    - Fix name fo test executable in example makefie
+
+v0.2.6
+    - Fix typo in pkgconfig.pc rule generation for includedir
+    - Place -I options from configuration behind project -I options
+    - Fix typo in dependency rule for .cc files
+    - Add blank lines to separate entries in change log
+
 v0.2.5          Release v0.2.5
-    
+
     - Copyright header adjustments
     - Improve determination of linker when some C++ files are generated
     - Add configuration check for setlinebuf
@@ -8,23 +30,23 @@ v0.2.5          Release v0.2.5
     - Fix rpath option to address macOS / Linux usage difference
 
 v0.2.4          Integration of Fedora packaging
-    
+
     - Put %package first (style, comment #11 of BZ#1689277)
     - Integrate fixes for minor issues found building SPICE
 
 v0.2.3          Address packaging review comments
-    
+
     See https://bugzilla.redhat.com/show_bug.cgi?id=1689277#c7
 
 v0.2.2          Release 0.2.2: Address packaging issues reported by rpmlint
-    
+
     - Presence of .c files in a non-devel package
     - Non-binary in /usr/lib, moved config files to /usr/share
     - Incoherent version number in change log
     - Handling of documentation (added support to make-it-quick)
 
 v0.2.1          Add support for man pages installation
-    
+
     - Add support for installation of man pages in either nroff or pod format
     - Fix handling of subdirectories in examples
 
