@@ -219,9 +219,9 @@ MIQ_CFGTEST=	"$<" -o "$<".exe > "$<".err 2>&1 &&			\
 		"$<".exe > "$<".out					\
 		$(MIQ_CFGSET)
 MIQ_CFG_PRINT=	if [ $$MIQ_CFGRC == 1 ]; then				\
-		    echo "$(POS_COLOR)OK$(DEF_COLOR)";			\
+		    echo "[OK]";					\
 		else							\
-		    echo "$(ERR_COLOR)NO$(DEF_COLOR)";			\
+		    echo "[NO]";					\
 		fi;
 MIQ_CFGUNDEF0=	$$MIQ_CFGRC						\
 	| sed -e 's|^\#define \(.*\) 0$$|/* \#undef \1 */|g' > "$@";	\
@@ -276,3 +276,16 @@ MIQ_PKGCONFIG_LIBS_OPTIONAL=						\
 	(pkg-config --libs $* --silence-errors > $@			\
 	&& MIQ_CFGRC=1 || MIQ_CFGRC=0;					\
 	true)
+
+
+
+#------------------------------------------------------------------------------
+#   Test checks
+#------------------------------------------------------------------------------
+
+MIQ_TEST=	&& MIQ_RC=1 || MIQ_RC=0; true
+PRINT_TEST_OK=	if [ $$MIQ_RC == 1 ]; then				\
+		    echo "[OK]";					\
+		else							\
+		    echo "[KO]";					\
+		fi;

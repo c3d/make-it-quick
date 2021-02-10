@@ -186,9 +186,12 @@ ERROR_MSG=  '[Ee]rror\( \?\[\?[A-Za-z]\+[0-9]\+\]\?\)\?:'
 #------------------------------------------------------------------------------
 # Colorization
 #------------------------------------------------------------------------------
-# These use ANSI code, but they work on Mac, Windows, Linux, BSD and VMS, which is good enough
+# These use ANSI code, but they work on Mac, Windows, Linux, BSD and VMS,
+# which is good enough for most use cases.
 # Change them if you want to work from an hpterm on HP-UX ;-)
 INFO_STEP_COL=  \\033[37;44m
+INFO_ESTEP_COL= \\033[37;41m
+INFO_WSTEP_COL= \\033[30;43m
 INFO_NAME_COL=  \\033[33;44m
 INFO_LINE_COL=  \\033[36;49m
 INFO_ERR_COL=   \\033[31m
@@ -196,13 +199,16 @@ INFO_WRN_COL=   \\033[33m
 INFO_POS_COL=   \\033[32m
 INFO_RST_COL=   \\033[39;49;27m
 INFO_CLR_EOL=   \\033[K
-INFO=           printf "%-20s %s %s %s %s %s %s %s\n"
-INFO_NONL=      printf "%-20s %-30s %s %s %s %s %s %s"
+INFO=           printf "%-16s %-56s%6s\n"
+INFO_NONL=      printf "%-16s %-56s"
+INFO_TEST=      printf "%-16s %-56s%6s\n"
 
 # Color for build steps
 STEP_COLOR:=    $(shell printf "$(INFO_STEP_COL)")
-LINE_COLOR:=    $(shell printf "$(INFO_NAME_COL)")
-NAME_COLOR:=    $(shell printf "$(INFO_LINE_COL)")
+WSTEP_COLOR:=   $(shell printf "$(INFO_WSTEP_COL)")
+ESTEP_COLOR:=   $(shell printf "$(INFO_ESTEP_COL)")
+LINE_COLOR:=    $(shell printf "$(INFO_LINE_COL)")
+NAME_COLOR:=    $(shell printf "$(INFO_NAME_COL)")
 ERR_COLOR:=     $(shell printf "$(INFO_ERR_COL)")
 WRN_COLOR:=     $(shell printf "$(INFO_WRN_COL)")
 POS_COLOR:=     $(shell printf "$(INFO_POS_COL)")
@@ -216,12 +222,19 @@ LINE_BUFFERED=--line-buffered
 COLOR_FILTER=   | grep $(LINE_BUFFERED) -v -e "^true &&" -e "^[A-Za-z0-9_-]\+\.\(c\|h\|cpp\|hpp\)$$"            \
 	    $(COLORIZE)
 
-COLORIZE= | sed $(SEDOPT_$(OS_NAME))                                                                        \
-            -e 's/^\(.*[,:(]\{1,\}[0-9]*[ :)]*\)\([Ww]arning\)/$(POS_COLOR)\1$(WRN_COLOR)\2$(DEF_COLOR)/g'  \
-            -e 's/^\(.*[,:(]\{1,\}[0-9]*[ :)]*\)\([Ee]rror\)/$(POS_COLOR)\1$(ERR_COLOR)\2$(DEF_COLOR)/g'    \
-            -e 's/^\(\[BEGIN\]\)\(.*\)$$/$(STEP_COLOR)\1\2$(CLR_EOLINE)$(DEF_COLOR)/g'                      \
-            -e 's/^\(\[END\]\)\(.*\)$$/$(STEP_COLOR)\1\2$(CLR_EOLINE)$(DEF_COLOR)/g'                        \
-            -e 's/^\(\[[A-Z/ 0-9-]\{1,\}\]\)\(.*\)$$/$(LINE_COLOR)\1$(NAME_COLOR)\2$(DEF_COLOR)/g'
+COLORIZE= | sed $(SEDOPT_$(OS_NAME))                                                                        		\
+            -e 's/^\(.*[,:(]\{1,\}[0-9]*[ :)]*\)\([Ww]arning\)/$(POS_COLOR)\1$(WRN_COLOR)\2$(DEF_COLOR)/g'  		\
+            -e 's/^\(.*[,:(]\{1,\}[0-9]*[ :)]*\)\([Ee]rror\)/$(POS_COLOR)\1$(ERR_COLOR)\2$(DEF_COLOR)/g'    		\
+            -e 's/^\(\[BEGIN\]\)\(.*\)$$/$(STEP_COLOR)\1\2$(CLR_EOLINE)$(DEF_COLOR)/g'        				\
+            -e 's/^\(\[END\]\)\(.*\)$$/$(STEP_COLOR)\1\2$(CLR_EOLINE)$(DEF_COLOR)/g'        				\
+            -e 's/\(\[OK\]\)/$(POS_COLOR)\1$(DEF_COLOR)/g'        							\
+            -e 's/\(\[NO\]\)/$(ERR_COLOR)\1$(DEF_COLOR)/g'        							\
+            -e 's/\(\[KO\]\)/$(ERR_COLOR)\1$(DEF_COLOR)/g'        							\
+            -e 's/^\(\[WARNING\]\)\(.*\)$$/$(WSTEP_COLOR)\1\2$(CLR_EOLINE)$(DEF_COLOR)/g' 				\
+            -e 's/^\(\[MISSING\]\)\(.*\)$$/$(WSTEP_COLOR)\1\2$(CLR_EOLINE)$(DEF_COLOR)/g' 				\
+            -e 's/^\(\[ERROR\]\)\(.*\)$$/$(ERR_COLOR)\1\2$(CLR_EOLINE)$(DEF_COLOR)/g'        				\
+            -e 's/^\(\[FAIL\]\)\(.*\)$$/$(ERR_COLOR)\1\2$(CLR_EOLINE)$(DEF_COLOR)/g'        				\
+            -e 's/^\(\[[A-Z/ 0-9-]\{1,\}\]\)\(.*\)$$/$(NAME_COLOR)\1$(LINE_COLOR)\2$(DEF_COLOR)/g'
 
 
 #------------------------------------------------------------------------------

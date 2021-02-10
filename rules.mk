@@ -262,9 +262,9 @@ help:
 	.postbuild $(RUN_TESTS:%=.tests) .goodbye
 
 .hello:
-	@$(INFO) "[BEGIN]" $(TARGET) $(BUILDENV) in "$(MIQ_PRETTYDIR)"
+	@$(INFO) "[BEGIN]" "$(TARGET) $(BUILDENV) in $(MIQ_PRETTYDIR)"
 .goodbye:
-	@$(INFO) "[END]" $(TARGET) $(BUILDENV) in "$(MIQ_PRETTYDIR)"
+	@$(INFO) "[END]" "$(TARGET) $(BUILDENV) in $(MIQ_PRETTYDIR)"
 
 # Sequencing build steps and build step hooks
 .config: .hello
@@ -392,12 +392,13 @@ PRINT_COMPILE=	$(PRINT_COMMAND) $(INFO) "[COMPILE$(MIQ_PRINTCOUNT)] " $<;
 PRINT_LINK= 	$(PRINT_COMMAND) $(INFO) "[LINK]" $(shell basename $@);
 PRINT_GENERATE= $(PRINT_COMMAND) $(INFO) "[GENERATE]" "$(shell basename "$@")";
 PRINT_VARIANT=  $(PRINT_COMMAND) $(INFO) "[VARIANT]" "$*";
-PRINT_INSTALL=  $(PRINT_COMMAND) $(INFO) "[INSTALL] " $(*F) in $(<D) $(COLORIZE);
-PRINT_UNINSTALL=$(PRINT_COMMAND) $(INFO) "[UNINSTALL] " $(*F) $(COLORIZE);
-PRINT_CLEAN=    $(PRINT_COMMAND) $(INFO) "[CLEAN] " $@ $(MIQ_PRETTYDIR) $(COLORIZE);
-PRINT_COPY=     $(PRINT_COMMAND) $(INFO) "[COPY]" $< '=>' $@ ;
-PRINT_DEPEND= 	$(PRINT_COMMAND) $(INFO) "[DEPEND] " $< ;
-PRINT_TEST= 	$(PRINT_COMMAND) $(INFO) "[TEST]" $(@:.test=) ;
+PRINT_INSTALL=  $(PRINT_COMMAND) $(INFO) "[INSTALL]" "$(*F) in $(<D)" $(COLORIZE);
+PRINT_UNINSTALL=$(PRINT_COMMAND) $(INFO) "[UNINSTALL] " "$(*F)" $(COLORIZE);
+PRINT_CLEAN=    $(PRINT_COMMAND) $(INFO) "[CLEAN] " "$@ $(MIQ_PRETTYDIR)" $(COLORIZE);
+PRINT_COPY=     $(PRINT_COMMAND) $(INFO) "[COPY]" "$< '=>' $@" ;
+PRINT_DEPEND= 	$(PRINT_COMMAND) $(INFO) "[DEPEND] " "$<" ;
+PRINT_TEST= 	$(PRINT_COMMAND) $(INFO_NONL) "[TEST]" "$(@:.test=)";
+PRINT_RESULT= 	$(PRINT_COMMAND) $(INFO) "[TEST]" "$(@:.test=)" "[$(shell cat $*.result)]";
 PRINT_CONFIG= 	$(PRINT_COMMAND) $(INFO_NONL) "[CONFIG]" "$(MIQ_ORIGTARGET)" ;
 PRINT_PKGCONFIG=$(PRINT_COMMAND) $(INFO) "[PKGCONFIG]" "$*" ;
 PRINT_LIBCONFIG=$(PRINT_COMMAND) $(INFO) "[LIBCONFIG]" "lib$*" ;
