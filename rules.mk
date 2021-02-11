@@ -398,7 +398,7 @@ PRINT_CLEAN=    $(PRINT_COMMAND) $(INFO) "[CLEAN] " "$@ $(MIQ_PRETTYDIR)" $(COLO
 PRINT_COPY=     $(PRINT_COMMAND) $(INFO) "[COPY]" "$< '=>' $@" ;
 PRINT_DEPEND= 	$(PRINT_COMMAND) $(INFO) "[DEPEND] " "$<" ;
 PRINT_TEST= 	$(PRINT_COMMAND) $(INFO_NONL) "[TEST]" "$(@:.test=)";
-PRINT_RESULT= 	$(PRINT_COMMAND) $(INFO) "[TEST]" "$(@:.test=)" "[$(shell cat $*.result)]";
+PRINT_RESULT= 	$(PRINT_COMMAND) $(INFO) "[TEST]" "$(@:.test=)" "[$(shell cat $*.result)]" $(COLORIZE);
 PRINT_CONFIG= 	$(PRINT_COMMAND) $(INFO_NONL) "[CONFIG]" "$(MIQ_ORIGTARGET)" ;
 PRINT_PKGCONFIG=$(PRINT_COMMAND) $(INFO) "[PKGCONFIG]" "$*" ;
 PRINT_LIBCONFIG=$(PRINT_COMMAND) $(INFO) "[LIBCONFIG]" "lib$*" ;
