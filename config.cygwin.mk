@@ -47,7 +47,7 @@ EXT.obj=	.obj
 
 # Because of the above, we need to put the number before the extesion
 # e.g. where Linux would have libfoo.so.1.3.2, cygwin has libfoo.1.3.2.dll
-MIQ_DLLBASE=    $(@:%.install_dll=%)
+MIQ_DLLBASE=    $(@:%.install.dll=%)
 MIQ_DLLNAME=	$(MIQ_DLLBASE:%$(EXT.dll)=%$(PRODUCTS_VERSION:%=.$(MIQ_V_VERSION))$(EXT.dll))
 MIQ_SONAME=	$(MIQ_SOBASE:%$(EXT.dll)=%)$(MIQ_V_MAJOR:%=.%)$(EXT.dll)
 MIQ_SONAME_OPT=	$(PRODUCTS_VERSION:%=-Wl,-soname -Wl,$(MIQ_SONAME))

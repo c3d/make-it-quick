@@ -36,21 +36,19 @@
 
 # Package description
 PACKAGE_NAME=make-it-quick
-PACKAGE_VERSION=0.2.7
+PACKAGE_VERSION=0.3.0
 PACKAGE_DESCRIPTION=A simple auto-configuring build system for C and C++ programs
 PACKAGE_URL=http://github.com/c3d/make-it-quick
 
 # Things to install
-HDR_INSTALL=			\
+HEADERS=			\
 	rules.mk		\
 	config.mk		\
 	$(wildcard config.*.mk)	\
 	$(MIQ_OBJDIR)config.system-setup.mk
 
-PREFIX.config=$(PREFIX.share)$(PACKAGE_DIR)config/
-PACKAGE_INSTALL.lib=$(DESTDIR)$(PREFIX.config)
-LIB_INSTALL=$(wildcard config/check*.c)
-DOC_INSTALL= README.md AUTHORS NEWS
+WARE.config=$(wildcard config/check*.c)
+WARE.doc= README.md AUTHORS NEWS
 TESTS=example/
 
 # Make sure we generate the config.system
@@ -61,22 +59,13 @@ MIQ=./
 include $(MIQ)rules.mk
 
 # Install the check*.c files as data
-INSTALL.lib=$(INSTALL.data)
+INSTALL.config=$(INSTALL.data)
 
 # Generation of the system setup file
-SYSTEM_SETUP=							\
-$(SYSCONFIG:%=SYSCONFIG?="$(SYSCONFIG)")			\
-$(PREFIX:%=PREFIX?="$(PREFIX)")					\
-$(PREFIX.bin:%=PREFIX.bin?="$(PREFIX.bin)")			\
-$(PREFIX.sbin:%=PREFIX.sbin?="$(PREFIX.sbin)")			\
-$(PREFIX.hdr:%=PREFIX.hdr?="$(PREFIX.hdr)")			\
-$(PREFIX.share:%=PREFIX.share?="$(PREFIX.share)")		\
-$(PREFIX.lib:%=PREFIX.lib?="$(PREFIX.lib)")			\
-$(PREFIX.dll:%=PREFIX.dll?="$(PREFIX.dll)")			\
-$(PREFIX.libexec:%=PREFIX.libexec?="$(PREFIX.libexec)")		\
-$(PREFIX.man:%=PREFIX.man?="$(PREFIX.man)")			\
-$(PREFIX.doc:%=PREFIX.doc?="$(PREFIX.doc)")			\
-$(PREFIX.var:%=PREFIX.var?="$(PREFIX.var)")			\
+SYSTEM_SETUP=								\
+$(SYSCONFIG:%=SYSCONFIG?="$(SYSCONFIG)")				\
+$(PREFIX:%=PREFIX?="$(PREFIX)")						\
+$(foreach i,$(INSTALLABLE),$(PREFIX.$i:%=PREFIX.$i?=$(PREFIX.$i)))	\
 CONFIG_SOURCES="$(PREFIX.config)"
 
 $(MIQ_OBJDIR)config.system-setup.mk:

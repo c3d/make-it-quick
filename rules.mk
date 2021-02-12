@@ -88,21 +88,8 @@ MIQ_LDFLAGS=	$(LDFLAGS)				\
 
 MIQ_PACKAGE= 	$(PACKAGE_NAME:%=$(MIQ_OBJDIR)%.pc)
 
-MIQ_INSTALL=	$(TO_INSTALL:%=%.$(DO_INSTALL))		\
-		$(MIQ_OUTEXE:%=%.$(DO_INSTALL)_exe)	\
-		$(MIQ_OUTLIB:%=%.$(DO_INSTALL)_lib)	\
-		$(MIQ_OUTDLL:%=%.$(DO_INSTALL)_dll)	\
-		$(EXE_INSTALL:%=%.$(DO_INSTALL)_exe)	\
-		$(LIB_INSTALL:%=%.$(DO_INSTALL)_lib)	\
-		$(DLL_INSTALL:%=%.$(DO_INSTALL)_dll)	\
-		$(HEADERS:%=%.$(DO_INSTALL)_hdr)	\
-		$(HDR_INSTALL:%=%.$(DO_INSTALL)_hdr)	\
-		$(SHR_INSTALL:%=%.$(DO_INSTALL)_shr)	\
-		$(DOC_INSTALL:%=%.$(DO_INSTALL)_doc)	\
-		$(MANPAGES:%=%.gz.$(DO_INSTALL)_man)	\
-		$(MAN_INSTALL:%=%.gz.$(DO_INSTALL)_man)	\
-		$(ETC_INSTALL:%=%.$(DO_INSTALL)_etc)	\
-		$(MIQ_PACKAGE:%=%.$(DO_INSTALL)_pc)
+MIQ_DOINSTALL=	$(foreach i,$(INSTALLABLE),$(WARE.$i:%=%.$(DO_INSTALL).$i))
+MIQ_INSTALL=	$(DO_INSTALL:%=$(MIQ_DOINSTALL))
 
 MIQ_SOURCES=	$(SOURCES)				\
 		$(SOURCES_BUILDENV_$(BUILDENV))		\
@@ -212,6 +199,7 @@ rebuild: re-$(TARGET)
 # Installation
 install: install-$(TARGET)
 uninstall: uninstall-$(TARGET)
+reinstall: reinstall-$(TARGET)
 
 clean: $(SUBDIRS:%=%.clean) $(VARIANTS:%=%.variant-clean)
 	-$(PRINT_CLEAN) rm -f $(TO_CLEAN) $(MIQ_OBJECTS) $(DEPENDENCIES) $(MIQ_OUTPRODS) $(MIQ_TOLINK) config.h
@@ -280,7 +268,7 @@ endif
 .objects: $(MIQ_OBJDIR:%=%.mkdir)
 .product: $(MIQ_OUTPRODS)
 .postbuild: .product .install
-.install: $(DO_INSTALL:%=$(MIQ_INSTALL))
+.install: $(MIQ_INSTALL)
 .tests: $(TESTS:%=%.test)
 .goodbye: .postbuild
 
@@ -328,6 +316,8 @@ install-%:
 	$(PRINT_COMMAND) $(MAKE) $* DO_INSTALL=install
 uninstall-%:
 	$(PRINT_COMMAND) $(MAKE) TARGET=$* DO_INSTALL=uninstall .install
+reinstall-%:
+	$(PRINT_COMMAND) $(MAKE) TARGET=$* DO_INSTALL=reinstall .install
 
 # Deep build (re-check all libraries instead of just resulting .a)
 deep-%:
@@ -392,7 +382,7 @@ PRINT_COMPILE=	$(PRINT_COMMAND) $(INFO) "[COMPILE$(MIQ_PRINTCOUNT)] " $<;
 PRINT_LINK= 	$(PRINT_COMMAND) $(INFO) "[LINK]" $(shell basename $@);
 PRINT_GENERATE= $(PRINT_COMMAND) $(INFO) "[GENERATE]" "$(shell basename "$@")" $(COLORIZE);
 PRINT_VARIANT=  $(PRINT_COMMAND) $(INFO) "[VARIANT]" "$*";
-PRINT_INSTALL=  $(PRINT_COMMAND) $(INFO) "[INSTALL]" "$(*F) in $(<D)" $(COLORIZE);
+PRINT_INSTALL=  $(PRINT_COMMAND) $(INFO) "[INSTALL]" "$(@F) => $(@D)/" $(COLORIZE);
 PRINT_UNINSTALL=$(PRINT_COMMAND) $(INFO) "[UNINSTALL] " "$(*F)" $(COLORIZE);
 PRINT_CLEAN=    $(PRINT_COMMAND) $(INFO) "[CLEAN] " "$@ $(MIQ_PRETTYDIR)" $(COLORIZE);
 PRINT_COPY=     $(PRINT_COMMAND) $(INFO) "[COPY]" "$< '=>' $@" ;
@@ -637,50 +627,28 @@ benchmark:	$(BENCHMARKS:%=%.benchmark)
 #  Install targets
 #------------------------------------------------------------------------------
 
-# Installing the product: always need to build it first
-%.install: $(PACKAGE_INSTALL).mkdir-only %
-	$(PRINT_INSTALL) $(INSTALL.data) $* $(PACKAGE_INSTALL)
-%.install_exe: $(PACKAGE_INSTALL.bin).mkdir-only %
-	$(PRINT_INSTALL) $(INSTALL.bin) $* $(PACKAGE_INSTALL.bin)
-%.install_lib: $(PACKAGE_INSTALL.lib).mkdir-only %
-	$(PRINT_INSTALL) $(INSTALL.lib) $* $(PACKAGE_INSTALL.lib)
-%.install_dll: $(PACKAGE_INSTALL.dll).mkdir-only %
-	$(PRINT_INSTALL) $(INSTALL.dll)
-%.install_hdr: $(PACKAGE_INSTALL.h).mkdir-only %
-	$(PRINT_INSTALL) $(INSTALL.h) $* $(PACKAGE_INSTALL.h)
-%.install_shr: $(PACKAGE_INSTALL.share).mkdir-only %
-	$(PRINT_INSTALL) $(INSTALL.share) $* $(PACKAGE_INSTALL.share)
-%.install_man: $(PACKAGE_INSTALL.man).mkdir-only %
-	$(PRINT_COMMAND) $(MKDIR) -p $(MIQ_MANDIR)
-	$(PRINT_INSTALL) $(INSTALL.man) $* $(MIQ_MANDIR)
-%.install_doc: $(PACKAGE_INSTALL.doc).mkdir-only %
-	$(PRINT_INSTALL) $(INSTALL.doc) $* $(PACKAGE_INSTALL.doc)
-%.install_etc: $(PACKAGE_INSTALL.sysconfig).mkdir-only %
-	$(PRINT_INSTALL) $(INSTALL.etc) $* $(PACKAGE_INSTALL.sysconfig)
-%.install_pc: $(PACKAGE_INSTALL.pkgconfig).mkdir-only %
-	$(PRINT_INSTALL) $(INSTALL.data) $* $(PACKAGE_INSTALL.pkgconfig)
+# Helper macro:
+# $1: install pattern
+# $2: what to install
+define install-rules
 
-# Uninstalling the product
-%.uninstall:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL)%) ; $(UNINSTALL.dir) $(PACKAGE_INSTALL) $(UNINSTALL.ok)
-%.uninstall_exe:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL.bin)%) ; $(UNINSTALL.dir) $(PACKAGE_INSTALL.bin) $(UNINSTALL.ok)
-%.uninstall_lib:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL.lib)%) ; $(UNINSTALL.dir) $(PACKAGE_INSTALL.lib) $(UNINSTALL.ok)
-%.uninstall_dll:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL.dll)%) ; $(UNINSTALL.dir) $(PACKAGE_INSTALL.dll) $(UNINSTALL.ok)
-%.uninstall_hdr:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL.h)%) ; $(UNINSTALL.dir) $(PACKAGE_INSTALL.h) $(UNINSTALL.ok)
-%.uninstall_shr:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL.share)%) ; $(UNINSTALL.dir) $(PACKAGE_INSTALL.share) $(UNINSTALL.ok)
-%.uninstall_doc:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL.doc)%) ; $(UNINSTALL.dir) $(PACKAGE_INSTALL.doc) $(UNINSTALL.ok)
-%.uninstall_man:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL.man)%)
-%.uninstall_etc:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL.sysconfig)%)
-%.uninstall_pc:
-	$(PRINT_UNINSTALL) $(UNINSTALL) $(*F:%=$(PACKAGE_INSTALL.pkgconfig)%) ; $(UNINSTALL.dir) $(PACKAGE_INSTALL.pkgconfig) $(UNINSTALL.ok)
+$2.install.$1: $$(PACKAGE_INSTALL.$1)$(notdir $2)
+$$(PACKAGE_INSTALL.$1)$(notdir $2): $$(WARE_DIR.$1)$2		| .install-directories
+	$$(PRINT_INSTALL) $$(firstword $$(INSTALL.$1) $$(INSTALL)) $$(WARE_DIR.$1)$2 $$(PACKAGE_INSTALL.$1)
+
+$2.uninstall.$1:
+	$$(PRINT_UNINSTALL) $$(firstword $$(UNINSTALL.$1) $$(UNINSTALL)) $$(PACKAGE_INSTALL.$1)$2; $$(UNINSTALL.dir) $$(PACKAGE_INSTALL.$1) $$(UNINSTALL.ok)
+
+$2.reinstall: $2 $$(PACKAGE_INSTALL.$1).mkdir-only
+	$$(PRINT_INSTALL) $$(firstword $$(INSTALL.$1) $$(INSTALL)) $2 $$(PACKAGE_INSTALL.$1)
+
+.install-directories: $$(PACKAGE_INSTALL.$1).mkdir-only
+
+endef
+
+# Generate rules for all the installable stuff
+$(eval $(foreach i,$(INSTALLABLE),$(foreach w,$(WARE.$i),$(call install-rules,$i,$w))))
+.install:	.install-directories
 
 
 #------------------------------------------------------------------------------
@@ -698,7 +666,7 @@ MIQ_GENPC=					  	 \
 	(echo 'prefix=$(PREFIX.bin)'			;\
 	echo 'exec_prefix=$${prefix}'			;\
 	echo 'libdir=$(PREFIX.lib)'			;\
-	echo 'includedir=$(PREFIX.h)'			;\
+	echo 'includedir=$(PREFIX.header)'		;\
 	echo 'Name: $(PACKAGE_NAME)'			;\
 	echo 'Description: $(PACKAGE_DESCRIPTION)'	;\
 	echo 'Version: $(PACKAGE_VERSION)'		;\

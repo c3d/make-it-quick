@@ -64,8 +64,36 @@ LAST_LOG?=$(LOGS)make.log
 # Stuff to clean
 TO_CLEAN=	*~ *.bak
 
-# Stuff to install
-TO_INSTALL=
+# Kinds of installable stuff
+INSTALLABLE=	exe		\
+		lib 		\
+		dll		\
+		header		\
+		share		\
+		license		\
+		man		\
+		doc		\
+		var		\
+		etc		\
+		config		\
+		sysconfig	\
+		pkgconfig
+
+# Stuff to install, with one of the suffixes above
+WARE.exe?=	$(MIQ_OUTEXE)
+WARE.lib?=	$(MIQ_OUTLIB)
+WARE.dll?=	$(MIQ_OUTDLL)
+WARE.man?=	$(MANPAGES)
+WARE.header?=	$(HEADERS)
+WARE.doc?= 	$(wildcard README*)
+WARE.license?= 	$(wildcard COPYING* LICENSE*)
+WARE.pkgconfig?=$(PACKAGE_NAME:%=%.pc)
+
+# Where we pick up the stuff to install (default is source)
+WARE_DIR.pkgconfig?=$(MIQ_OBJDIR)
+
+# Where to put system configuration files
+SYSCONFIG?=$(PREFIX.etc)
 
 # Buildenv for recursive builds
 RECURSE_BUILDENV=$(BUILDENV)
@@ -98,7 +126,7 @@ PACKAGE_DLLS=$(MIQ_PRODDLL)
 CONFIG_SOURCES?=$(MIQ)config/
 
 # Sources to reformat
-CLANG_FORMAT_SOURCES=$(SOURCES) $(HDR_INSTALL)
+CLANG_FORMAT_SOURCES=$(SOURCES) $(WARE.header)
 
 
 #------------------------------------------------------------------------------
@@ -106,32 +134,34 @@ CLANG_FORMAT_SOURCES=$(SOURCES) $(HDR_INSTALL)
 #------------------------------------------------------------------------------
 
 # Variables typically provided by configure scripts
-SYSCONFIG?=/etc/
 PREFIX?=/usr/local/
 PREFIX.bin?=$(PREFIX)bin/
 PREFIX.sbin?=$(PREFIX)sbin/
-PREFIX.lib?=$(PREFIX)lib/
 PREFIX.libexec?=$(PREFIX)libexec/
+PREFIX.exe?=$(PREFIX.bin)
+PREFIX.lib?=$(PREFIX)lib/
 PREFIX.dll?=$(PREFIX.lib)
-PREFIX.h?=$(PREFIX)include/
+PREFIX.header?=$(PREFIX)include/
 PREFIX.share?=$(PREFIX)share/
 PREFIX.man?=$(PREFIX.share)man/
 PREFIX.doc?=$(PREFIX.share)doc/
+PREFIX.license?=$(PREFIX.doc)
+PREFIX.config?=$(PREFIX.share)config/
 PREFIX.var?=$(PREFIX)var/
+PREFIX.etc?=/etc/
+PREFIX.sysconfig=$(SYSCONFIG)
+PREFIX.pkgconfig=$(PREFIX.share)pkgconfig/
+
 
 # Package configuration directories by default
 # The defaut is to install binaries and shared libraries in the prefix
 # but to install headers and data items under a directory named after project
-PACKAGE_INSTALL?=$(DESTDIR)$(PREFIX)
-PACKAGE_INSTALL.bin?=$(DESTDIR)$(PREFIX.bin)
-PACKAGE_INSTALL.lib?=$(DESTDIR)$(PREFIX.lib)
-PACKAGE_INSTALL.dll?=$(DESTDIR)$(PREFIX.dll)
-PACKAGE_INSTALL.h?=$(DESTDIR)$(PREFIX.h)$(PACKAGE_DIR)
-PACKAGE_INSTALL.share?=$(DESTDIR)$(PREFIX.share)$(PACKAGE_DIR)
-PACKAGE_INSTALL.man?=$(DESTDIR)$(PREFIX.man)
-PACKAGE_INSTALL.doc?=$(DESTDIR)$(PREFIX.doc)$(PACKAGE_DIR)
-PACKAGE_INSTALL.pkgconfig?=$(DESTDIR)$(PREFIX.share)pkgconfig/
-PACKAGE_INSTALL.sysconfig?=$(DESTDIR)$(SYSCONFIG)$(PACKAGE_DIR)
+define package-install
+
+PACKAGE_INSTALL.$1?=$$(DESTDIR)$$(PREFIX.$1)
+
+endef
+$(eval $(foreach i,$(INSTALLABLE),$(call package-install,$i)))
 
 
 #------------------------------------------------------------------------------
