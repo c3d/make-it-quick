@@ -237,6 +237,9 @@ super-user privileges.
     [INSTALL]            opt macosx-clang in [top]/build
     [INSTALL]            hello in /usr/local/bin
 
+In your `Makefile`, you can specify what to install with `WARE.xyz` variables,
+where `xyz` is an extension found in the `$(INSTALLABLE)` variable. By default,
+there are installation rules for the most common kinds of files.
 
 ## Build modifiers
 
@@ -450,7 +453,7 @@ and `libfoo.so.1` will both point to `libfoo.so.1.3.2`.
 There a few utility targets, in particular:
 
 * `clang-format` reformats all sources specified in `CLANG_FORMAT_SOURCES`
-  (which defaults to `SOURCES` and `HDR_INSTALL`)
+  (which defaults to `SOURCES` and `HEADERS`)
 
 
 ## Redistribution
