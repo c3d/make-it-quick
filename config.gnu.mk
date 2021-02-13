@@ -144,9 +144,16 @@ MIQ_SYMLINKS=	$(PRODUCTS_VERSION:%=&& $(MIQ_SYMLINKS_SO))
 #  Build rules
 #------------------------------------------------------------------------------
 
+# Select RPATH to include test paths for debug and opt
+# For TARGET==release, you must install to test
+RPATH=		$(RPATH_$(TARGET)) $(PREFIX.dll)
+RPATH_debug=	. $(OUTPUT)
+RPATH_opt=	. $(OUTPUT)
+RPATH_release=
+
 MAKE_DIR=	mkdir -p $*
 MAKE_OBJDIR=	$(MAKE_DIR) && touch $@
-LDFLAGS_RPATH=	-Wl,-rpath,$(PREFIX.dll)
+LDFLAGS_RPATH=	$(RPATH:%=-Wl,-rpath,%)
 
 ifdef LIBTOOL
 COMPILE-lt=	$(LIBTOOL) --silent --mode=compile

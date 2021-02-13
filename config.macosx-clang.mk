@@ -44,16 +44,15 @@ include $(MIQ)config.gnu.mk
 EXT.dll=	.dylib
 TEST_ENV=	DYLD_LIBRARY_PATH=$(OUTPUT)
 
-
 # For macOS, the convention is to put the version number before extension,
 # e.g. where Linux would have libfoo.so.1.3.2, macOS has libfoo.1.3.2.dylib
 MIQ_DLLBASE=    $(@:%.install_dll=%)
 MIQ_DLLNAME=	$(MIQ_DLLBASE:%$(EXT.dll)=%$(PRODUCTS_VERSION:%=.$(MIQ_V_VERSION))$(EXT.dll))
 MIQ_SONAME=	$(MIQ_SOBASE:%$(EXT.dll)=%)$(MIQ_V_MAJOR:%=.%)$(EXT.dll)
-MIQ_SONAME_OPT=	$(PRODUCTS_VERSION:%=-Wl,-install_name -Wl,$(MIQ_SONAME))
+MIQ_SONAME_OPT=	$(PRODUCTS_VERSION:%=-Wl,-install_name -Wl,@rpath/$(MIQ_SONAME))
 
 # On MacOSX, we will use basic frameworks e.g. for string and filesystem functions
-LDFLAGS_BUILDENV_macosx-clang=	-framework CoreFoundation \
+LDFLAGS_BUILDENV_macosx-clang=	-framework CoreFoundation 	\
 				-framework CoreServices
 
 # Special case x11 package, missing on macOS, and unusual location - A bit yucky
