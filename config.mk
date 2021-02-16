@@ -262,7 +262,8 @@ COLORIZE= | sed $(SEDOPT_$(OS_NAME))                                            
             -e 's/^\(\[MISSING\]\)\(.*\)$$/$(WSTEP_COLOR)\1\2$(CLR_EOLINE)$(DEF_COLOR)/g' 				\
             -e 's/^\(\[ERROR\]\)\(.*\)$$/$(ERR_COLOR)\1\2$(CLR_EOLINE)$(DEF_COLOR)/g'        				\
             -e 's/^\(\[FAIL\]\)\(.*\)$$/$(ERR_COLOR)\1\2$(CLR_EOLINE)$(DEF_COLOR)/g'        				\
-            -e 's/^\(\[[A-Z/ 0-9-]\{1,\}\]\)\(.*\)$$/$(NAME_COLOR)\1$(LINE_COLOR)\2$(DEF_COLOR)/g'
+            -e 's/^\(\[[A-Z/ 0-9-]\{1,\}\]\)\(.*\)$$/$(NAME_COLOR)\1$(LINE_COLOR)\2$(DEF_COLOR)/g' ;			\
+            [ $${PIPESTATUS[0]} -eq 0 ]
 
 
 #------------------------------------------------------------------------------
