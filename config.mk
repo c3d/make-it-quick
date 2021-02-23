@@ -122,6 +122,14 @@ PACKAGE_DIR?=$(PACKAGE_NAME:%=%/)
 PACKAGE_LIBS=$(MIQ_PRODLIB)
 PACKAGE_DLLS=$(MIQ_PRODDLL)
 
+# Install headers, docs and var items in package subdirectory by default
+PACKAGE_DIR.header?=$(PACKAGE_DIR)
+PACKAGE_DIR.share?=$(PACKAGE_DIR)
+PACKAGE_DIR.doc?=$(PACKAGE_DIR)
+PACKAGE_DIR.license?=$(PACKAGE_DIR)
+PACKAGE_DIR.config?=$(PACKAGE_DIR)
+PACKAGE_DIR.var?=$(PACKAGE_DIR)
+
 # Location of configuration files, etc (tweaked at install time)
 CONFIG_SOURCES?=$(MIQ)config/
 
@@ -158,10 +166,11 @@ PREFIX.pkgconfig=$(PREFIX.share)pkgconfig/
 # but to install headers and data items under a directory named after project
 define package-install
 
-PACKAGE_INSTALL.$1?=$$(DESTDIR)$$(PREFIX.$1)
+PACKAGE_INSTALL.$1?=$$(DESTDIR)$$(PREFIX.$1)$$(PACKAGE_DIR.$1)
 
 endef
 $(eval $(foreach i,$(INSTALLABLE),$(call package-install,$i)))
+
 
 
 #------------------------------------------------------------------------------
