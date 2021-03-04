@@ -46,7 +46,7 @@ TEST_ENV=	DYLD_LIBRARY_PATH=$(OUTPUT)
 
 # For macOS, the convention is to put the version number before extension,
 # e.g. where Linux would have libfoo.so.1.3.2, macOS has libfoo.1.3.2.dylib
-MIQ_DLLBASE=    $(@:%.install_dll=%)
+MIQ_DLLBASE=    $(@F:%.install.dll=%)
 MIQ_DLLNAME=	$(MIQ_DLLBASE:%$(EXT.dll)=%$(PRODUCTS_VERSION:%=.$(MIQ_V_VERSION))$(EXT.dll))
 MIQ_SONAME=	$(MIQ_SOBASE:%$(EXT.dll)=%)$(MIQ_V_MAJOR:%=.%)$(EXT.dll)
 MIQ_SONAME_OPT=	$(PRODUCTS_VERSION:%=-Wl,-install_name -Wl,@rpath/$(MIQ_SONAME))

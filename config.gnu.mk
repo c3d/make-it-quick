@@ -122,9 +122,9 @@ PFX.dll=	lib
 #  Shared libraries versioning
 #------------------------------------------------------------------------------
 
-MIQ_SOBASE=		$(@F:%.install_dll=%)
+MIQ_SOBASE=		$(@F:%.install.dll=%)
 MIQ_SONAME=		$(MIQ_SOBASE)$(MIQ_V_MAJOR:%=.%)
-MIQ_DLLNAME=		$(@:%.install_dll=%)$(PRODUCTS_VERSION:%=.$(MIQ_V_VERSION))
+MIQ_DLLNAME=		$(@F:%.install.dll=%)$(PRODUCTS_VERSION:%=.$(MIQ_V_VERSION))
 
 # Conversion to libttool input
 MIQ_LT_CURRENT=	$(shell echo $$(($(MIQ_V_MAJOR) + $(MIQ_V_MINOR))))
@@ -135,8 +135,8 @@ MIQ_LT_VERS_OPT=$(PRODUCTS_VERSION:%=-version-info $(MIQ_LT_VERSION))
 
 # Symbolic links for shared libraries
 MIQ_SONAME_OPT=	$(PRODUCTS_VERSION:%=-Wl,-soname -Wl,$(MIQ_SONAME))
-MIQ_SYMLINKS_SO=ln -sf $(notdir $(MIQ_DLLNAME)) $(MIQ_SOBASE) && 	\
-		ln -sf $(notdir $(MIQ_DLLNAME)) $(MIQ_SONAME)
+MIQ_SYMLINKS_SO=ln -sf $(MIQ_DLLNAME) $(MIQ_SOBASE) && 	\
+		ln -sf $(MIQ_DLLNAME) $(MIQ_SONAME)
 MIQ_SYMLINKS=	$(PRODUCTS_VERSION:%=&& $(MIQ_SYMLINKS_SO))
 
 
@@ -165,8 +165,7 @@ LINK.lib=	$(LINK-lt)    $(LD)  $(MIQ_LDFLAGS) $(MIQ_LINKARGS)	\
 			-o $@						\
 			$(MIQ_LT_VERS_OPT)
 LINK.dll=	$(LINK.lib)
-INSTALL.dll=	$(LIBTOOL) --silent --mode=install			\
-			$(INSTALL) $(MIQ_DLLNAME) $(PACKAGE_INSTALL.dll)
+INSTALL.dll=	$(LIBTOOL) --silent --mode=install $(INSTALL)
 LINK.exe=	$(MIQ_LINK)    $(LD)  $(MIQ_LINKARGS) $(MIQ_LDFLAGS) -o $@
 else
 # Non-libtool case: manage manually
@@ -176,11 +175,10 @@ COMPILE.cpp=	$(CXX)	$(MIQ_CXXFLAGS)	-c $< -o $@
 COMPILE.s=	$(CC)	$(MIQ_CFLAGS)	-c $< -o $@
 LINK.lib=	$(AR) $@ $^ && $(RANLIB) $@
 LINK.dll=	$(LD) -shared	$(MIQ_LINKARGS)	$(MIQ_LDFLAGS)  \
-				-o $(MIQ_DLLNAME)		\
+				-o $(OUTPUT)$(MIQ_DLLNAME)	\
 				$(MIQ_SONAME_OPT)		\
 		&& (cd $(OUTPUT) $(MIQ_SYMLINKS))
-INSTALL.dll= 	$(INSTALL) $(MIQ_DLLNAME) $(PACKAGE_INSTALL.dll) \
-		&& (cd $(PACKAGE_INSTALL.dll) $(MIQ_SYMLINKS))
+INSTALL.dll= 	(cd $(PACKAGE_INSTALL.dll) $(MIQ_SYMLINKS)) && $(INSTALL)
 LINK.exe=	$(LD)		 $(MIQ_LINKARGS) $(MIQ_LDFLAGS) -o $@
 endif
 

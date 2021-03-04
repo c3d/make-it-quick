@@ -634,13 +634,13 @@ define install-rules
 
 $2.install.$1: $$(PACKAGE_INSTALL.$1)$(notdir $2)
 $$(PACKAGE_INSTALL.$1)$(notdir $2): $$(WARE_DIR.$1)$2		| .install-directories
-	$$(PRINT_INSTALL) $$(firstword $$(INSTALL.$1) $$(INSTALL)) $$(WARE_DIR.$1)$2 $$(PACKAGE_INSTALL.$1)
+	$$(PRINT_INSTALL) $$(if $$(INSTALL.$1),$$(INSTALL.$1),$$(INSTALL)) $$(WARE_DIR.$1)$2 $$(PACKAGE_INSTALL.$1)
 
 $2.uninstall.$1:
-	$$(PRINT_UNINSTALL) $$(firstword $$(UNINSTALL.$1) $$(UNINSTALL)) $$(PACKAGE_INSTALL.$1)$2; $$(UNINSTALL.dir) $$(PACKAGE_INSTALL.$1) $$(UNINSTALL.ok)
+	$$(PRINT_UNINSTALL) $$(if $$(UNINSTALL.$1),$$(UNINSTALL.$1),$$(UNINSTALL)) $$(PACKAGE_INSTALL.$1)$2; $$(UNINSTALL.dir) $$(PACKAGE_INSTALL.$1) $$(UNINSTALL.ok)
 
 $2.reinstall: $2 $$(PACKAGE_INSTALL.$1).mkdir-only
-	$$(PRINT_INSTALL) $$(firstword $$(INSTALL.$1) $$(INSTALL)) $2 $$(PACKAGE_INSTALL.$1)
+	$$(PRINT_INSTALL) $$(if $$(INSTALL.$1),$$(INSTALL.$1),$$(INSTALL)) $$(WARE_DIR.$1)$2 $$(PACKAGE_INSTALL.$1)
 
 .install-directories: $$(PACKAGE_INSTALL.$1).mkdir-only
 
