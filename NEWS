@@ -1,4 +1,5 @@
-v0.3.0
+v0.3.0          Release 0.3.0: Variable name changes
+    
     - install: Fix creation of shared library symbolic links
     - config: Make COLORIZE a weak variable
     - install: Select which kind of files go in package subdirectory
