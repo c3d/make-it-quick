@@ -1,3 +1,16 @@
+v0.3.0
+    - install: Fix creation of shared library symbolic links
+    - config: Make COLORIZE a weak variable
+    - install: Select which kind of files go in package subdirectory
+    - colorization: Check pipe status
+    - Set rpath for testing purpose with opt and debug targets
+    - docs: Udpate README.md to match installation refactoring
+    - Refactor installation
+    - Simplify the color filter
+    - Colorize test results even if at top-level
+    - Colorize generate steps even when generating makefiles
+    - colorization: Put colorization of config in COLORIZE
+
 v0.2.7
     - Add configuration check for long double
     - config: Add tests for _Float80 and _Float128
