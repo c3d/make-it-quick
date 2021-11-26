@@ -44,10 +44,10 @@ rm -f $SETUP
 # DD='$(DESTDIR)'
 while [ $# -ne 0 ]; do
     case "$1" in
-    --build=*)                          output IGNORED_BUILD=${1/--build=/}/;;
-    --host=*)                           output IGNORED_HOST=${1/--host=/}/;;
-    --program-prefix=*)                 output IGNORED_PROGRAM_PREFIX=${1/--program-prefix=/}/;;
-    --disable-dependency-tracking)      output IGNORED_DEPENDENCY_TRACKING=0;;
+    --build=*)                          output CONFIGURE.build=${1/--build=/}/;;
+    --host=*)                           output CONFIGURE.host=${1/--host=/}/;;
+    --program-prefix=*)                 output CONFIGURE.program-prefix=${1/--program-prefix=/}/;;
+    --disable-dependency-tracking)      output CONFIGURE.disable-dependency-tracking=1;;
     --prefix=*)                         output PREFIX=$DD${1/--prefix=/}/;;
     --exec-prefix=*)                    output PREFIX.exec=$DD${1/--exec-prefix=/}/;;
     --bindir=*)                         output PREFIX.bin=$DD${1/--bindir=/}/;;
