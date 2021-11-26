@@ -1,5 +1,10 @@
+v0.3.1          Release v0.3.1: Configure variable name changes
+
+    - Rename 'configure' arguments as `CONFIGURE.foo` instead of `IGNORED_FOO`
+    - Do not install headers with executable flag
+
 v0.3.0          Release 0.3.0: Variable name changes
-    
+
     - install: Fix creation of shared library symbolic links
     - config: Make COLORIZE a weak variable
     - install: Select which kind of files go in package subdirectory
