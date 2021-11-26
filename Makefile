@@ -55,7 +55,7 @@ TESTS=example/
 # We override the 'config' installable for config sources,
 # whereas for most packages, it is for configuration files.
 PACKAGE_DIR.config=$(PACKAGE_DIR)config/
-PREFIX.config=$(PREFIX.header)
+PREFIX.config=$(PREFIX.share)
 
 # Make sure we generate the config.system
 MIQ_MAKEFILE_INSTALL=yes
