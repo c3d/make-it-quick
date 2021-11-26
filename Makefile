@@ -70,7 +70,7 @@ SYSTEM_SETUP=								\
 $(SYSCONFIG:%=SYSCONFIG?="$(SYSCONFIG)")				\
 $(PREFIX:%=PREFIX?="$(PREFIX)")						\
 $(foreach i,$(INSTALLABLE),$(PREFIX.$i:%=PREFIX.$i?=$(PREFIX.$i)))	\
-CONFIG_SOURCES="$(PREFIX.config)"
+CONFIG_SOURCES="$(PREFIX.config)$(PACKAGE_DIR.config)"
 
 $(MIQ_OBJDIR)config.system-setup.mk:
 	$(PRINT_GENERATE) ( $(SYSTEM_SETUP:%=echo %;) true ) > $@
