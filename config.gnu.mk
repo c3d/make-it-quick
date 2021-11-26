@@ -49,7 +49,7 @@ RANLIB=         $(CROSS_COMPILE:%=%-)ranlib
 INSTALL=	install
 INSTALL.data=   $(INSTALL) -m 644
 INSTALL.bin=	$(INSTALL)
-INSTALL.h=	$(INSTALL.data)
+INSTALL.header=	$(INSTALL.data)
 INSTALL.share=	$(INSTALL.data)
 INSTALL.lib=	$(INSTALL)
 INSTALL.man=	$(INSTALL.data)
