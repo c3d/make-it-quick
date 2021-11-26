@@ -180,7 +180,9 @@ LINK.dll=	$(LD) -shared	$(MIQ_LINKARGS)	$(MIQ_LDFLAGS)  \
 				-o $(OUTPUT)$(MIQ_DLLNAME)	\
 				$(MIQ_SONAME_OPT)		\
 		&& (cd $(OUTPUT) $(MIQ_SYMLINKS))
-INSTALL.dll= 	(cd $(PACKAGE_INSTALL.dll) $(MIQ_SYMLINKS)) && $(INSTALL)
+INSTALL.dll= 	($(INSTALL) $(MIQ_DLLNAME) $(PACKAGE_INSTALL.dll) &&	\
+		 cd $(PACKAGE_INSTALL.dll) $(MIQ_SYMLINKS))	  &&	\
+                true
 LINK.exe=	$(LD)		 $(MIQ_LINKARGS) $(MIQ_LDFLAGS) -o $@
 endif
 
