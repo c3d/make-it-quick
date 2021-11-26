@@ -267,7 +267,7 @@ endif
 .objects: .prebuild
 .objects: $(MIQ_OBJDIR:%=%.mkdir)
 .product: $(MIQ_OUTPRODS)
-.postbuild: .product .install
+.postbuild: .product $(DO_INSTALL:%=.install)
 .install: $(MIQ_INSTALL)
 .tests: $(TESTS:%=%.test)
 .goodbye: .postbuild
