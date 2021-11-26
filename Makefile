@@ -36,7 +36,7 @@
 
 # Package description
 PACKAGE_NAME=make-it-quick
-PACKAGE_VERSION=0.3.0
+PACKAGE_VERSION=0.3.1
 PACKAGE_DESCRIPTION=A simple auto-configuring build system for C and C++ programs
 PACKAGE_URL=http://github.com/c3d/make-it-quick
 
