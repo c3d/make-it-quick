@@ -55,6 +55,7 @@ INSTALL.lib=	$(INSTALL)
 INSTALL.man=	$(INSTALL.data)
 INSTALL.doc=	$(INSTALL.data)
 INSTALL.etc=	$(INSTALL.data)
+INSTALL.config= $(INSTALL.data)
 INSTALL.pkgconfig=$(INSTALL.data)
 INSTALL.license=$(INSTALL.data)
 UNINSTALL=	/bin/rm -f
