@@ -51,6 +51,12 @@ WARE.config=$(wildcard config/check*.c)
 WARE.doc= README.md AUTHORS NEWS
 TESTS=example/
 
+# Install the check*.c files as data, under prefix/include
+# We override the 'config' installable for config sources,
+# whereas for most packages, it is for configuration files.
+PACKAGE_DIR.config=$(PACKAGE_DIR)config/
+PREFIX.config=$(PREFIX.header)
+
 # Make sure we generate the config.system
 MIQ_MAKEFILE_INSTALL=yes
 
@@ -58,8 +64,6 @@ MIQ=./
 -include configured.mk
 include $(MIQ)rules.mk
 
-# Install the check*.c files as data
-INSTALL.config=$(INSTALL.data)
 
 # Generation of the system setup file
 SYSTEM_SETUP=								\
