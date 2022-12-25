@@ -1,5 +1,5 @@
 # ******************************************************************************
-# config.arm-linux-gnu.mk                                  make-it-quick project
+#                                 make-it-quick project
 # ******************************************************************************
 #
 # File description:
@@ -36,3 +36,4 @@
 
 CROSS_COMPILE=arm-linux-gnu
 include $(MIQ)config.gnu.mk
+

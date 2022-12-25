@@ -1,0 +1,74 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/kubernetes-helm
+{
+	"name": "Kubernetes - Local Configuration",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/base:bullseye",
+
+	"features": {
+		"ghcr.io/devcontainers/features/docker-from-docker:1": {},
+		"ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
+			"version": "latest",
+			"helm": "latest",
+			"minikube": "none"
+		},
+		"./local-features/copy-kube-config": {},
+		"ghcr.io/devcontainers/features/anaconda:1": {},
+		"ghcr.io/devcontainers/features/aws-cli:1": {},
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
+		"ghcr.io/rocker-org/devcontainer-features/miniforge:0": {},
+		"ghcr.io/devcontainers-contrib/features/act-asdf:1": {},
+		"ghcr.io/devcontainers-contrib/features/alp-asdf:1": {},
+		"ghcr.io/devcontainers-contrib/features/amplify-cli:1": {},
+		"ghcr.io/devcontainers-contrib/features/angular-cli:1": {},
+		"ghcr.io/devcontainers-contrib/features/ansible:1": {},
+		"ghcr.io/devcontainers-contrib/features/argo-cd:1": {},
+		"ghcr.io/devcontainers-contrib/features/asdf-package:1": {},
+		"ghcr.io/devcontainers-contrib/features/consul-asdf:1": {},
+		"ghcr.io/devcontainers-contrib/features/cookiecutter:1": {},
+		"ghcr.io/devcontainers-contrib/features/digitalocean-cli:1": {},
+		"ghcr.io/devcontainers-contrib/features/direnv-asdf:1": {},
+		"ghcr.io/dhoeric/features/act:1": {},
+		"ghcr.io/dhoeric/features/conftest:1": {},
+		"ghcr.io/customink/codespaces-features/docker-in-docker-amzn:1": {},
+		"ghcr.io/saml-to/devcontainer-features/assume-aws-role:1": {}
+	},
+
+	"remoteEnv": {
+		"SYNC_LOCALHOST_KUBECONFIG": "true"
+	},
+
+	"initializeCommand": "cd .devcontainer && bash ensure-mount-sources",
+	"mounts": [
+		{
+			"source": "${env:HOME}${env:USERPROFILE}/.kube",
+			"target": "/usr/local/share/kube-localhost",
+			"type": "bind"
+		},
+		// Optional mount to also sync certs in your .minikube folder
+		{
+			"source": "${env:HOME}${env:USERPROFILE}/.minikube",
+			"target": "/usr/local/share/minikube-localhost",
+			"type": "bind"
+		}
+	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.makefile-tools"
+			]
+		}
+	}
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "kubectl version",
+
+	// Configure tool-specific properties.
+	// "customizations": {},
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}
