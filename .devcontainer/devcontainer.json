@@ -56,7 +56,11 @@
 		"vscode": {
 			"extensions": [
 				"ms-vscode.makefile-tools",
-				"coderfin.logical-properties"
+				"coderfin.logical-properties",
+				"fofolee.crypto-tools",
+				"googlecloudtools.cloudcode",
+				"mindginative.terraform-snippets",
+				"jpogran.puppet-vscode"
 			]
 		}
 	}
