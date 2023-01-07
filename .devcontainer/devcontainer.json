@@ -55,8 +55,7 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"ms-vscode.makefile-tools",
-				"coderfin.logical-properties"
+				"ms-vscode.makefile-tools"
 			]
 		}
 	}
