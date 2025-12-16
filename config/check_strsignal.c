@@ -4,6 +4,5 @@
 int main()
 {
     const char *s = strsignal(SIGINT);
-    return s != 0;
+    return s == 0;
 }
-
