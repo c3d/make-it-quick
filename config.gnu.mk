@@ -175,7 +175,7 @@ CFLAGS_PIC=	-fPIC
 COMPILE.c=	$(CC)	$(MIQ_CFLAGS)	-c $< -o $@
 COMPILE.cpp=	$(CXX)	$(MIQ_CXXFLAGS)	-c $< -o $@
 COMPILE.s=	$(CC)	$(MIQ_CFLAGS)	-c $< -o $@
-LINK.lib=	$(AR) $@ $^ && $(RANLIB) $@
+LINK.lib=	$(AR) $@ $(filter %$(EXT.obj),$^) && $(RANLIB) $@
 LINK.dll=	$(LD) -shared	$(MIQ_LINKARGS)	$(MIQ_LDFLAGS)  \
 				-o $(OUTPUT)$(MIQ_DLLNAME)	\
 				$(MIQ_SONAME_OPT)		\
