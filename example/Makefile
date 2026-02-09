@@ -54,7 +54,9 @@ CONFIG=	<stdio.h>		\
 	setlinebuf		\
 	libm			\
 	liboony			\
-	sbrk
+	sbrk			\
+	pthread			\
+	pipe
 
 # Define what to test
 TESTS=product count-characters
@@ -67,4 +69,4 @@ MIQ=../
 include $(MIQ)rules.mk
 
 count-characters.test:
-	$(PRINT_TEST) echo Output has `$(TEST_ENV) $(MIQ_OUTEXE) | wc -c` characters, should be 35
+	$(PRINT_TEST) echo Output has `$(TEST_ENV) $(MIQ_OUTEXE) | wc -c` characters, should be 43
