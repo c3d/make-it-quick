@@ -6,11 +6,25 @@
 #
 #   Common rules for building the targets
 #
-#
-#
-#
-#
-#
+## Usage:
+##    make                : Build default target (TARGET=$(TARGET))
+##    make all            : Same
+##    make debug          : Debug build
+##    make opt            : Optimized build with debug info
+##    make release        : Release build without debug info
+##    make profile        : Profile build
+##    make clean          : Clean build results (only BUILDENV=$(BUILDENV))
+##    make rebuild        : Clean before building
+##    make nuke           : Clean build directory
+##    make check / test   : Build product and run sanity checks
+##    make benchmark      : Build product, then run benchmarks
+##    make install        : Build and install result
+##    make uninstall      : Remove the installed results
+##    make dist           : Create a tarball for packaging
+##    make clang-format   : Reformat sources using clang-format
+##    make v-[target]     : Build target in 'verbose' mode
+##    make d-[target]     : Deep-checking of library dependencies
+##    make top-[target]   : Rebuild from top-level directory
 #
 # ******************************************************************************
 # This software is licensed under the GNU General Public License v3
@@ -219,27 +233,8 @@ NEWS: .ALWAYS
 distclean nuke: clean
 	-$(PRINT_CLEAN) rm -rf $(MIQ_OUTPRODS) $(BUILD) $(LOGS) $(MIQ_TARBALL)
 
-help:
-	@$(ECHO) "Available targets:"
-	@$(ECHO) "  make                : Build default target (TARGET=$(TARGET))"
-	@$(ECHO) "  make all            : Same"
-	@$(ECHO) "  make debug          : Debug build"
-	@$(ECHO) "  make opt            : Optimized build with debug info"
-	@$(ECHO) "  make release        : Release build without debug info"
-	@$(ECHO) "  make profile        : Profile build"
-	@$(ECHO) "  make clean          : Clean build results (only BUILDENV=$(BUILDENV))"
-	@$(ECHO) "  make rebuild        : Clean before building"
-	@$(ECHO) "  make nuke           : Clean build directory"
-	@$(ECHO) "  make check / test   : Build product and run sanity checks"
-	@$(ECHO) "  make benchmark      : Build product, then run benchmarks"
-	@$(ECHO) "  make install        : Build and install result"
-	@$(ECHO) "  make uninstall      : Remove the installed results"
-	@$(ECHO) "  make dist           : Create a tarball for packaging"
-	@$(ECHO) "  make clang-format   : Reformat sources using clang-format"
-	@$(ECHO) "  make v-[target]     : Build target in 'verbose' mode"
-	@$(ECHO) "  make d-[target]     : Deep-checking of library dependencies"
-	@$(ECHO) "  make top-[target]   : Rebuild from top-level directory"
-
+help: .ALWAYS
+	@sed -n 's/^## //p' $(MAKEFILE_LIST)
 
 #------------------------------------------------------------------------------
 #   Internal targets
@@ -273,7 +268,7 @@ endif
 .goodbye: .postbuild
 
 
-.PHONY: all debug opt release profile build test install rebuild
+.PHONY: all debug opt release profile build test install rebuild help
 .PHONY: .hello .config .libraries .prebuild		\
 	.recurse .objects .product			\
 	.postbuild .goodbye
