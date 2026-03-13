@@ -47,6 +47,7 @@ PYTHON=         python
 AR=             $(CROSS_COMPILE:%=%-)ar -rcs
 RANLIB=         $(CROSS_COMPILE:%=%-)ranlib
 OBJCOPY=        $(CROSS_COMPILE:%=%-)objcopy
+SIZE=           $(CROSS_COMPILE:%=%-)size
 INSTALL=	install
 INSTALL.data=   $(INSTALL) -m 644
 INSTALL.bin=	$(INSTALL)
