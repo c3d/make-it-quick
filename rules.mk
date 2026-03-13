@@ -120,7 +120,7 @@ MIQ_FULLDIR:=   $(abspath .)/
 MIQ_DIR:=       $(subst $(abspath $(TOP))/,,$(MIQ_FULLDIR))
 MIQ_PRETTYDIR:= $(subst $(abspath $(TOP))/,[top],$(MIQ_FULLDIR)$(VARIANT:%=[%]))
 MIQ_BUILDDATE:= $(shell /bin/date '+%Y%m%d-%H%M%S')
-MIQ_OBJROOT:=	$(BUILD)$(BUILDENV)/$(CROSS_COMPILE:%=%-)$(TARGET)
+MIQ_OBJROOT:=	$(BUILD)$(BUILDENV)/$(VARIANT:%=%/)$(CROSS_COMPILE:%=%/)$(TARGET)
 MIQ_BUILDLOG:=  $(LOGS)build-$(BUILDENV)-$(CROSS_COMPILE:%=%-)$(TARGET)-$(MIQ_BUILDDATE).log
 endif
 
