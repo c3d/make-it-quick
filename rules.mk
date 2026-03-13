@@ -469,7 +469,7 @@ ifeq ($(MAKECMDGOALS),.build)
 endif
 
 # Create output directory if necessary
-$(MIQ_OUTPRODS):			| $(OUTPUT).mkdir-only
+$(MIQ_OUTPRODS):			| $(MIQ_OBJDIR).mkdir-only
 
 # Link
 .SECONDEXPANSION:
