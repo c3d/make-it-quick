@@ -64,12 +64,13 @@ UNINSTALL=	/bin/rm -f
 UNINSTALL.dir=	/bin/rmdir > /dev/null 2>&1
 UNINSTALL.ok=	|| true
 CAT=		cat /dev/null
+TAR=		tar
 
 # Tarball generation
 GEN_TARBALL=	mkdir $(MIQ_TARNAME) &&				\
-		tar cf - AUTHORS NEWS $(shell git ls-files)  |	\
-		(cd $(MIQ_TARNAME); tar xf - ) &&		\
-		tar cfj $@ $(MIQ_TARNAME) &&			\
+		$(TAR) cf - AUTHORS NEWS $(shell git ls-files)  |	\
+		(cd $(MIQ_TARNAME); $(TAR) xf - ) &&		\
+		$(TAR) cfj $@ $(MIQ_TARNAME) &&			\
 		rm -rf $(MIQ_TARNAME)
 
 GEN_AUTHORS=	(echo "This software was brought to you by:";	\
