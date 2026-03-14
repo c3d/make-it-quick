@@ -240,6 +240,7 @@ INFO_RST_COL=   \\033[39;49;27m
 INFO_CLR_EOL=   \\033[K
 INFO=           printf "%-16s %-56s%6s\n"
 INFO_NONL=      printf "%-16s %-56s"
+INFO_NONL_CMD=  printf "%-16s "
 INFO_TEST=      printf "%-16s %-56s%6s\n"
 
 # Color for build steps
