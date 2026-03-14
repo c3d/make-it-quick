@@ -356,11 +356,12 @@ endif
 .PRECIOUS: %/.mkdir
 
 # If LIBRARIES=foo/bar, go to directory foo/bar, which should build bar.a
+ifdef LIBRARIES
 $(OUTPUT)$(PFX.lib)%$(EXT.lib): $(DEEP_BUILD)
 	+$(PRINT_COMMAND) cd $(firstword $(dir $(filter %$*, $(LIBRARIES:.lib=) $(SUBDIRS))) .nonexistent) && $(MIQ_RECURSE)
 $(OUTPUT)$(PFX.dll)%$(EXT.dll): $(DEEP_BUILD)
 	+$(PRINT_COMMAND) cd $(firstword $(dir $(filter %$*, $(LIBRARIES:.dll=) $(SUBDIRS))) .nonexistent) && $(MIQ_RECURSE)
-
+endif
 
 #------------------------------------------------------------------------------
 #  Progress printout
