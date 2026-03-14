@@ -45,7 +45,7 @@ SHELL=      /bin/bash
 # Default target
 TARGET?=opt
 
-# Default build environment if not set
+# Default build environment if not set (autodetects from host)
 BUILDENV?=auto
 
 # Default top level directory

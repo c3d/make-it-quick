@@ -52,6 +52,7 @@ include $(MIQ)config.$(BUILDENV).mk
 # Make sure 'all' remains the first target seen
 all: $(TARGET)
 
+ifeq ($(BUILDENV),)
 hello: warn-buildenv
 
 warn-buildenv:
@@ -63,3 +64,4 @@ warn-buildenv:
 	@$(ECHO) "* Attempting to build $(TARGET) with $(BUILDENV)" DIR=$(DIR)
 	@$(ECHO) "****************************************************************"
 	@$(ECHO) "$(DEF_COLOR)"
+endif
