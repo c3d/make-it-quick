@@ -161,7 +161,7 @@ MIQ_V_VERSION=	$(MIQ_V_MAJOR).$(MIQ_V_MINOR).$(MIQ_V_PATCH)
 # correct platform extension, i.e. .a for static libraries on Linux
 ifneq ($(PRODUCTS),)
 ifeq ($(MIQ_PRODEXE)$(MIQ_PRODLIB)$(MIQ_PRODDLL),)
-$(error Error: Variable PRODUCTS must contain .exe, .lib or .dll)
+$(error Error: Variable PRODUCTS='$(PRODUCTS)' must name a valid executable (ending in '$(EXT.exe)'), library (ending in '$(EXT.lib))' or shared library (ending in '$(EXT.dll)'))
 endif
 endif
 
