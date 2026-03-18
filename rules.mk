@@ -351,9 +351,11 @@ endif
 
 %/.mkdir-only:
 	$(PRINT_COMMAND) $(MAKE_DIR)
+.mkdir-only:
+	@:
 %/.mkdir:
 	$(PRINT_COMMAND) $(MAKE_OBJDIR)
-.PRECIOUS: %/.mkdir
+.PRECIOUS: %/.mkdir .mkdir
 
 # If LIBRARIES=foo/bar, go to directory foo/bar, which should build bar.a
 ifdef LIBRARIES
