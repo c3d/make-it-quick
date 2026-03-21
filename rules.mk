@@ -101,6 +101,8 @@ MIQ_LDFLAGS=	$(LDFLAGS)				\
 		$(LDFLAGS_RPATH)			\
 		$(LDFLAGS_$*) $(LDFLAGS_$<)
 
+MIQ_CFGLDFLAGS= $(MIQ_LDFLAGS)
+
 MIQ_PACKAGE= 	$(PACKAGE_NAME:%=$(MIQ_OBJDIR)%.pc)
 
 MIQ_DOINSTALL=	$(foreach i,$(INSTALLABLE),$(WARE.$i:%=%.$(DO_INSTALL).$i))
@@ -520,7 +522,7 @@ $(MIQ_OBJDIR)%.pkg-config.cflags: 					$(MIQ_PKGDEPS)
 $(MIQ_OBJDIR)%.pkg-config.ldflags: 					$(MIQ_PKGDEPS)
 	$(PRINT_COMMAND)	$(MIQ_PKGCONFIG_LIBS_CHECK)
 $(MIQ_OBJDIR)lib%.cfg.ldflags: $(MIQ_OBJDIR)CFG_HAVE_lib%.h		$(MIQ_PKGDEPS)
-	$(PRINT_COMMAND)  (grep -q 'define ' $< && echo $(LINK_CFG_OPT)$* || true) > $@
+	$(PRINT_COMMAND)  (grep -q 'define ' $<  && echo $(LINK_CFG_OPT)$* || true) > $@
 
 
 #------------------------------------------------------------------------------

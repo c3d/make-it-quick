@@ -219,7 +219,7 @@ TEST_ENV=	LD_LIBRARY_PATH=$(OUTPUT)
 #------------------------------------------------------------------------------
 
 MIQ_CFGUPPER=	$(shell echo -n "$(MIQ_ORIGTARGET)" | tr '[:lower:]' '[:upper:]' | tr -c '[:alnum:]' '_')
-MIQ_CFGLFLAGS=	$(MIQ_LDFLAGS)						\
+MIQ_CFGLFLAGS=	$(MIQ_CFGLDFLAGS)					\
 		$(shell grep '// [A-Z]*FLAGS=' "$<" |			\
 			sed -e 's|// [A-Z]*FLAGS=||g')			\
 		$(shell $(CAT) $(MIQ_PKGLDFLAGS))
