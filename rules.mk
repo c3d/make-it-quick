@@ -56,7 +56,8 @@ MIQ_INCLUDES=  	$(INCLUDES)				\
 		$(INCLUDES_BUILDENV_$(BUILDENV))	\
 		$(INCLUDES_TARGET_$(TARGET))		\
 		$(INCLUDES_VARIANT_$(VARIANT))		\
-		$(INCLUDES_$*) $(INCLUDES_$<)
+		$(INCLUDES_$*) $(INCLUDES_$<)		\
+		$(MIQ_OBJDIR)
 
 MIQ_DEFINES=	$(DEFINES)				\
 		$(DEFINES_BUILDENV_$(BUILDENV))		\
@@ -216,7 +217,7 @@ uninstall: uninstall-$(TARGET)
 reinstall: reinstall-$(TARGET)
 
 clean: $(SUBDIRS:%=%.clean) $(VARIANTS:%=%.variant-clean)
-	-$(PRINT_CLEAN) rm -f $(TO_CLEAN) $(MIQ_OBJECTS) $(DEPENDENCIES) $(MIQ_OUTPRODS) $(MIQ_TOLINK) config.h
+	-$(PRINT_CLEAN) rm -f $(TO_CLEAN) $(MIQ_OBJECTS) $(DEPENDENCIES) $(MIQ_OUTPRODS) $(MIQ_TOLINK) $(CONFIG_H)
 %.clean:
 	$(PRINT_COMMAND) cd $* && $(MIQ_RECURSE) clean $(COLORIZE)
 %.variant-clean:
@@ -253,8 +254,7 @@ help: .ALWAYS
 .config: .hello
 .config: $(VARIANTS:%=%.variant)
 ifeq ($(VARIANTS),)
-.config: $(CONFIG:%=config.h)
-.config: $(MIQ_NORMCONFIG:%=$(MIQ_OBJDIR)CFG_HAVE_%.mk)
+.config: $(CONFIG:%=$(CONFIG_H))
 endif
 .libraries: .config
 .libraries: $(MIQ_OBJLIBS) $(MIQ_OBJDLLS)
@@ -536,7 +536,7 @@ MIQ_CONFIGDEPS=	$(MIQ_PKGDEPS) 						\
 		$(MIQ_ORDERONLY:%=% .hello)
 
 # Generate the config.h by concatenating all the indiviual config files
-config.h: $(MIQ_NORMCONFIG:%=$(MIQ_OBJDIR)CFG_HAVE_%.h)
+$(CONFIG_H): $(MIQ_NORMCONFIG:%=$(MIQ_OBJDIR)CFG_HAVE_%.h)
 	$(PRINT_GENERATE) cat $^ > $@
 
 # Build makefile configuration files from generated .h files

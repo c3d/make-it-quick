@@ -54,6 +54,9 @@ TOP?=$(abspath .)/
 # Default output for build products
 OUTPUT?=$(TOP)
 
+# Default location for config.h (may need adjustment in some special cases)
+CONFIG_H ?= $(MIQ_OBJDIR)config.h
+
 # Default location for object files
 BUILD?= $(TOP).build/
 
