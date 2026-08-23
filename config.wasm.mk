@@ -1,11 +1,34 @@
-# ******************************************************************************
-# config.wasm.mk                                           make-it-quick project
-# ******************************************************************************
+#******************************************************************************
+# config.wasm.mk                                                  DB48X project
+#******************************************************************************
 #
-#  Emscripten / WebAssembly — host compiler is emcc (not gcc).
+#  File Description:
 #
-#  Link flags follow the legacy DB48X wasm build (Makefile.old): pthread,
-#  embind (--bind), embedded config/help, ASYNCIFY, MODULARIZE=0.
+#   Emscripten / WebAssembly setup for C and C++
+#
+#
+#
+#
+#
+#
+#
+#
+#******************************************************************************
+#  (C) 2026 Christophe de Dinechin <christophe@dinechin.org>
+#  This software is licensed under the terms outlined in LICENSE.txt
+#******************************************************************************
+#  This file is part of DB48X.
+#
+#  DB48X is free software: you can redistribute it and/or modify
+#  it under the terms outlined in the LICENSE.txt file
+#
+#  DB48X is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#******************************************************************************
+#
+#  Since EMDSK6, Emscripten / WebAssembly — C++ objects must be linked with
+#  em++ instead of emcc so libc++ and exception support are pulled in.
 #
 # ******************************************************************************
 
@@ -21,20 +44,21 @@ EXT.exe=.js
 CFLAGS_PIC=
 
 # Override GNU tool names (must follow config.gnu.mk)
-CC:=emcc
-CXX:=emcc -x c++
-LD:=emcc
-CPP:=emcc -E
-AR:=emar
-RANLIB:=emranlib
+CC=emcc
+CXX=em++
+LD=em++
+CPP=emcc -E
+AR=emar
+RANLIB=emranlib
 
-# pthread + embind; exceptions required for C++ embind
+# pthread + embind; exceptions required for C++ embind and DMCP C++ sources
 CFLAGS_BUILDENV_wasm=	-pthread
 CXXFLAGS_BUILDENV_wasm= -pthread -fexceptions
 
 # Legacy wasm link parameters (see Makefile.old VARIANT=wasm)
 LDFLAGS_BUILDENV_wasm=							\
 	-pthread							\
+	-fexceptions							\
 	-sMODULARIZE=0							\
 	-sRESERVED_FUNCTION_POINTERS=20					\
 	-sPTHREAD_POOL_SIZE=4						\
